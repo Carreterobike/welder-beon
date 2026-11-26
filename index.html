@@ -1301,7 +1301,7 @@ function goView(v){for(const x of document.querySelectorAll('nav button'))x.setA
   for(const x of document.querySelectorAll('.view'))x.classList.toggle('on',x.id==='v-'+v);window.scrollTo(0,0);if(v==='pla')renderPlanos()}
 
 /* Auto-actualizar */
-const APPV='20261126222440';
+const APPV='20261126222526';
 (function(){
   if(!GHMODE||location.protocol!=='https:')return;
   try{if(sessionStorage.getItem('wbUpdDone')===APPV){sessionStorage.removeItem('wbUpdDone');toast('✓ App actualizada')}}catch(x){}
@@ -1334,7 +1334,7 @@ let saved={};try{saved=JSON.parse(localStorage.getItem('wbSaved')||'{}')||{}}cat
 function renderSaved(){
   const g=saved[mat];if(!g){$('savedBox').innerHTML='<p class="mut" style="margin:8px 0 0">Todavía no has guardado parámetros para '+NAME[mat]+'.</p>';return}
   const f=new Date(g.ts);const rows=[['Proceso',g.fix&&g.fix.tig===false?'—':'TIG'],['Corriente',g.fix&&g.fix.ac===false?'—':'AC'],['Mando',g.fix&&g.fix.loc===false?'—':'Pedal'],['Balance',g.bal+' %'],['Frecuencia',g.hz+' Hz'],['Rampa subida',String(g.up).replace('.',',')+' s'],['Rampa bajada',String(g.dn).replace('.',',')+' s'],['Postgás',String(g.post).replace('.',',')+' s'],['Pregás',String(g.pre).replace('.',',')+' s'],['Tungsteno',TW[g.tw]?TW[g.tw].n:'—'],['Precalentamiento',String(g.ex)],['Gas',TG[g.tgas]?TG[g.tgas].n:'Argón puro']];
-  $('savedBox').innerHTML=`<div class="saved"><b>✓ Guardado · ${esc(NAME[g.union]||g.union)}</b><span class="mut"> ${esc(f.toLocaleDateString('es-ES'))} ${esc(f.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}))}</span><table>${rows.map(([a,b])=>`<tr><td>${a}</td><td><b>${esc(b)}</b></td></tr>`).join('')}</table><button class="btn ghost" id="loadSet">Volver a estos valores</button></div>`;
+  $('savedBox').innerHTML=`<div class="saved"><b>✓ Guardado · ${esc(NAME[g.union]||g.union)}</b><span class="mut"> ${esc(f.toLocaleDateString('es-ES'))} ${esc(f.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}))}</span><table>${rows.map(([a,b])=>`<tr><td>${a}</td><td><b>${esc(b)}</b></td></tr>`).join('')}</table><div class="acts" style="margin-top:6px"><button class="btn ghost" id="loadSet">Volver a estos valores</button><button class="btn ghost" id="delSet" style="color:var(--bad)">Borrar</button></div></div>`;
 }
 $('saveSet').addEventListener('click',async()=>{
   saved[mat]={ts:Date.now(),union:mat,bal:vals[mat].bal,hz:vals[mat].hz,up:pv.up,dn:pv.dn,post:pv.post,pre:pv.pre,ex:pv.ex,tw,tgas,fix:{...fixOn}};
@@ -1343,6 +1343,9 @@ $('saveSet').addEventListener('click',async()=>{
   if(db)try{await db.doc('ajustes/guardado').set(JSON.parse(JSON.stringify(saved)));await db.doc('ajustes/valores').set(JSON.parse(JSON.stringify(vals)))}catch(x){$('saveMsg').textContent='Guardado en este aparato (no se ha podido sincronizar).'}
   $('savedBox').scrollIntoView({behavior:'smooth',block:'nearest'});
 });
+$('savedBox').addEventListener('click',async e=>{if(e.target.id!=='delSet')return;const b=e.target;if(b.dataset.s!=='1'){b.dataset.s='1';b.textContent='Pulsa otra vez para borrar';return}
+  delete saved[mat];try{localStorage.setItem('wbSaved',JSON.stringify(saved))}catch(x){}renderSaved();
+  if(db)try{await db.doc('ajustes/guardado').set(JSON.parse(JSON.stringify(saved)))}catch(x){}});
 $('savedBox').addEventListener('click',e=>{if(e.target.id!=='loadSet')return;const g=saved[mat];if(!g)return;pushHist();vals[mat]={bal:g.bal,hz:g.hz};for(const k of ['up','dn','post','pre','ex'])pv[k]=g[k];if(g.fix)Object.assign(fixOn,g.fix);if(TG[g.tgas]){tgas=g.tgas;try{localStorage.setItem('wbTgas',tgas)}catch(x){}}if(TW[g.tw]){tw=g.tw;try{localStorage.setItem('wbTw',tw)}catch(x){}}try{localStorage.setItem('wbPv',JSON.stringify(pv));localStorage.setItem('wbFix',JSON.stringify(fixOn))}catch(x){}renderAll();});
 
 document.body.insertAdjacentHTML('beforeend',`<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><path id="ptr" d="${PTRACE}"/></defs></svg>`);
