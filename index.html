@@ -131,7 +131,7 @@ main{padding:10px max(3vw,10px)}
 #expDlg,#mkDlg{width:min(640px,94vw);max-height:88vh;overflow:auto;background:var(--card);color:var(--ink);border-radius:14px;padding:16px 18px;border:0;box-shadow:0 20px 50px -10px #000a}
 #expDlg h2{margin:0 0 6px;padding-right:40px}#expDlg h3{margin:12px 0 2px;font-size:17px}#expDlg p{margin:4px 0}
 .xclose{position:sticky;top:0;float:right;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:20px;cursor:pointer;margin:-6px -8px 0 0}
-.exr{display:flex;flex-wrap:wrap;gap:6px 14px;background:var(--bg);border-radius:10px;padding:8px 10px;margin:8px 0;font-size:15px}.exr .ok{color:#1a7f37;font-weight:700}.exr .ko{color:#b45309;font-weight:700}
+.exr{display:flex;flex-wrap:wrap;gap:6px 14px;background:var(--bg);border-radius:10px;padding:8px 10px;margin:8px 0;font-size:15px}.exr .ok,.rtab .ok{color:#1a7f37;font-weight:700}.exr .ko,.rtab .ko{color:#b45309;font-weight:700}
 #v-pla .plgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
 .plc{display:flex;flex-direction:column;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;cursor:pointer;padding:0;color:var(--ink)}
 .plc img{width:100%;aspect-ratio:4/3;object-fit:contain;background:#fff;display:block}.plc span{padding:8px 10px;display:flex;flex-direction:column}.plc small{color:var(--mut)}
@@ -151,6 +151,9 @@ main{padding:10px max(3vw,10px)}
 .inf{font-style:normal;display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;margin-left:6px;border-radius:50%;border:1.5px solid currentColor;font-size:13px;line-height:1;opacity:.85}
 #mat button{display:flex;align-items:center;justify-content:center}
 .matsrc{font-size:12px;color:var(--mut);margin-top:8px}
+.rbox{background:var(--bg);border-radius:12px;padding:10px;margin:8px 0}.lbx{font-size:12px;color:var(--mut);margin:6px 0 2px}.esp{margin:4px 0 6px}.esp button{min-height:34px;padding:2px 10px}
+.rtab{width:100%;border-collapse:collapse;font-size:14px}.rtab th{font-size:12px;color:var(--mut);font-weight:500;text-align:left;padding:3px}.rtab td{padding:5px 3px;border-top:1px solid var(--line);vertical-align:top}.twd{display:inline-block;width:10px;height:10px;border-radius:50%;border:1.5px solid #111;margin-right:4px;vertical-align:-1px}
+.rtab .ok{color:#1a7f37;font-weight:700}.rtab .ko{color:#b45309;font-weight:700;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -532,7 +535,9 @@ const WANT={tig:'tig',mma:'tig',ac:'ac',dc:'ac',pul:'ac',hf:'hf',lift:'hf',t2:'t
 let pSel=null,pv={up:0,dn:0,post:10,pre:1,ex:40};try{const q=JSON.parse(localStorage.getItem('wbPv')||'null');if(q)for(const kk in pv)if(typeof q[kk]==='number')pv[kk]=q[kk]}catch(x){}
 function pval(k){if(k==='bal')return vals[mat].bal;if(k==='hz')return vals[mat].hz;return pv[k]}
 function pfmt(k){const v=pval(k);if(k==='cur')return '';if(RNG[k]&&RNG[k][2]===1)return String(v);return v.toFixed(1)}
-function prec(k){return k==='bal'?(MREC[mat]||MREC.fund).bal:k==='hz'?(MREC[mat]||MREC.fund).hz:k==='post'?'1 s por cada 10 A':k==='pre'?'1–1,5':k==='ex'?TW[tw].r:'0'}
+function prec(k){return k==='bal'?(MREC[mat]||MREC.fund).bal:k==='hz'?(MREC[mat]||MREC.fund).hz:k==='post'?(typeof esp==='number'?Math.max(5,Math.round(4*esp))+'–25':'1 s por cada 10 A'):k==='pre'?'1–1,5':k==='ex'?TW[tw].r:'0'}
+function dirRec(k){const r=String(prec(k)).replace(/,/g,'.');const m=r.match(/^([\d.]+)(?:–([\d.]+))?$/);if(!m)return null;const v=pval(k),a=+m[1],b=m[2]?+m[2]:a;return v<a?'up':v>b?'dn':'ok'}
+const DIRH={ok:'<span class="ok">✓</span>',up:'<span class="ko">↑ súbelo</span>',dn:'<span class="ko">↓ bájalo</span>'};
 function inRec(k){const r=String(prec(k)).replace(/,/g,'.');const m=r.match(/^([\d.]+)(?:–([\d.]+))?$/);if(!m)return null;const v=pval(k),a=+m[1],b=m[2]?+m[2]:a;return v>=a&&v<=b}
 function panelSVG(){
   const ON='#7dff5c',OFF='#1c3a24',k=pSel;
@@ -555,12 +560,12 @@ function pinfo(){
   const k=pSel;if(!k)return '<span>Toca una casilla o un botón del panel.</span>';
   const xb=EXP[k]?`<button class="xbtn" data-x="${k}">Explicación ›</button>`:'';
   if(k==='gas')return `<b>${TG[tgas].n}</b><span>${TG[tgas].v} l/min · en el caudalímetro</span>${xb}`;
-  if(k==='ex'){const ok=inRec('ex');return `<b>Precalentamiento: ${pfmt('ex')}</b><span>${TW[tw].n}: ${TW[tw].r}</span>${ok?'<span class="ok">✓ dentro</span>':'<span class="ko">fuera</span>'}${xb}`}
-  if(k==='pre'){const ok=inRec('pre');return `<b>Pregás: ${pfmt('pre').replace('.',',')} s</b><span>Rec.: 1–1,5 s</span>${ok?'<span class="ok">✓ dentro</span>':'<span class="ko">fuera</span>'}${xb}`}
+  if(k==='ex'){const ok=inRec('ex');return `<b>Precalentamiento: ${pfmt('ex')}</b><span>${TW[tw].n}: ${TW[tw].r}</span>${DIRH[dirRec('ex')]||''}${xb}`}
+  if(k==='pre'){const ok=inRec('pre');return `<b>Pregás: ${pfmt('pre').replace('.',',')} s</b><span>Rec.: 1–1,5 s</span>${DIRH[dirRec('pre')]||''}${xb}`}
   if(SEQ.includes(k)){
     if(k==='cur')return `<b>Corriente</b><span>Con pedal: el máximo del pie pisado a fondo.</span>${EXP.loc?'<button class="xbtn" data-x="loc">Explicación ›</button>':''}`;
     const v=pfmt(k).replace('.',','),r=prec(k),ok=inRec(k);const un=UNIT[k]==='uP'?' %':UNIT[k]==='uH'?' Hz':UNIT[k]==='uS'?' s':'';
-    return `<b>${PN[k]}: ${v}${un}</b><span>Rec.: ${r}${/^[\d,–]+$/.test(String(r))?un:''}</span>${ok===true?'<span class="ok">✓ dentro</span>':ok===false?'<span class="ko">fuera</span>':''}${xb}`;
+    return `<b>${PN[k]}: ${v}${un}</b><span>Rec.: ${r}${/^[\d,–]+$/.test(String(r))?un:''}</span>${DIRH[dirRec(k)]||''}${xb}`;
   }
   const w=WANT[k];
   return `<b>${PN[k]}</b><span>${w?(w===k?(FIXK.includes(k)?(fixOn[k]?'✓ Fijo. Toca otra vez para apagarlo.':'Apagado. Toca otra vez para encenderlo.'):'✓ correcto para aluminio.'):'Para aluminio: '+PN[w]+'.'):''}</span>${xb}`;
@@ -1090,7 +1095,7 @@ function openExp(k){
   const o=EXP[k];if(!o)return;
   let extra='';
   if(o.rec){const r=prec(k),ok=inRec(k);const un=UNIT[k]==='uP'?' %':UNIT[k]==='uH'?' Hz':UNIT[k]==='uS'?' s':'';
-    extra=`<div class="exr"><span>Tu valor: <b>${pfmt(k).replace('.',',')}${un}</b></span><span>Recomendado: <b>${r}${/^[\d,–]+$/.test(String(r))?un:''}</b></span>${ok===true?'<span class="ok">✓ dentro</span>':ok===false?'<span class="ko">fuera</span>':''}</div>`;
+    extra=`<div class="exr"><span>Tu valor: <b>${pfmt(k).replace('.',',')}${un}</b></span><span>Recomendado: <b>${r}${/^[\d,–]+$/.test(String(r))?un:''}</b></span>${DIRH[dirRec(k)]||''}</div>`;
     if(k==='bal'||k==='hz')extra+=`<p class="mut">Recomendado para ${NAME[mat]} (ajuste fino de Claude, orientativo).</p>`}
   if(k==='gas')return openGas();
   if(o.tw){const t=TW[tw];extra+=twChips()+`<p class="mut">${t.n} mm: ${t.t}. ${t.m?'Valor de la tabla del manual ESAB.':'Aproximado: el manual no trae este tungsteno; es el valor del lantanado WL10 del mismo grosor.'}</p>`}
@@ -1127,8 +1132,40 @@ const MATX={
   ['Cómo se suelda','Con pulso, empujando la antorcha 10–15°. Hot start para que el inicio funda y Crater filling al final.'],
   ['Qué vigilar','Rodillos en U con poca presión, sirga de teflón, tubo de contacto de aluminio y manguera recta. Hilo seco y limpio. El hollín negro a los lados es normal con 5356.']]}
 };
+let esp=3;try{const q=+localStorage.getItem('wbEsp');if(q>=2&&q<=6)esp=q}catch(x){}
+function recFor(k,e){const M=MREC[k];const rg=t=>t.split('–').map(Number);const tk=e<=4?'do':'az';
+  return{bal:rg(M.bal),hz:rg(M.hz),up:[0,0.5],dn:[0,1],post:[Math.max(5,Math.round(40*e/10)),25],pre:[1,1.5],tw:tk,ex:rg(TW[tk].r)}}
+function recBox(k){const r=recFor(k,esp);const V=vals[k]||DEF[k];const f=x=>String(x).replace('.',',');
+  const d=(v,[a,b])=>v<a?'up':v>b?'dn':'ok';const rng=([a,b],u)=>a===b?f(a)+u:f(a)+'–'+f(b)+u;
+  const dot=t=>`<i class="twd" style="background:${TW[t].c}"></i>`;
+  const rows=[['Corriente','Pedal',fixOn.loc?'Pedal':'Panel',fixOn.loc?'ok':null],
+   ['Tungsteno',dot(r.tw)+TW[r.tw].n,dot(tw)+TW[tw].n,tw===r.tw?'ok':'cam'],
+   ['Afilado','En punta, algo truncada','—',null],
+   ['Rampa subida',rng(r.up,' s'),f(pv.up)+' s',d(pv.up,r.up)],
+   ['Rampa bajada',rng(r.dn,' s'),f(pv.dn)+' s',d(pv.dn,r.dn)],
+   ['Postgás',f(r.post[0])+' s o más',f(pv.post)+' s',d(pv.post,r.post)],
+   ['Pregás',rng(r.pre,' s'),f(pv.pre)+' s',d(pv.pre,r.pre)],
+   ['Balance',rng(r.bal,' %'),V.bal+' %',d(V.bal,r.bal)],
+   ['Frecuencia',rng(r.hz,' Hz'),V.hz+' Hz',d(V.hz,r.hz)],
+   ['Precalent.',rng(r.ex,''),String(pv.ex),d(pv.ex,r.ex)],
+   ['Gas',tgas==='ar'?'Argón 7–9,5 l/min':'Ar + He ≈24 l/min','—',null]];
+  const H={ok:'<span class="ok">✓</span>',up:'<span class="ko">↑ súbelo</span>',dn:'<span class="ko">↓ bájalo</span>',cam:'<span class="ko">cámbialo</span>'};
+  return `<div class="rbox"><b>Recomendación para ${esc(NAME[k])}</b><div class="lbx">Espesor de la pieza</div><div class="twc esp">${[2,3,4,5,6].map(e=>`<button data-esp="${e}" data-mk="${k}" aria-pressed="${e===esp}">${e} mm</button>`).join('')}</div>
+  <table class="rtab"><tr><th>Parámetro</th><th>Recomendado</th><th>Tuyo</th><th></th></tr>${rows.map(([n,a,b,c])=>`<tr><td>${n}</td><td><b>${a}</b></td><td>${b}</td><td>${c?H[c]:''}</td></tr>`).join('')}</table>
+  <button class="btn y" style="width:100%;margin-top:8px" data-loadrec="${k}">Cargar recomendación en el panel</button>
+  <p class="mut" style="margin:6px 0 0">Tu máquina es inversora: con ella se recomienda tungsteno lantanado afilado, no puro (verde). ${esp<=4?'2,4 mm vale para unos 110–200 A en aluminio':'3,2 mm para piezas de 5–6 mm y más amperaje'}. Postgás: 1 s por cada 10 A que uses (unos 40 A por mm de espesor), mínimo 5 s. Ajuste fino de Claude, orientativo: compruébalo con una probeta.</p></div>`}
+function loadRec(k){const r=recFor(k,esp);pushHist();const mid=([a,b])=>Math.round((a+b)/2);
+  mat=k;vals[k]={bal:mid(r.bal),hz:Math.round(mid(r.hz)/1)};
+  if(pv.up<r.up[0]||pv.up>r.up[1])pv.up=0;if(pv.dn<r.dn[0]||pv.dn>r.dn[1])pv.dn=0;
+  if(pv.post<r.post[0])pv.post=r.post[0];if(pv.pre<r.pre[0]||pv.pre>r.pre[1])pv.pre=1;
+  tw=r.tw;pv.ex=mid(r.ex);fixOn.loc=true;
+  try{localStorage.setItem('wbPv',JSON.stringify(pv));localStorage.setItem('wbTw',tw);localStorage.setItem('wbFix',JSON.stringify(fixOn))}catch(x){}
+  saveValsSoon();renderAll();$('expDlg').close();flash('Recomendación cargada');
+  if(openM!=='tig'){openM='tig';maq='tig';renderMaqSel()}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-esp]');if(b){esp=+b.dataset.esp;try{localStorage.setItem('wbEsp',esp)}catch(x){}openMat(b.dataset.mk);return}
+  const l=e.target.closest('[data-loadrec]');if(l)loadRec(l.dataset.loadrec)});
 function openMat(k){const o=MATX[k];if(!o)return;
-  let rec='';if(MREC[k])rec=`<div class="exr"><span>Balance recomendado: <b>${MREC[k].bal} %</b></span><span>Frecuencia: <b>${MREC[k].hz} Hz</b></span></div><p class="mut">Ajuste fino de Claude, orientativo. Compruébalo con una probeta.</p>`;
+  let rec='';if(MREC[k])rec=recBox(k);
   $('expBody').innerHTML=`<h2>${esc(o.t)}</h2><p class="mut" style="margin-top:0">${esc(o.c)}</p>${rec}${o.s.map(([a,b])=>`<h3>${a}</h3><p>${b}</p>`).join('')}${o.w?`<p class="wn" style="background:#faeeda;color:#633806;border-radius:8px;padding:8px 10px;margin-top:10px">${o.w}</p>`:''}<p class="src">Fuentes: <a href="https://twi-global.com/technical-knowledge/job-knowledge/weldability-of-materials-aluminium-alloys-021">TWI</a> · <a href="https://welders-supply.com/welding-processes/tig-welding/tig-welding-aluminum-settings/">Welders Supply</a> · estudios técnicos sobre 6082-T6 y 7020 · fichas EN 1706</p>`;
   $('expDlg').dataset.k='';if(!$('expDlg').open)$('expDlg').showModal();
 }
@@ -1264,7 +1301,7 @@ function goView(v){for(const x of document.querySelectorAll('nav button'))x.setA
   for(const x of document.querySelectorAll('.view'))x.classList.toggle('on',x.id==='v-'+v);window.scrollTo(0,0);if(v==='pla')renderPlanos()}
 
 /* Auto-actualizar */
-const APPV='20261126220048';
+const APPV='20261126222005';
 (function(){
   if(!GHMODE||location.protocol!=='https:')return;
   try{if(sessionStorage.getItem('wbUpdDone')===APPV){sessionStorage.removeItem('wbUpdDone');toast('✓ App actualizada')}}catch(x){}
