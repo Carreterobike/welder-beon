@@ -286,7 +286,8 @@ main{padding:10px max(3vw,10px)}
 
 <!-- MANUAL -->
 <section class="view man" id="v-man">
-  <h2>Manual fácil · Tig 4300iw AC/DC + panel TA24 AC/DC</h2>
+  <div class="seg" id="manSel"><button data-v="tig">TIG · 4300i</button><button data-v="mig">HILO · Aristo 500ix</button></div>
+  <h2 id="manT"></h2>
   <p class="mut">Resumen en palabras sencillas de los dos manuales de ESAB: el de la máquina y el del panel. Lo que el manual no dice, aquí tampoco.</p>
   <div class="mnav" id="mnav"></div>
   <div id="mbody"></div>
@@ -634,9 +635,113 @@ const MAN=[
 <p>Las reparaciones eléctricas, solo el servicio técnico de ESAB.</p>`],
 ['seg','Seguridad en corto',`<ul><li>No toques piezas con tensión ni trabajes con ropa o guantes mojados.</li><li>Careta, guantes y ropa que no arda. Nada de anillos ni ropa suelta.</li><li>Extracción de humos en el arco.</li><li>Si llevas marcapasos, consulta al médico antes de soldar.</li><li>Nada inflamable cerca.</li><li>No usar la máquina para descongelar tuberías.</li></ul>`]
 ];
+function trig(){
+  const L=(y,t)=>`<text x="6" y="${y+4}" font-size="13" fill="currentColor">${t}</text>`;
+  const row=(y,pts,c)=>`<polyline points="${pts.map(([x,v])=>`${x},${y-v*14}`).join(' ')}" fill="none" stroke="${c}" stroke-width="3" stroke-linejoin="round"/>`;
+  const st=(x0,x1,y0,y1)=>`<line x1="${x0}" y1="${y0}" x2="${x0}" y2="${y1}" stroke="currentColor" stroke-dasharray="3 3" opacity=".5"/>`;
+  const g2=`<svg viewBox="0 0 330 150" style="width:100%;max-width:420px;height:auto;color:#eee">
+  <text x="6" y="14" font-size="14" font-weight="700" fill="currentColor">2T</text>
+  ${L(42,'Gatillo')}${row(48,[[70,0],[90,0],[90,1],[250,1],[250,0],[320,0]],'#eee')}
+  ${L(82,'Gas')}${row(88,[[70,0],[90,0],[90,1],[300,1],[300,0],[320,0]],'#2b7bd6')}
+  ${L(122,'Arco')}${row(128,[[70,0],[120,0],[120,1],[250,1],[280,0.3],[280,0],[320,0]],'#d48a00')}
+  <text x="92" y="146" font-size="11" fill="currentColor">aprietas</text><text x="225" y="146" font-size="11" fill="currentColor">sueltas</text></svg>`;
+  const g4=`<svg viewBox="0 0 330 150" style="width:100%;max-width:420px;height:auto;color:#eee">
+  <text x="6" y="14" font-size="14" font-weight="700" fill="currentColor">4T</text>
+  ${L(42,'Gatillo')}${row(48,[[70,0],[85,0],[85,1],[110,1],[110,0],[230,0],[230,1],[255,1],[255,0],[320,0]],'#eee')}
+  ${L(82,'Gas')}${row(88,[[70,0],[85,0],[85,1],[300,1],[300,0],[320,0]],'#2b7bd6')}
+  ${L(122,'Arco')}${row(128,[[70,0],[110,0],[110,1],[230,1],[255,0.3],[255,0],[320,0]],'#d48a00')}
+  <text x="74" y="146" font-size="11" fill="currentColor">aprieta·suelta</text><text x="210" y="146" font-size="11" fill="currentColor">aprieta·suelta</text></svg>`;
+  return `<div class="two"><div class="fig">${g2}<p>2T: mientras aprietas, suelda. Al soltar, llena el cráter, corta y sigue saliendo gas.</p></div><div class="fig">${g4}<p>4T: aprieta (sale gas) y suelta (empieza a soldar). Aprieta otra vez (llena el cráter) y suelta (corta y sale el postgás).</p></div></div>`;
+}
+const SRCH='<p class="src">Fuentes: <a href="https://ldgsesabwe.blob.core.windows.net/manuals/InstructionManuals/0463%20696%20201%20ES.pdf">manual ESAB Aristo 500ix (0463 696 201 ES, 2022)</a> · <a href="https://ldgsesabwe.blob.core.windows.net/manuals/InstructionManuals/0460%20896%20287%20US.pdf">manual ESAB Aristo U82 (0460 896 287, 2013)</a></p>';
+const MANH=[
+['hmaq','Tu máquina',`<p>Son dos partes:</p><ul><li><b>Aristo 500ix</b>: la <b>fuente</b>, la caja grande que da la corriente. Sirve para MIG, MIG con pulso, TIG y ranurado. Lo que puede hacer depende del panel y del alimentador.</li><li><b>Aristo U82</b>: el <b>panel</b> con pantalla, que va en el alimentador de hilo. Desde ahí se ajusta todo.</li></ul>
+<table><tr><th>Dato</th><th>Valor</th></tr><tr><td>Corriente en MIG</td><td>16–500 A</td></tr><tr><td>Aguanta</td><td>500 A el 60 % del tiempo · 400 A sin parar (100 %)</td></tr><tr><td>Corriente de la red</td><td>380–460 V trifásica (de fábrica, 400 V)</td></tr><tr><td>Tensión en vacío</td><td>58 V</td></tr><tr><td>Peso</td><td>58,5 kg</td></tr><tr><td>Protección</td><td>IP23: vale para dentro y fuera</td></tr></table>
+<p class="mut">El «60 %» se mide en 10 minutos y hasta 40 °C: 6 minutos soldando y 4 descansando.</p>
+<p class="mut">Ojo: con esta máquina, el panel U82 tiene que llevar como mínimo el programa 3.02G, según su manual. El manual del U82 que he encontrado es más antiguo (versión 1.15A, de 2013), así que algún nombre de menú puede cambiar un poco en tu pantalla.</p>`],
+['hcon','Conectar y encender',`<ol><li>Cable de <b>retorno</b> al borne <b>negativo (−)</b>. La pinza, a la pieza, con buen contacto: limpia el punto de la pinza.</li><li>Cable de <b>soldadura</b> al borne <b>positivo (+)</b>, hacia el alimentador.</li><li>Interruptor general en <b>I</b> para encender y en <b>O</b> para apagar.</li></ol>
+<table><tr><th>Luz en la fuente</th><th>Qué significa</th></tr><tr><td>Luz de encendido</td><td>La máquina tiene corriente.</td></tr><tr><td>Luz naranja</td><td>Se ha calentado de más: no deja soldar hasta que se enfría, y vuelve sola.</td></tr></table>
+<ul><li>Lo que tenías ajustado se guarda aunque apagues o se vaya la luz.</li><li>Los ventiladores siguen <b>6,5 minutos</b> después de soldar y luego la máquina se pone en ahorro.</li><li>En la fuente hay un <b>fusible de 10 A</b> que protege la corriente del alimentador.</li><li>En MIG con pulso y arco corto, los cables de soldadura y retorno no deben pasar de <b>10 m</b>.</li><li>No tires nunca de los cables para mover la máquina: usa el asa.</li></ul>`],
+['hpan','El panel U82',`<table><tr><th>Pieza</th><th>Para qué sirve</th></tr>
+<tr><td>Pantalla</td><td>Menús, valores y medidas. Se apaga la luz a los 3 minutos sin tocar nada.</td></tr>
+<tr><td>Mando izquierdo</td><td>Mueve el cursor de una línea a otra.</td></tr>
+<tr><td>Mandos derechos</td><td>Suben y bajan el valor de la línea marcada.</td></tr>
+<tr><td>5 teclas de abajo</td><td>Cambian según la pantalla: lo que hacen pone justo encima, en la pantalla. La de la derecha suele ser <b>QUIT</b> (salir).</td></tr>
+<tr><td>2ND FUNCT</td><td>Da otras 5 funciones a esas teclas.</td></tr>
+<tr><td>MENU</td><td>Vuelve al menú principal.</td></tr>
+<tr><td>ENTER</td><td>Confirma.</td></tr>
+<tr><td>USB</td><td>En el lado izquierdo, debajo de una tapa. Memoria en FAT32 y <b>con la máquina apagada</b> al meterla.</td></tr></table>
+<h3>Los menús</h3><ul><li><b>Main menu</b> (menú principal): proceso, método (arco corto/spray o pulso), gatillo (2T/4T) y forma de arrancar.</li><li><b>Weld Data Setting</b>: todos los ajustes de soldadura.</li><li><b>Measure</b>: lo que está midiendo mientras sueldas.</li><li><b>Weld Data Memory</b>: las memorias.</li><li><b>Fast Mode</b>: teclas rápidas a memorias.</li><li><b>Configuration</b>: idioma, bloqueo con código, unidades, mantenimiento…</li><li><b>Tools</b>: registro de errores, USB, límites…</li></ul>`],
+['haju','Ajustes y rangos',`<p>Lo que verás en <b>Weld Data Setting</b> en arco corto y spray:</p>
+<table><tr><th>Ajuste</th><th>Qué es</th><th>Rango</th></tr>
+<tr><td>Voltage</td><td>Con sinergia, es una corrección sobre la línea. Sin sinergia, es el voltaje real.</td><td>8–60 V, pasos de 0,25</td></tr>
+<tr><td>Wire feed speed</td><td>Velocidad del hilo: es lo que manda la potencia</td><td>0,8–30 m/min</td></tr>
+<tr><td>Inductance</td><td>Baño más blando (más) o arco más duro (menos)</td><td>0–100 %</td></tr>
+<tr><td>Gas pre-flow / post-flow</td><td>Gas antes y después</td><td>0,1–25 s</td></tr>
+<tr><td>Hot start</td><td>Arranque más caliente</td><td>0–10 s</td></tr>
+<tr><td>Crater filling</td><td>Bajada al final para llenar el cráter</td><td>0–10 s</td></tr>
+<tr><td>Burnback</td><td>Quema la punta del hilo al acabar</td><td>0–1 s, pasos de 0,01</td></tr>
+<tr><td>Spot welding</td><td>Tiempo de punto</td><td>0–25 s</td></tr></table>
+<h3>Sinergia</h3><p>Con <b>Synergy ON</b> tú pones la velocidad de hilo y la máquina pone el voltaje sola, según la línea sinérgica (material, hilo y gas). La que viene de fábrica es hilo ER70S, CO₂ y 1,2 mm: <b>cámbiala a la tuya</b>.</p>
+<h3>Pulso</h3><p>En pulso hay ajustes más finos: corriente de pico (100–650 A), frecuencia (16–312 Hz), corriente de fondo (4–300 A)… Con sinergia los pone la línea, así que normalmente <b>no hace falta tocarlos</b>.</p>
+<h3>QSet</h3><p>Ajuste de largo de arco de −18 a +18. Para spray, súbelo, o quítalo para spray puro.</p>`],
+['hfun','Funciones',`${trig()}
+<table><tr><th>Función</th><th>Qué hace</th></tr>
+<tr><td>Creep start</td><td>El hilo sale a la mitad de velocidad hasta tocar la pieza. Arranques suaves.</td></tr>
+<tr><td>Hot start</td><td>Al empezar sube hilo y voltaje un momento para que funda bien.</td></tr>
+<tr><td>Soft start</td><td>Echa el hilo para atrás al tocar para encender el arco. Solo con alimentadores que lo permitan.</td></tr>
+<tr><td>Crater filling</td><td>Al acabar baja el calor poco a poco para que no quede cráter.</td></tr>
+<tr><td>Burnback</td><td>Retraso antes de cortar la corriente: decide cuánto hilo queda fuera.</td></tr>
+<tr><td>Termination</td><td>Cómo corta al final: <b>Final pulse</b> o <b>SCT</b>.</td></tr>
+<tr><td>Release pulse</td><td>Si el hilo se queda pegado, da un golpe de corriente para soltarlo.</td></tr>
+<tr><td>Gas purging</td><td>Saca gas para purgar la manguera, sin corriente ni hilo. Se puede poner en una tecla.</td></tr>
+<tr><td>Wire inching</td><td>Saca hilo sin soldar. Va en una tecla.</td></tr></table>`],
+['hmem','Memorias',`<p>Hay <b>255 memorias</b>. Lo que estás usando ahora siempre está en la «memoria de trabajo».</p>
+<table><tr><th>Para</th><th>Pulsa</th></tr>
+<tr><td>Guardar</td><td><b>STORE</b> → elige número → <b>STORE</b></td></tr>
+<tr><td>Cargar</td><td>Elige número → <b>RECALL</b> → <b>YES</b></td></tr>
+<tr><td>Borrar</td><td>Elige número → <b>DELETE</b> → <b>YES</b></td></tr>
+<tr><td>Copiar</td><td><b>2ND FUNCT</b> → <b>COPY</b> → número de destino → <b>YES</b></td></tr>
+<tr><td>Cambiar una</td><td><b>2ND FUNCT</b> → <b>EDIT</b> → cambias → <b>QUIT</b></td></tr>
+<tr><td>Ponerle nombre</td><td><b>EDIT DESCRIPTION</b> (hasta 40 letras)</td></tr></table>
+<ul><li><b>Fast Mode</b>: las teclas WELD DATA 1–4 cargan una memoria con un toque.</li><li>Con la opción de cambiar con el gatillo, un <b>doble clic</b> en el gatillo pasa entre hasta 5 memorias.</li></ul>`],
+['herr','Errores y qué hacer',`<p>Cuando hay un error sale un aviso y un <b>«!»</b> arriba a la derecha de la pantalla. Para ver cuál fue: <b>Main menu → Tools → Error log</b>. Guarda los últimos 99. El número de unidad dice dónde está el fallo: 1 refrigeración · 2 fuente · 3 alimentador · 4 mando a distancia · 5 unidad AC · 8 panel.</p>
+<table><tr><th>Código</th><th>Qué pasa</th><th>Qué hacer</th></tr>
+<tr><td>1, 2, 3</td><td>Fallo de memoria del programa</td><td>Reinicia. Si sigue, servicio técnico.</td></tr>
+<tr><td>4</td><td>Tensión interna baja: para de soldar</td><td>Apaga en el general. Si sigue, servicio técnico.</td></tr>
+<tr><td>5</td><td>Tensión interna fuera de límites (red débil o falta una fase)</td><td>Apaga en el general. Si sigue, servicio técnico.</td></tr>
+<tr><td>6</td><td>Se ha calentado</td><td>Mira que no estén tapadas o sucias las entradas de aire, y no te pases del ciclo de trabajo.</td></tr>
+<tr><td>7</td><td>Consumo de corriente demasiado alto</td><td>Apaga en el general. Si sigue, servicio técnico.</td></tr>
+<tr><td>12, 14, 60</td><td>Problema de comunicación entre aparatos</td><td>Que solo haya un alimentador o mando conectado. Apaga en el general.</td></tr>
+<tr><td>15, 22, 23, 28</td><td>El panel no procesa los datos a tiempo</td><td>Apaga en el general. Si sigue, servicio técnico.</td></tr>
+<tr><td>16</td><td>Tensión en vacío demasiado alta</td><td>Apaga en el general. Si sigue, servicio técnico.</td></tr>
+<tr><td>17</td><td>Se ha perdido contacto con otro aparato (cable)</td><td>Revisa los cables entre panel, alimentador y fuente.</td></tr>
+<tr><td>19</td><td>Pila de la memoria baja: vuelve a ajustes de fábrica</td><td>Apaga en el general. Si sigue, servicio técnico.</td></tr>
+<tr><td>25</td><td>El USB no es compatible</td><td>Usa otra memoria USB.</td></tr>
+<tr><td>26</td><td>El programa se ha reiniciado solo</td><td>Si se repite, servicio técnico.</td></tr>
+<tr><td>40</td><td>Alimentador de hilo no compatible</td><td>Conecta el correcto.</td></tr>
+<tr><td>54</td><td>Toca cambiar el tubo de contacto (aviso que tú configuras)</td><td>Cámbialo y pulsa <b>RESET</b>.</td></tr>
+<tr><td>64, 70–73</td><td>Se han pasado los límites que pusiste</td><td>Revisa los límites y la soldadura.</td></tr></table>
+<h3>Problemas de la fuente</h3><table><tr><th>Pasa esto</th><th>Mira</th></tr>
+<tr><td>No sale el arco</td><td>Interruptor encendido, cables bien conectados, corriente bien puesta, fusibles de la red.</td></tr>
+<tr><td>Se corta mientras sueldas</td><td>Si la luz naranja está encendida, se ha calentado: espera. Si no hay luz de encendido, revisa los fusibles.</td></tr>
+<tr><td>Se calienta muy a menudo</td><td>No te pases de su ciclo de trabajo, y que no haga más de 40 °C donde está.</td></tr>
+<tr><td>La soldadura sale mal</td><td>Cables bien apretados, corriente correcta, hilo correcto, fusibles.</td></tr></table>`],
+['hman','Mantenimiento',`<table><tr><th>Cuándo</th><th>Qué</th></tr>
+<tr><td>Cada vez que la uses</td><td>Que la máquina y los cables no estén dañados, y la antorcha limpia y en buen estado.</td></tr>
+<tr><td>Cada 3 meses</td><td>Limpiar o cambiar las etiquetas que no se lean, limpiar los bornes y revisar los cables de soldadura.</td></tr>
+<tr><td>Cada 6 meses</td><td>Limpiar por dentro con aire seco a baja presión. Lo hace un técnico autorizado: hay que abrirla.</td></tr></table>
+<ul><li>Con mucho polvo, más a menudo.</li><li>Antes de tocar nada: desenchufa y espera al menos <b>4 minutos</b>, porque guarda corriente dentro.</li><li>En el U82 puedes poner cada cuántos arranques avisa para cambiar el tubo de contacto: <b>Configuration → Maintenance</b>.</li></ul>`],
+['hseg','Seguridad en corto',`<ul><li>No toques la pieza ni la antorcha con la piel o con guantes mojados mientras sueldas.</li><li>Careta, guantes y ropa que no arda. Extracción de humos.</li><li>Si llevas marcapasos, consulta al médico.</li><li>Solo para soldar: nunca para descongelar tuberías.</li><li>Es un equipo de «clase A»: no es para enchufar en viviendas.</li><li>El <b>VRD</b> baja la tensión en vacío a 35 V cuando no sueldas, pero lo tiene que activar un técnico.</li><li>La instalación eléctrica (cable 4 × 6 mm², automático de 32 A tipo C) la hace un profesional.</li></ul>`]
+];
+
+let manMaq=null;
 function renderMan(){
-  $('mnav').innerHTML=MAN.map(([id,t])=>`<a href="#m-${id}">${t}</a>`).join('');
-  $('mbody').innerHTML=MAN.map(([id,t,h])=>`<div class="card" id="m-${id}"><h2>${t}</h2>${h}</div>`).join('');
+  const mq=manMaq||maq;const L=mq==='mig'?MANH:MAN;
+  for(const b of $('manSel').children)b.setAttribute('aria-pressed',b.dataset.v===mq);
+  $('manT').textContent=mq==='mig'?'Manual fácil · Aristo 500ix + panel U82':'Manual fácil · Tig 4300iw AC/DC + panel TA24 AC/DC';
+  $('mnav').innerHTML=L.map(([id,t])=>`<a href="#m-${id}">${t}</a>`).join('');
+  $('mbody').innerHTML=L.map(([id,t,h])=>`<div class="card" id="m-${id}"><h2>${t}</h2>${h}</div>`).join('')+(mq==='mig'?SRCH:'');
 }
 
 function renderPanelPre(){}
@@ -1098,6 +1203,7 @@ function openMkForm(o){
 function goView(v){for(const x of document.querySelectorAll('nav button'))x.setAttribute('aria-current',x.dataset.v===v);
   for(const x of document.querySelectorAll('.view'))x.classList.toggle('on',x.id==='v-'+v);$('maqSel').hidden=v!=='maq';window.scrollTo(0,0);if(v==='pla')renderPlanos()}
 $('expX').addEventListener('click',()=>$('expDlg').close());
+$('manSel').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;manMaq=b.dataset.v;renderMan();window.scrollTo(0,0)});
 $('updBtn').addEventListener('click',()=>{location.href=location.pathname+'?v='+Date.now()});
 $('expDlg').addEventListener('click',e=>{if(e.target===$('expDlg'))$('expDlg').close()});
 document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='z'&&!/input|textarea/i.test(document.activeElement.tagName)&&$('v-maq').classList.contains('on')){e.preventDefault();e.shiftKey?redo():undo()}});
