@@ -1216,9 +1216,33 @@ function openMkForm(o){
 
 function goView(v){for(const x of document.querySelectorAll('nav button'))x.setAttribute('aria-current',x.dataset.v===v);
   for(const x of document.querySelectorAll('.view'))x.classList.toggle('on',x.id==='v-'+v);$('maqSel').hidden=v!=='maq';window.scrollTo(0,0);if(v==='pla')renderPlanos()}
+
+/* Auto-actualizar */
+const APPV='20261126203552';
+(function(){
+  if(!GHMODE||location.protocol!=='https:')return;
+  try{if(sessionStorage.getItem('wbUpdDone')===APPV){sessionStorage.removeItem('wbUpdDone');toast('✓ App actualizada')}}catch(x){}
+  let busy=false;
+  async function check(){
+    if(busy||document.visibilityState!=='visible')return;busy=true;
+    try{
+      const r=await fetch(location.pathname+'?chk='+Date.now(),{cache:'no-store'});if(!r.ok)return;
+      const m=(await r.text()).match(/const APPV='(\d+)'/);if(!m||m[1]===APPV||m[1]<APPV)return;
+      let tried='';try{tried=sessionStorage.getItem('wbUpdTry')||''}catch(x){}
+      if(tried===m[1])return;
+      try{sessionStorage.setItem('wbUpdTry',m[1]);sessionStorage.setItem('wbUpdDone',m[1])}catch(x){}
+      location.replace(location.pathname+'?v='+m[1]);
+    }catch(x){}finally{busy=false}
+  }
+  setTimeout(check,1500);
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')check()});
+  window.addEventListener('focus',check);
+  setInterval(check,5*60*1000);
+})();
+function toast(t){const d=document.createElement('div');d.textContent=t;d.style.cssText='position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top));transform:translateX(-50%);background:#1a7f37;color:#fff;padding:10px 16px;border-radius:12px;font:600 15px Barlow,sans-serif;z-index:99;box-shadow:0 8px 20px -6px #0008';document.body.appendChild(d);setTimeout(()=>d.remove(),3000)}
 $('expX').addEventListener('click',()=>$('expDlg').close());
 $('manSel').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;manMaq=b.dataset.v;renderMan();window.scrollTo(0,0)});
-$('updBtn').addEventListener('click',()=>{location.href=location.pathname+'?v='+Date.now()});
+$('updBtn').addEventListener('click',()=>{try{sessionStorage.removeItem('wbUpdTry')}catch(x){}location.href=location.pathname+'?v='+Date.now()});
 $('expDlg').addEventListener('click',e=>{if(e.target===$('expDlg'))$('expDlg').close()});
 document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='z'&&!/input|textarea/i.test(document.activeElement.tagName)&&$('v-maq').classList.contains('on')){e.preventDefault();e.shiftKey?redo():undo()}});
 planosInit();
