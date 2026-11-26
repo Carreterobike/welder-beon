@@ -99,27 +99,72 @@ nav button[aria-current=true]{color:#fff;border-top-color:var(--y)}
 dialog{border:0;padding:0;background:transparent;max-width:96vw}
 dialog img{max-width:96vw;max-height:88vh;border-radius:8px;display:block}
 dialog::backdrop{background:#000c}
+
+/* v2 compacto */
+header{padding:8px max(4vw,12px);padding-top:max(8px,env(safe-area-inset-top))}
+#logo{width:44px;height:44px;border-radius:10px}.wm img{height:clamp(24px,5vw,34px)}.wm span{font-size:11px;margin-top:1px}
+header p{font-size:13px}@media(max-width:899px){header p{display:none}}
+main{padding:10px max(3vw,10px)}
+.seg{gap:6px;margin-bottom:8px}.seg button{min-height:38px;font-size:15px;padding:4px 8px}.mq{margin-bottom:8px}.mq button{min-height:40px;font-size:15px}
+.machine{padding:10px;border-radius:14px}.mhead{margin-bottom:6px}.mhead b{font-size:17px}
+#tigMaq .note{display:none}
+.pbox{margin:0 auto 6px}
+.pinfo{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;margin:4px 2px 0;font-size:14px;min-height:0;line-height:1.3}
+.pinfo .ok{color:#7dff5c}.pinfo .ko{color:#ffb347}
+.xbtn{background:#2a2a2a;color:#fff;border:1px solid #555;border-radius:16px;padding:3px 10px;font:600 13px Barlow,sans-serif;cursor:pointer}
+#fixStrip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:0 0 6px}
+#fixStrip button{display:flex;align-items:center;justify-content:center;gap:6px;min-height:36px;border-radius:9px;border:1px solid #333;background:#0e0f0f;color:#eee;font:600 14px Barlow,sans-serif;cursor:pointer;padding:2px 6px}
+#fixStrip button i{width:9px;height:9px;border-radius:50%;background:#1c3a24;flex:none}#fixStrip button.on i{background:#7dff5c;box-shadow:0 0 6px #7dff5c}
+#fixStrip button.sel{outline:3px solid var(--y);outline-offset:-1px}
+#fixStrip svg{height:18px;width:auto}
+#out{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+#out .cell{padding:6px 6px 6px;border-radius:9px}
+#out .ch{display:flex;align-items:center;gap:3px;min-height:18px}#out .ch svg{height:15px;width:auto;max-width:24px;flex:none;color:#f2f2f2}
+#out .ch span{font-size:11.5px;color:#bbb;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#out .v{font-size:21px;margin:2px 0 3px}#out .v u{font-size:11px}
+#out .pm{margin-top:0;gap:4px}#out .pm button{min-height:28px;font-size:17px;border-radius:7px}
+#out .cell.nopm .v{margin-bottom:0}#out .cell small.r{font-size:11px;color:#9a9a9a}
+.mact{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}.mact .btn{min-height:40px;padding:6px 14px}.mact span{font-size:13px;color:#bbb}
+#outMig{grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:6px}#outMig .cell{padding:6px 8px;cursor:pointer}#outMig .cell em{display:none}#outMig .ic{height:20px;margin-bottom:1px}#outMig .v{font-size:20px}#outMig small{font-size:12px}
+@media(min-width:900px){#tigMaq .machine{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:12px}#out{grid-template-columns:repeat(2,minmax(0,1fr))}#out .v{font-size:24px}#panelBox{top:56px}#tigMaq .mright{display:flex;flex-direction:column}}
+.twc{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.twc button{display:flex;align-items:center;gap:6px;min-height:38px;border-radius:9px;border:2px solid var(--ink);background:transparent;color:var(--ink);font:600 15px Barlow,sans-serif;padding:4px 10px;cursor:pointer}.twc button[aria-pressed=true]{background:var(--ink);color:var(--bg)}.twc i{width:13px;height:13px;border-radius:50%;border:2px solid #111}
+#expDlg,#mkDlg{width:min(640px,94vw);max-height:88vh;overflow:auto;background:var(--card);color:var(--ink);border-radius:14px;padding:16px 18px;border:0;box-shadow:0 20px 50px -10px #000a}
+#expDlg h2{margin:0 0 6px;padding-right:40px}#expDlg h3{margin:12px 0 2px;font-size:17px}#expDlg p{margin:4px 0}
+.xclose{position:sticky;top:0;float:right;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:20px;cursor:pointer;margin:-6px -8px 0 0}
+.exr{display:flex;flex-wrap:wrap;gap:6px 14px;background:var(--bg);border-radius:10px;padding:8px 10px;margin:8px 0;font-size:15px}.exr .ok{color:#1a7f37;font-weight:700}.exr .ko{color:#b45309;font-weight:700}
+#v-pla .plgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.plc{display:flex;flex-direction:column;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;cursor:pointer;padding:0;color:var(--ink)}
+.plc img{width:100%;aspect-ratio:4/3;object-fit:contain;background:#fff;display:block}.plc span{padding:8px 10px;display:flex;flex-direction:column}.plc small{color:var(--mut)}
+.pltop{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}.pltop h2{margin:0;flex:1}
+.pltool{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}.pltool .btn{min-height:40px;padding:6px 12px}.pltool .btn[aria-pressed=true]{background:var(--y);color:#111}
+.plwrap{overflow:auto;border:1px solid var(--line);border-radius:12px;background:#fff;max-height:70vh}
+#plStage{position:relative;margin:0 auto}#plImg{display:block;width:100%;height:auto;user-select:none;-webkit-user-select:none}
+.mk{position:absolute;transform:translate(-50%,-50%);width:30px;height:30px;border-radius:50%;border:2px solid #111;background:var(--y);color:#111;font:700 15px Barlow,sans-serif;cursor:pointer;box-shadow:0 2px 6px #0007;padding:0}
+.mk.mig{background:#4aa8ff}.mk.on{outline:3px solid #b42318;outline-offset:2px}
+.adding #plStage{cursor:crosshair}
+.pt{width:100%;border-collapse:collapse;font-size:15px}.pt td{padding:4px 2px;border-bottom:1px solid var(--line)}
+@media(min-width:900px){.plbody{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:12px;align-items:start}}
+.mkc h3{margin-top:0}
 </style>
 </head>
 <body>
 <header id="top"><div class="hd"><div class="brand"><img id="logo" alt="" width="56" height="56"><div><h1 class="wm"><img src="data:image/png;base64,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" alt="Welder" height="40"><span>BeOn</span></h1><p>Aluminio · ER5356 · motos de carreras</p></div></div><button class="btn" id="inst" hidden>Instalar en el Mac</button></div></header>
 <nav>
   <button data-v="maq" aria-current="true">Máquina</button>
-  <button data-v="reg">Registro</button>
+  <button data-v="pla">Planos</button>
   <button data-v="man">Manual</button>
 </nav>
 
 <main>
-<div class="seg mq" id="maqSel"><button data-m="tig">TIG · Tig 4300i</button><button data-m="mig">HILO · Aristo 500ix U82</button></div>
+<div class="seg mq" id="maqSel"><button data-m="tig">TIG · 4300i</button><button data-m="mig">HILO · Aristo 500ix</button></div>
 <!-- MÁQUINA -->
 <section class="view on" id="v-maq">
 <div id="tigMaq">
   <div class="seg" id="mat"></div>
-  <p class="twl">Tungsteno</p><div class="seg" id="twSel"></div>
   <div class="machine" aria-live="polite">
     <div class="mhead"><b>Origo TA24 AC/DC</b><i id="tag"></i></div>
     <div id="panelBox" class="pbox"><div id="panel"></div><p id="pinfo" class="pinfo"></p></div>
-    <div class="grid" id="out"></div>
+    <div class="mright"><div id="fixStrip"></div><div class="grid" id="out"></div><div class="mact"><button class="btn y" id="saveSet">Guardar parámetros</button><span id="saveMsg"></span></div></div>
     <p class="note">Toca una casilla o los botones del panel: se enciende su LED como en la máquina. Para cambiar un valor, muévete con las flechas ◀ ▶ hasta que se encienda el LED de ese icono y gira la rueda. El pregás está en las funciones ocultas.</p>
   </div>
   <div class="card" hidden style="margin-top:14px">
@@ -137,7 +182,7 @@ dialog::backdrop{background:#000c}
     </div>
     <div class="acts"><button class="btn" id="saveVals">Guardar mis valores</button><span class="mut" id="valsMsg" style="align-self:center"></span></div>
   </div>
-<div class="card" id="saveCard" style="margin-top:14px"><div class="acts" style="margin-top:0"><button class="btn y" id="saveSet">Guardar estos parámetros</button><span class="mut" id="saveMsg" style="align-self:center"></span></div><div id="savedBox"></div></div>
+<div id="savedBox" style="margin-top:10px"></div>
 </div>
 
 <div id="migMaq" hidden>
@@ -194,19 +239,27 @@ dialog::backdrop{background:#000c}
 </section>
 
 
-<!-- MANUAL -->
-<section class="view man" id="v-man">
-  <h2>Manual fácil · Tig 4300iw AC/DC + panel TA24 AC/DC</h2>
-  <p class="mut">Resumen en palabras sencillas de los dos manuales de ESAB: el de la máquina y el del panel. Lo que el manual no dice, aquí tampoco.</p>
-  <div class="mnav" id="mnav"></div>
-  <div id="mbody"></div>
-</section>
-
-<!-- REGISTRO -->
-<section class="view" id="v-reg">
+<!-- PLANOS -->
+<section class="view" id="v-pla">
+  <div id="plHome">
+    <div class="pltop"><h2>Planos</h2></div>
+    <div class="card">
+      <label for="plNew" style="margin-top:0">Nombre del plano (opcional)</label>
+      <input id="plNew" placeholder="Ej.: Basculante 450 · lado derecho" maxlength="80">
+      <div class="acts"><label class="btn y" style="margin:0;display:inline-flex;align-items:center;color:#111">+ Añadir plano (foto o PDF)<input id="plFile" type="file" accept="image/*,application/pdf,.pdf" hidden></label><span class="mut" id="plBusy" style="align-self:center"></span></div>
+      <p class="err" id="plErr"></p>
+    </div>
+    <p class="mut" id="plMsg">Cargando…</p>
+    <div class="plgrid" id="plList"></div>
+  </div>
+  <div id="plView" hidden>
+    <div class="pltop"><button class="btn ghost" id="plBack">‹ Planos</button><h2 id="plName"></h2></div>
+    <div class="pltool"><button class="btn" id="plAddBtn">+ Marcar punto</button><button class="btn ghost" id="plZout" aria-label="Alejar">−</button><button class="btn ghost" id="plZin" aria-label="Acercar">+</button><button class="btn ghost" id="plRen">Renombrar</button><button class="btn ghost" id="plDel">Borrar plano</button></div>
+    <div class="plbody"><div class="plwrap" id="plWrap"><div id="plStage"><img id="plImg" alt="Plano"><div id="plMarks"></div></div></div><div id="plSide"></div></div>
+  </div>
   <div class="card" id="syncCard" hidden>
-    <h2>Sincronizar Mac y móvil</h2>
-    <p class="mut" id="syncSt">Sin conectar: las pruebas y los guardados solo se quedan en este aparato.</p>
+    <h2 style="font-size:20px">Sincronizar Mac y móvil</h2>
+    <p class="mut" id="syncSt">Sin conectar: los planos y lo guardado solo se quedan en este aparato.</p>
     <div id="syncForm">
       <div class="row">
         <div><label for="gU">Usuario de GitHub</label><input id="gU" autocomplete="off" autocapitalize="off" value="Carreterobike"></div>
@@ -218,6 +271,18 @@ dialog::backdrop{background:#000c}
     <div class="acts" id="syncOn" hidden><button class="btn ghost" id="gNow">Sincronizar ahora</button><button class="btn ghost" id="gOff">Desconectar</button></div>
     <p class="err" id="syncErr"></p>
   </div>
+</section>
+
+<!-- MANUAL -->
+<section class="view man" id="v-man">
+  <h2>Manual fácil · Tig 4300iw AC/DC + panel TA24 AC/DC</h2>
+  <p class="mut">Resumen en palabras sencillas de los dos manuales de ESAB: el de la máquina y el del panel. Lo que el manual no dice, aquí tampoco.</p>
+  <div class="mnav" id="mnav"></div>
+  <div id="mbody"></div>
+</section>
+
+<!-- REGISTRO -->
+<section class="view" id="v-reg">
   <div class="card" id="form">
     <h2>Nueva prueba</h2>
     <div id="fuWrap"><label for="fu">Unión</label>
@@ -243,6 +308,13 @@ dialog::backdrop{background:#000c}
 </main>
 
 
+<dialog id="expDlg"><button class="xclose" id="expX" aria-label="Cerrar">×</button><div id="expBody"></div></dialog>
+<dialog id="mkDlg"><form id="mkForm" method="dialog"><h2>Guardar punto</h2>
+<label for="mkName">Nombre</label><input id="mkName" maxlength="80">
+<label for="mkNota">Nota (opcional)</label><textarea id="mkNota" placeholder="Espesor, posición, qué tal salió…"></textarea>
+<div id="mkMig" hidden><div class="row"><div><label for="mkVel">Velocidad de hilo m/min</label><input id="mkVel" type="number" step="0.1" inputmode="decimal"></div><div><label for="mkVolt">Corrección de voltaje V</label><input id="mkVolt" type="number" step="0.25" inputmode="decimal" value="0"></div></div></div>
+<div id="mkPrev" style="margin-top:10px"></div>
+<div class="acts"><button class="btn y" id="mkOk" value="ok">Guardar punto</button><button class="btn ghost" value="cancel" formnovalidate>Cancelar</button></div><p class="err" id="mkErr2"></p></form></dialog>
 <dialog id="dlg"><img id="dlgImg" alt=""></dialog>
 
 <script>
@@ -253,6 +325,7 @@ const NOTE={fund:'Más limpieza: la fundición trae más óxido y suciedad.',"70
 let maq='tig',mt='fe',wire='1.0',gas='M21';try{const m=JSON.parse(localStorage.getItem('wbMaq')||'null');if(m){if(m.maq==='mig'||m.maq==='tig')maq=m.maq;if(['fe','inox','alu'].includes(m.mt))mt=m.mt;if(typeof m.wire==='string')wire=m.wire;if(typeof m.gas==='string')gas=m.gas}}catch(x){}
 let vals=JSON.parse(JSON.stringify(DEF)),mat='fund',db=null,assets=null,sample=null,entries=[],sel=-1,files=[];
 const GHMODE=typeof claude==='undefined';
+const H={past:[],fut:[],t:0};
 const GH=(()=>{
   let cfg=null;try{cfg=JSON.parse(localStorage.getItem('wbGh')||'null')}catch(x){}
   let state=null,sha=null,timer=null;const subs=new Set(),phc=new Map();
@@ -260,7 +333,7 @@ const GH=(()=>{
   const dec=s=>{const bin=atob(s.replace(/\s/g,''));const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new TextDecoder().decode(u)};
   const url=p=>`https://api.github.com/repos/${encodeURIComponent(cfg.user)}/${encodeURIComponent(cfg.repo)}/contents/${p}`;
   const H=(x)=>Object.assign({Authorization:'Bearer '+cfg.token,'X-GitHub-Api-Version':'2022-11-28',Accept:'application/vnd.github+json'},x||{});
-  const blank=()=>({guardado:null,valores:null,pruebas:{}});
+  const blank=()=>({guardado:null,valores:null,pruebas:{},planos:{}});
   function st(t,ok){const e=$('syncSt');if(e){e.textContent=t;e.style.color=ok?'#1a7f37':''}}
   async function pull(){
     const r=await fetch(url('datos.json')+'?t='+Date.now(),{headers:H(),cache:'no-store'});
@@ -280,9 +353,9 @@ const GH=(()=>{
     }
     throw new Error('No se ha podido sincronizar');
   }
-  const key=p=>p==='ajustes/guardado'?['guardado']:p==='ajustes/valores'?['valores']:p.startsWith('pruebas/')?['pruebas',p.slice(8)]:null;
-  const get=k=>!state?undefined:k.length===1?state[k[0]]:(state.pruebas||{})[k[1]];
-  const put=(k,v)=>{if(k.length===1)state[k[0]]=v;else{state.pruebas=state.pruebas||{};if(v===undefined)delete state.pruebas[k[1]];else state.pruebas[k[1]]=v}};
+  const key=p=>p==='ajustes/guardado'?['guardado']:p==='ajustes/valores'?['valores']:p.split('/');
+  const get=k=>!state?undefined:k.length===1?state[k[0]]:(state[k[0]]||{})[k[1]];
+  const put=(k,v)=>{if(k.length===1)state[k[0]]=v;else{state[k[0]]=state[k[0]]||{};if(v===undefined)delete state[k[0]][k[1]];else state[k[0]][k[1]]=v}};
   const snap=v=>({exists:v!=null,data:()=>JSON.parse(JSON.stringify(v))});
   const db={
     doc:p=>{const k=key(p);return{
@@ -290,17 +363,17 @@ const GH=(()=>{
       update:o=>mutate(()=>{const c=get(k);if(c)put(k,Object.assign(c,o))},'Actualizar '+p),
       delete:()=>mutate(()=>put(k,undefined),'Borrar '+p),
       onSnapshot:(cb)=>{const f=()=>{if(state)cb(snap(get(k)))};subs.add(f);f();return()=>subs.delete(f)}}},
-    collection:()=>{const q={
-      add:v=>{const id=Date.now().toString(36)+Math.random().toString(36).slice(2,7);return mutate(()=>{state.pruebas=state.pruebas||{};state.pruebas[id]=JSON.parse(JSON.stringify(v))},'Nueva prueba').then(()=>({id}))},
+    collection:(cn)=>{const q={
+      add:v=>{const id=Date.now().toString(36)+Math.random().toString(36).slice(2,7);return mutate(()=>{state[cn]=state[cn]||{};state[cn][id]=JSON.parse(JSON.stringify(v))},'Nuevo '+cn).then(()=>({id}))},
       orderBy:()=>q,limit:()=>q,
-      onSnapshot:(cb)=>{const f=()=>{if(!state)return;const docs=Object.entries(state.pruebas||{}).map(([id,v])=>({id,data:()=>v})).sort((a,b)=>(b.data().ts||0)-(a.data().ts||0));cb({docs,metadata:{fromCache:false}})};subs.add(f);f();return()=>subs.delete(f)}};return q}
+      onSnapshot:(cb)=>{const f=()=>{if(!state)return;const docs=Object.entries(state[cn]||{}).map(([id,v])=>({id,data:()=>v})).sort((a,b)=>(b.data().ts||0)-(a.data().ts||0));cb({docs,metadata:{fromCache:false}})};subs.add(f);f();return()=>subs.delete(f)}};return q}
   };
-  async function shrink(f){
-    try{const bm=await createImageBitmap(f);const m=1600,sc=Math.min(1,m/Math.max(bm.width,bm.height));const c=document.createElement('canvas');c.width=Math.round(bm.width*sc);c.height=Math.round(bm.height*sc);c.getContext('2d').drawImage(bm,0,0,c.width,c.height);return await new Promise(z=>c.toBlob(z,'image/jpeg',.85))}catch(x){return f}
+  async function shrink(f,m){
+    try{const bm=await createImageBitmap(f);const sc=Math.min(1,m/Math.max(bm.width,bm.height));const c=document.createElement('canvas');c.width=Math.round(bm.width*sc);c.height=Math.round(bm.height*sc);c.getContext('2d').drawImage(bm,0,0,c.width,c.height);return await new Promise(z=>c.toBlob(z,'image/jpeg',.85))}catch(x){return f}
   }
   const b64blob=b=>new Promise((ok,ko)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(',')[1]);r.onerror=ko;r.readAsDataURL(b)});
   const assets={
-    upload:async f=>{const id=Date.now().toString(36)+Math.random().toString(36).slice(2,7);const b=await shrink(f);
+    upload:async (f,o)=>{const id=Date.now().toString(36)+Math.random().toString(36).slice(2,7);const b=await shrink(f,(o&&o.max)||1600);
       const r=await fetch(url('fotos/'+id+'.jpg'),{method:'PUT',headers:H({'Content-Type':'application/json'}),body:JSON.stringify({message:'Foto',content:await b64blob(b)})});
       if(!r.ok)throw new Error('No se ha podido subir la foto ('+r.status+')');return{id}},
     delete:async id=>{const r=await fetch(url('fotos/'+id+'.jpg'),{headers:H()});if(!r.ok)return;const j=await r.json();await fetch(url('fotos/'+id+'.jpg'),{method:'DELETE',headers:H({'Content-Type':'application/json'}),body:JSON.stringify({message:'Borrar foto',sha:j.sha})})}
@@ -359,7 +432,7 @@ const IB={"ex":[513.7,417,38.4,37.3],"loc":[396,111.6,30.1,27.7],"tig":[64,48,56
 const pico=k=>`<svg viewBox="${IB[k].join(' ')}" height="31" style="max-width:60px" aria-hidden="true"><use href="#ptr" fill="#f2f2f2" fill-rule="evenodd"/></svg>`;
 let fixOn={tig:true,ac:true,loc:true};try{const f=JSON.parse(localStorage.getItem('wbFix')||'null');if(f)fixOn=Object.assign(fixOn,f)}catch(x){}
 const FIXK=['tig','ac','loc'];const isFix=k=>FIXK.includes(k)&&fixOn[k];
-const cell=(ic,l,v,u,e,k,pi)=>`<div class="cell${k?' key':''}${pi&&isFix(ic)?' fix':''}" data-ic="${ic}"><div class="ic">${pi&&IB[ic]?pico(ic):ico(ic)}</div><small>${l}</small><div class="v">${esc(v)}${u?`<u>${u}</u>`:''}</div>${e?`<em>${e}</em>`:''}${pi&&typeof EDIT!=='undefined'&&EDIT.has(ic)?'<div class="pm"><button data-d="-1" aria-label="Bajar">−</button><button data-d="1" aria-label="Subir">+</button></div>':''}</div>`;
+const cell=(ic,l,v,u,e,k,pi)=>`<div class="cell${k?' key':''}${pi&&isFix(ic)?' fix':''}" data-ic="${ic}" data-l="${esc(l)}" data-e="${esc(String(e||'').replace(/<[^>]*>/g,''))}"><div class="ic">${pi&&IB[ic]?pico(ic):ico(ic)}</div><small>${l}</small><div class="v">${esc(v)}${u?`<u>${u}</u>`:''}</div>${e?`<em>${e}</em>`:''}${pi&&typeof EDIT!=='undefined'&&EDIT.has(ic)?'<div class="pm"><button data-d="-1" aria-label="Bajar">−</button><button data-d="1" aria-label="Subir">+</button></div>':''}</div>`;
 
 function segs(){
   for(const id of ['mat','mat2'])$(id).innerHTML=Object.keys(NAME).map(k=>`<button data-v="${k}" aria-pressed="${k===mat}">${NAME[k]}</button>`).join('');
@@ -367,24 +440,14 @@ function segs(){
 const TW={az:{n:'Azul 3,2',c:'#1e5fd6',t:'lantanado 2 % (WL20)',r:'60–70',m:0},ve:{n:'Verde 3,2',c:'#1f9d3a',t:'puro (WP)',r:'55–65',m:1},do:{n:'Dorado 2,4',c:'#d9a400',t:'lantanado 1,5 % (WL15)',r:'40–50',m:0}};
 let tw='ve';try{const t=localStorage.getItem('wbTw');if(TW[t])tw=t}catch(x){}
 function renderTw(){const e=document.getElementById('twSel');if(e)e.innerHTML=Object.entries(TW).map(([k,o])=>`<button data-tw="${k}" aria-pressed="${k===tw}"><i style="background:${o.c}"></i>${o.n}</button>`).join('')}
-document.addEventListener('click',e=>{const b=e.target.closest('#twSel button');if(!b)return;tw=b.dataset.tw;try{localStorage.setItem('wbTw',tw)}catch(x){}pSel='ex';renderAll()});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-tw]');if(!b)return;pushHist();tw=b.dataset.tw;try{localStorage.setItem('wbTw',tw)}catch(x){}pSel='ex';renderAll();if($('expDlg').open&&$('expDlg').dataset.k==='ex')openExp('ex')});
 function PVF(k){const v=(typeof pv!=='undefined'?pv[k]:{up:0,dn:0,post:10,pre:0.5,ex:40}[k]);return RNG[k]&&RNG[k][2]===1?String(v):v.toFixed(1).replace('.',',')}
 function renderMaq(){
   const p=vals[mat];
   $('tag').textContent=NAME[mat];
-  $('out').innerHTML=[
-    cell('tig','Proceso','TIG','','Soldadura con tungsteno y la varilla aparte. Botón 1',0,1),
-    cell('ac','Corriente','AC','','Alterna: limpia el óxido del aluminio mientras suelda. Botón 2',0,1),
-    cell('loc','Mando','PEDAL','','La corriente la controlas con el pie. Botón 5, tercer LED',0,1),
-    cell('bal','Balance',p.bal,'%','Reparto entre limpiar óxido (menos %) y meter calor y penetrar (más %)',1,1),
-    cell('hz','Frecuencia AC',p.hz,'Hz','Más Hz: arco más estrecho y con más fuerza. Menos Hz: baño más ancho',1,1),
-    cell('up','Rampa subida',PVF('up'),'s','Tiempo que tarda en subir la corriente al empezar. A 0, la subes tú con el pedal',0,1),
-    cell('dn','Rampa bajada',PVF('dn'),'s','Tiempo que tarda en bajar al acabar. A 0, la bajas tú levantando el pie',0,1),
-    cell('post','Postgás',PVF('post'),'s','Gas que sigue saliendo al acabar: protege el tungsteno y el final del cordón',0,1),
-    cell('pre','Pregás (oculto)',PVF('pre'),'s','Gas antes de encender el arco. Función oculta A, 0–5 s',0,1),
-    cell('ex','Precalentamiento',PVF('ex'),'','Calienta el tungsteno para que arranque bien en AC. Recomendado con '+TW[tw].n+': '+TW[tw].r,0,1),
-    cell('gas','Argón puro','7–9,5','l/min','Gas que protege el baño del aire. Se regula en la botella')
-  ].join('');
+  $('fixStrip').innerHTML=[['tig','TIG'],['ac','AC'],['loc','PEDAL']].map(([k,l])=>`<button data-ic="${k}" class="${fixOn[k]?'on':''}${pSel===k?' sel':''}"><i></i>${IB[k]?pico(k):''}${l}</button>`).join('');
+  const C=(k,l,v,u)=>`<div class="cell${EDIT.has(k)?'':' nopm'}${pSel===k?' sel':''}" data-ic="${k}"><div class="ch">${IB[k]?pico(k):ico(k)}<span>${l}</span></div><div class="v">${esc(v)}${u?`<u>${u}</u>`:''}</div>${EDIT.has(k)?'<div class="pm"><button data-d="-1" aria-label="Bajar">−</button><button data-d="1" aria-label="Subir">+</button></div>':`<small class="r">l/min · botella</small>`}</div>`;
+  $('out').innerHTML=[C('bal','Balance',p.bal,'%'),C('hz','Frec.',p.hz,'Hz'),C('up','Subida',PVF('up'),'s'),C('dn','Bajada',PVF('dn'),'s'),C('post','Postgás',PVF('post'),'s'),C('pre','Pregás',PVF('pre'),'s'),C('ex','Precal.',PVF('ex'),''),C('gas','Argón','7–9,5','')].join('');
   $('mb').value=p.bal;$('mh').value=p.hz;
 }
 
@@ -461,23 +524,24 @@ function panelSVG(){
   g+=`<rect x="128.0" y="272.5" width="208.4" height="89.5" rx="10" fill="#0f2a17" stroke="#6a6a6a" stroke-width="3"/><text x="322.4" y="346.0" text-anchor="end" fill="${ON}" font-size="70" font-family="Share Tech Mono,monospace">${disp}</text>`;
   g+=`<rect data-a="L" x="32.9" y="428.4" width="64.6" height="50.9" rx="8" fill="transparent" style="cursor:pointer"/><rect data-a="R" x="116.7" y="428.4" width="63.6" height="50.9" rx="8" fill="transparent" style="cursor:pointer"/>`;
   g+=`<g data-a="knob" style="cursor:grab"><circle cx="690" cy="466" r="92" fill="#111" stroke="#454545" stroke-width="4"/><circle cx="690" cy="466" r="74" fill="#1a1a1a"/><path d="M690 466 L690 407.6" stroke="#555" stroke-width="6" stroke-linecap="round" transform="rotate(${knobA} 690 466)"/></g>`;
+  g+=`<g data-a="undo" style="cursor:pointer"><rect x="316" y="528" width="124" height="70" rx="14" fill="#0d0d0e" stroke="${H.past.length?'#ffd100':'#555'}" stroke-width="3"/><text x="378" y="584" text-anchor="middle" fill="${H.past.length?'#fff':'#777'}" font-size="56" font-family="Barlow,sans-serif" font-weight="700">↶</text></g><g data-a="redo" style="cursor:pointer"><rect x="450" y="528" width="124" height="70" rx="14" fill="#0d0d0e" stroke="${H.fut.length?'#ffd100':'#555'}" stroke-width="3"/><text x="512" y="584" text-anchor="middle" fill="${H.fut.length?'#fff':'#777'}" font-size="56" font-family="Barlow,sans-serif" font-weight="700">↷</text></g>`;
   for(const n in PL){const [x,y]=PL[n];const on=litSet.has(n);g+=`<circle cx="${x}" cy="${y}" r="7" fill="${on?ON:OFF}"/>`+(on?`<circle cx="${x}" cy="${y}" r="13" fill="${ON}" opacity=".25"/>`:'')}
   return `<svg viewBox="0 0 820 610" role="img" aria-label="Panel Origo TA24 interactivo" style="touch-action:none">${g}</svg>`;
 }
 let knobA=0;
 function pinfo(){
-  const k=pSel;if(!k)return 'Toca una casilla o un botón del panel.';
-  if(k==='gas')return '<b>Argón</b> No está en el panel: se regula en el caudalímetro de la botella. Recomendado para aluminio: 7–9,5 l/min (15–20 CFH).';
-  if(k==='pul')return '<b>DC con pulso</b> Según el manual, el pulso solo existe en DC. En aluminio (AC) no se usa: deja el botón 2 en AC.';
-  if(k==='pre')return `<b>Pregás: ${pfmt('pre')} s</b> Recomendado para aluminio: 1–1,5 s. Gas antes de encender el arco. Es una función oculta (letra A, 0–5 s): mantén pulsado un botón 5 segundos, busca la A con ▶ y cámbiala con la rueda. Aquí la cambias con − y +.`;
-  if(k==='ex'){const o=TW[tw],ok=inRec('ex');return `<b>Precalentamiento del electrodo: ${pfmt('ex')}</b> Tungsteno ${o.n} mm, ${o.t}. Recomendado: ${o.r} ${ok?'· ✓ dentro':'· fuera de lo recomendado'} · rango 1–100<br>${o.m?'Valor de la tabla del manual ESAB.':'Referencia aproximada: el manual ESAB no trae este tungsteno; es el valor del lantanado WL10 del mismo grosor.'} Calienta el tungsteno para que el arco arranque bien en AC.`}
+  const k=pSel;if(!k)return '<span>Toca una casilla o un botón del panel.</span>';
+  const xb=EXP[k]?`<button class="xbtn" data-x="${k}">Explicación ›</button>`:'';
+  if(k==='gas')return `<b>Argón puro</b><span>7–9,5 l/min · en el caudalímetro</span>${xb}`;
+  if(k==='ex'){const ok=inRec('ex');return `<b>Precalentamiento: ${pfmt('ex')}</b><span>${TW[tw].n}: ${TW[tw].r}</span>${ok?'<span class="ok">✓ dentro</span>':'<span class="ko">fuera</span>'}${xb}`}
+  if(k==='pre'){const ok=inRec('pre');return `<b>Pregás: ${pfmt('pre').replace('.',',')} s</b><span>Rec.: 1–1,5 s</span>${ok?'<span class="ok">✓ dentro</span>':'<span class="ko">fuera</span>'}${xb}`}
   if(SEQ.includes(k)){
-    if(k==='cur')return '<b>Corriente de soldadura</b> Con pedal, aquí pones el máximo que dará el pedal pisado a fondo.';
-    const v=pfmt(k),r=prec(k),ok=inRec(k);const un=UNIT[k]==='uP'?' %':UNIT[k]==='uH'?' Hz':UNIT[k]==='uS'?' s':'';const rg=RNG[k]?` · rango ${String(RNG[k][0]).replace('.',',')}–${RNG[k][1]}`:'';
-    return `<b>${PN[k]}: ${v}${un}</b> Recomendado: ${r}${/^[\d,–]+$/.test(String(r))?un:''}${rg} ${ok===true?'· ✓ dentro':ok===false?'· fuera de lo recomendado':''}<br>Gira la rueda del panel o usa − y + en la casilla. ◀ ▶ pasan al siguiente LED.`;
+    if(k==='cur')return `<b>Corriente</b><span>Con pedal: el máximo del pie pisado a fondo.</span>${EXP.loc?'<button class="xbtn" data-x="loc">Explicación ›</button>':''}`;
+    const v=pfmt(k).replace('.',','),r=prec(k),ok=inRec(k);const un=UNIT[k]==='uP'?' %':UNIT[k]==='uH'?' Hz':UNIT[k]==='uS'?' s':'';
+    return `<b>${PN[k]}: ${v}${un}</b><span>Rec.: ${r}${/^[\d,–]+$/.test(String(r))?un:''}</span>${ok===true?'<span class="ok">✓ dentro</span>':ok===false?'<span class="ko">fuera</span>':''}${xb}`;
   }
   const w=WANT[k];
-  return `<b>${PN[k]}</b> ${w?(w===k?(FIXK.includes(k)?(fixOn[k]?'✓ Fijo y encendido. Toca la casilla otra vez para apagarlo.':'Apagado. Toca la casilla otra vez para encenderlo.'):'✓ correcto para aluminio.'):'Para aluminio tiene que estar en '+PN[w]+': vuelve a pulsar el botón.'):'Pulsa el botón otra vez para cambiar.'}`;
+  return `<b>${PN[k]}</b><span>${w?(w===k?(FIXK.includes(k)?(fixOn[k]?'✓ Fijo. Toca otra vez para apagarlo.':'Apagado. Toca otra vez para encenderlo.'):'✓ correcto para aluminio.'):'Para aluminio: '+PN[w]+'.'):''}</span>${xb}`;
 }
 
 function miniPanel(k){const o=pSel;pSel=k;const v=panelSVG();pSel=o;return `<div class="mp">${v}</div>`}
@@ -565,9 +629,9 @@ function renderMan(){
 }
 
 function renderPanelPre(){}
-function renderPanel(){$('panel').innerHTML=panelSVG();$('pinfo').innerHTML=pinfo();for(const c of $('out').querySelectorAll('.cell'))c.classList.toggle('sel',c.dataset.ic===pSel)}
+function renderPanel(){$('panel').innerHTML=panelSVG();$('pinfo').innerHTML=pinfo();for(const c of $('out').querySelectorAll('.cell'))c.classList.toggle('sel',c.dataset.ic===pSel);for(const c of $('fixStrip').querySelectorAll('button'))c.classList.toggle('sel',c.dataset.ic===pSel)}
 function step(dir){
-  const k=pSel;if(!k||!RNG[k])return;const [mn,mx,st]=RNG[k];
+  const k=pSel;if(!k||!RNG[k])return;const [mn,mx,st]=RNG[k];pushHist();
   if(k==='bal'){vals[mat].bal=clamp(vals[mat].bal+dir,mn,mx);saveValsSoon()}
   else if(k==='hz'){vals[mat].hz=clamp(vals[mat].hz+dir,mn,mx);saveValsSoon()}
   else{pv[k]=Math.round(clamp(pv[k]+dir*st,mn,mx)*10)/10;try{localStorage.setItem('wbPv',JSON.stringify(pv))}catch(x){}}
@@ -577,6 +641,7 @@ let svT=null;function saveValsSoon(){clearTimeout(svT);svT=setTimeout(async()=>{
 $('panelBox').addEventListener('click',e=>{
   const t=e.target.closest('[data-a]');if(!t)return;const a=t.dataset.a;
   if(a[0]==='b'){const col=COLS[+a[1]];const i=col.indexOf(pSel);pSel=col[(i+1)%col.length];renderPanel();return}
+  if(a==='undo'){undo();return}if(a==='redo'){redo();return}
   if(a==='L'||a==='R'){let i=SEQ.indexOf(pSel);i=i<0?(a==='R'?0:SEQ.length-1):(i+(a==='R'?1:-1)+SEQ.length)%SEQ.length;pSel=SEQ[i];renderPanel();return}
 });
 let drag=null;
@@ -584,7 +649,9 @@ $('panelBox').addEventListener('pointerdown',e=>{const t=e.target.closest('[data
 window.addEventListener('pointermove',e=>{if(!drag)return;const a=Math.atan2(e.clientY-drag.cy,e.clientX-drag.cx);let d=a-drag.a;if(d>Math.PI)d-=2*Math.PI;if(d<-Math.PI)d+=2*Math.PI;drag.a=a;drag.acc+=d;while(Math.abs(drag.acc)>0.26){const s=Math.sign(drag.acc);drag.acc-=s*0.26;drag.moved=true;step(s)}});
 window.addEventListener('pointerup',e=>{if(!drag)return;if(!drag.moved){step(e.clientX>=drag.cx?1:-1)}drag=null});
 $('panelBox').addEventListener('wheel',e=>{if(!e.target.closest('[data-a="knob"]'))return;e.preventDefault();step(e.deltaY<0?1:-1)},{passive:false});
-$('out').addEventListener('click',e=>{const c=e.target.closest('.cell');if(!c)return;const kk=c.dataset.ic;const pb=e.target.closest('.pm button');if(pb){pSel=kk;step(+pb.dataset.d);return}if(FIXK.includes(kk)&&pSel===kk){fixOn[kk]=!fixOn[kk];try{localStorage.setItem('wbFix',JSON.stringify(fixOn))}catch(x){}renderMaq()}pSel=kk;renderPanel();if(window.innerWidth<900)$('panelBox').scrollIntoView({behavior:'smooth',block:'nearest'})});
+$('fixStrip').addEventListener('click',e=>{const c=e.target.closest('button');if(!c)return;const kk=c.dataset.ic;if(pSel===kk){pushHist();fixOn[kk]=!fixOn[kk];try{localStorage.setItem('wbFix',JSON.stringify(fixOn))}catch(x){}}pSel=kk;renderMaq();renderPanel()});
+$('panelBox').addEventListener('click',e=>{const x=e.target.closest('[data-x]');if(x)openExp(x.dataset.x)});
+$('out').addEventListener('click',e=>{const c=e.target.closest('.cell');if(!c)return;const kk=c.dataset.ic;const pb=e.target.closest('.pm button');if(pb){pSel=kk;step(+pb.dataset.d);return}if(FIXK.includes(kk)&&pSel===kk){pushHist();fixOn[kk]=!fixOn[kk];try{localStorage.setItem('wbFix',JSON.stringify(fixOn))}catch(x){}renderMaq()}pSel=kk;renderPanel();if(window.innerWidth<900)$('panelBox').scrollIntoView({behavior:'smooth',block:'nearest'})});
 
 
 const MT={
@@ -697,16 +764,17 @@ function renderMaqSel(){
 }
 $('maqSel').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;maq=b.dataset.m;renderMaqSel()});
 for(const id of ['mtSel','mtSel2'])$(id).addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;mt=b.dataset.v;selM=-1;renderMaqSel()});
+$('outMig').addEventListener('click',e=>{const c=e.target.closest('.cell');if(!c)return;openExpMig(c.dataset.l||'',c.dataset.e||'')});
 $('wireSel').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;wire=b.dataset.v;renderMaqSel()});
 $('gasSel').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;gas=b.dataset.v;renderMaqSel()});
 $('symMig').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;selM=+b.dataset.i===selM?-1:+b.dataset.i;renderFinoMig()});
 
 document.addEventListener('click',e=>{
   const b=e.target.closest('#mat button,#mat2 button');
-  if(b){mat=b.dataset.v;sel=-1;renderAll();return}
+  if(b){pushHist();mat=b.dataset.v;sel=-1;renderAll();return}
   const s=e.target.closest('#sym button');
   if(s){sel=+s.dataset.i===sel?-1:+s.dataset.i;renderFino();$('ansBox').scrollIntoView({block:'nearest'});return}
-  const n=e.target.closest('nav button');
+  const n=e.target.closest('nav button');if(n){goView(n.dataset.v);return}
   if(n){for(const x of document.querySelectorAll('nav button'))x.setAttribute('aria-current',x===n);
     for(const v of document.querySelectorAll('.view'))v.classList.toggle('on',v.id==='v-'+n.dataset.v);window.scrollTo(0,0);return}
   const im=e.target.closest('.thumbs img');
@@ -831,6 +899,197 @@ Dame el ajuste fino con este formato:
   btn.disabled=false;
 }
 
+/* Explicaciones completas */
+const SRC_TA24='Manual ESAB del panel TA24 AC/DC (0459 944 174)';
+const SRC_4300='Manual ESAB Tig 4300iw AC/DC (0460 157 301)';
+const SRC_WEB='<a href="https://www.weldingtipsandtricks.com/tig-welding-cast-aluminum-cleaning-action.html">Welding Tips and Tricks</a> · <a href="https://welders-supply.com/welding-processes/tig-welding/tig-welding-aluminum-settings/">Welders Supply</a>';
+const EXP={
+ tig:{t:'Proceso TIG',q:'El arco salta entre un electrodo de tungsteno, que no se funde, y la pieza. El material lo pones tú con la varilla (ER5356). El argón que sale por la tobera protege el tungsteno y el baño del aire.',
+  s:[['En el panel','Botón 1. Tiene dos LED: TIG y MMA (electrodo revestido). Para aluminio, siempre TIG.'],['Por qué TIG en aluminio','Controlas el calor con el pedal y aportas la varilla a mano: es el proceso más fino para piezas de moto, donde importan el aspecto y que no se deforme.']],src:SRC_TA24},
+ mma:{t:'Electrodo (MMA)',q:'Soldadura con electrodo revestido. No se usa para estas piezas de aluminio.',s:[['Qué hacer','Vuelve a pulsar el botón 1 hasta que se encienda TIG.']],src:SRC_TA24},
+ ac:{t:'Corriente alterna (AC)',q:'El aluminio tiene siempre encima una capa de óxido que funde a más de 2.000 °C, mientras que el aluminio funde a unos 660 °C. Si no rompes esa capa, el baño no moja y salen suciedad y poros.',
+  s:[['Cómo lo hace','La corriente alterna cambia de sentido muchas veces por segundo. En una mitad del ciclo rompe y limpia el óxido (limpieza). En la otra mitad mete el calor en la pieza (penetración).'],['En el panel','Botón 2. Tiene tres LED: AC, DC y DC con pulso. Para aluminio, siempre AC.'],['Si estuviera en DC','En continua no se rompe el óxido: el baño no se abre bien y queda sucio. DC es para acero e inox.']],src:SRC_TA24},
+ dc:{t:'Corriente continua (DC)',q:'Corriente en un solo sentido. Es para acero e inox, no para aluminio, porque no rompe el óxido.',s:[['Qué hacer','Pulsa el botón 2 hasta que se encienda AC.']],src:SRC_TA24},
+ pul:{t:'DC con pulso',q:'La corriente sube y baja entre un pico y un fondo. Según el manual, en este panel el pulso solo existe en DC, así que en aluminio (AC) no se usa.',s:[['Qué hacer','Deja el botón 2 en AC.']],src:SRC_TA24},
+ hf:{t:'Cebado HF (alta frecuencia)',q:'El arco se enciende sin tocar la pieza con el tungsteno: una chispa de alta frecuencia salta sola al pisar el pedal.',s:[['Por qué','Al no tocar, el tungsteno no se contamina con aluminio ni deja inclusiones en la pieza. Es lo normal en aluminio.'],['En el panel','Botón 3: HF o LiftArc.']],src:SRC_TA24},
+ lift:{t:'Cebado LiftArc',q:'Para encender el arco tocas la pieza con el tungsteno y lo levantas. Se usa donde la alta frecuencia molesta a otros aparatos.',s:[['Para aluminio','Mejor HF: al tocar se puede contaminar el tungsteno.']],src:SRC_TA24},
+ t2:{t:'Gatillo 2T',q:'Aprietas el pulsador de la antorcha: suelda. Lo sueltas: para.',s:[['Con pedal','La que manda es el pedal, así que esto casi no afecta.'],['En el panel','Botón 4: 2T o 4T.']],src:SRC_TA24},
+ t4:{t:'Gatillo 4T',q:'Aprietas y sueltas para empezar, y aprietas y sueltas otra vez para acabar. Sirve para cordones largos sin tener el dedo apretado.',s:[['Con pedal','No hace falta.']],src:SRC_TA24},
+ rem:{t:'Panel',q:'Primer LED del botón 5: la corriente se regula desde el panel, no desde el pedal.',s:[['Para ti','Tú trabajas con pedal: deja encendido el tercer LED (mando a distancia).']],src:SRC_TA24},
+ mem:{t:'Cambio de memoria con el pulsador',q:'Segundo LED del botón 5: permite pasar de la memoria 1 a la 2 con el pulsador de la antorcha.',s:[['Memorias','Para guardar una memoria, mantén pulsado su botón (1 o 2) 5 segundos.']],src:SRC_TA24},
+ loc:{t:'Mando a distancia (pedal)',q:'Tercer LED del botón 5. Con él encendido, la corriente la controlas con el pie: cuanto más pisas, más amperios, hasta el máximo que hayas puesto en el panel.',
+  s:[['Cómo se ajusta','Pon en el panel la corriente máxima un poco por encima de la que vas a necesitar. Así tienes margen con el pie sin tener que pisar a fondo.'],['Rampas','Con pedal, deja las rampas de subida y bajada en 0: la subida y la bajada las haces tú con el pie.'],['Corriente mínima','Es la función oculta I (0–99 %), según el manual.']],src:SRC_TA24},
+ bal:{t:'Balance',q:'Dentro de cada ciclo de la alterna, reparte el tiempo entre limpiar el óxido y meter calor en la pieza. En este panel va del 50 al 98 % (el rango depende de la frecuencia, según el manual).',
+  s:[['Si lo subes (más %)','Más calor en la pieza y más penetración. El cordón sale más estrecho, se limpia menos óxido y el tungsteno trabaja más frío.'],['Si lo bajas (menos %)','Más limpieza: la franja blanquecina a los lados del cordón es más ancha. El tungsteno se calienta más, la punta se redondea, y la penetración es menor.'],['Señales de que falta limpieza','Puntitos negros o una piel gris flotando en el baño, y el baño que no moja los bordes. Baja 1–2 %.'],['Señales de que sobra limpieza','Punta del tungsteno que se embola o arco que baila, y franja blanca muy ancha. Sube 1–2 %.'],['Para tu unión','6082 + fundición: más limpieza, porque la fundición trae más óxido y suciedad. 7020 + 7020: más penetración.']],rec:1,src:SRC_TA24+' · '+SRC_WEB},
+ hz:{t:'Frecuencia AC',q:'Cuántas veces por segundo cambia de sentido la corriente alterna. En este panel va de 10 a 152 Hz.',
+  s:[['Si la subes','El arco se estrecha y se concentra: más fuerza en un punto, baño más estrecho y mejor dirección en esquinas y piezas finas. El zumbido se oye más agudo.'],['Si la bajas','El arco se abre: baño más ancho y más blando, con el calor más repartido.'],['Cómo ajustarla','Cambia en pasos de 5–10 Hz y mira la anchura del baño.']],rec:1,src:SRC_TA24+' · '+SRC_WEB},
+ up:{t:'Rampa de subida',q:'Tiempo que tarda la corriente en subir desde el mínimo hasta la de soldadura al empezar. En este panel va de 0 a 10 s.',
+  s:[['Con pedal','Déjala en 0: la subida la haces tú pisando poco a poco.'],['Si no usaras pedal','Una rampa corta evita que el arranque golpee y que salpique.']],rec:1,src:SRC_TA24},
+ dn:{t:'Rampa de bajada',q:'Tiempo que tarda la corriente en bajar al acabar. En este panel va de 0 a 10 s.',
+  s:[['Con pedal','Déjala en 0: al terminar, levanta el pie despacio mientras aportas un poco de varilla para llenar el cráter.'],['Por qué importa en aluminio','Si cortas de golpe queda un cráter que se puede agrietar al enfriar.']],rec:1,src:SRC_TA24},
+ post:{t:'Postgás',q:'Gas que sigue saliendo después de apagar el arco. En este panel va de 0 a 25 s.',
+  s:[['Para qué sirve','Protege el tungsteno caliente y el final del cordón mientras se enfrían.'],['Si te quedas corto','El tungsteno sale de color (azul, gris o negro) y el final del cordón queda sucio.'],['Si te pasas','Solo gastas más gas.'],['Regla','1 segundo por cada 10 A que hayas usado. Por ejemplo, a 120 A, unos 12 s.'],['Truco','No retires la antorcha hasta que acabe.']],rec:1,src:SRC_TA24+' · '+SRC_WEB},
+ pre:{t:'Pregás',q:'Gas que sale antes de que se encienda el arco, para echar el aire de la manguera y de la zona. Es la función oculta A, de 0 a 5 s.',
+  s:[['Si te quedas corto','El primer instante suelda sin protección: arranque sucio o con poro.'],['Cómo llegar en la máquina','Mantén pulsado un botón 5 segundos, elige la letra A con ▶ y cámbiala con la rueda. El manual no dice qué botón: prueba hasta que salgan las letras.']],rec:1,src:SRC_TA24},
+ ex:{t:'Precalentamiento del electrodo',q:'En AC, da al tungsteno una energía de arranque para que el arco cebe bien y estable. En este panel va de 1 a 100. Es el último LED de abajo.',
+  s:[['Depende del tungsteno','Cuanto más grueso es el tungsteno, más valor necesita. Elige el tuyo arriba y te digo el valor.'],['Si te quedas corto','Al pisar le cuesta cebar o el arco salta inestable al principio.'],['Si te pasas','La punta se calienta de más al arrancar. Si ves que se deforma al cebar, bájalo.']],rec:1,tw:1,src:SRC_TA24},
+ gas:{t:'Argón puro',q:'Protege el tungsteno y el baño del aire. No está en el panel: se regula en el caudalímetro de la botella.',
+  s:[['Recomendado','7–9,5 l/min (15–20 CFH) para aluminio con tobera normal.'],['Si te quedas corto','Poros y cordón sucio u oscuro.'],['Si te pasas','El chorro hace remolinos y mete aire: también salen poros. Más no es mejor.'],['Truco','Con lente de gas y tobera grande puedes necesitar algo más. Evita las corrientes de aire.']],src:SRC_WEB}
+};
+const EXPM={
+ 'Method':{q:'Cómo pasa el hilo al baño.',s:[['Arco corto','El hilo toca el baño y se corta muchas veces por segundo. Poco calor: chapa fina y posiciones.'],['Spray','Gotas muy finas que vuelan sin tocar. Mucha corriente, mucha penetración, posición plana.'],['Pulso','La corriente alterna entre un pico y un fondo: una gota por pulso. Menos calor y salpicadura que el spray. Es lo que mejor va en aluminio e inox.']]},
+ 'Synergy':{q:'Con sinergia en ON, tú eliges la velocidad de hilo y la máquina ajusta sola el voltaje (y el pulso) según la línea sinérgica que hayas elegido.',s:[['Ventaja','Un solo mando para subir o bajar la potencia. El voltaje lo afinas con la corrección.']]},
+ 'Línea sinérgica':{q:'Es la «receta» de la máquina para tu material, tu diámetro de hilo y tu gas. Se elige en el menú principal del U82.',s:[['Importante','Que coincida exactamente con el hilo y el gas que llevas puestos. El nombre exacto en tu panel puede variar: busca la del material, el diámetro y el gas.']]},
+ 'Voltage (corrección)':{q:'Con sinergia es una corrección sobre el voltaje de la línea, en pasos de 0,25 V (según el manual).',s:[['Si la subes','El arco es más largo, y el cordón más plano y ancho, que moja mejor los bordes. Si te pasas: mordeduras, salpicadura fina y arco que se va.'],['Si la bajas','El arco es más corto, y el cordón más alto y estrecho. Si te pasas: el hilo tropieza con la pieza y salpica gordo.'],['Cómo ajustarla','Cambia en pasos de 0,5 V y haz una probeta.']]},
+ 'Inductance':{q:'Solo actúa en arco corto y spray (según el manual). Cambia lo rápido que sube la corriente cuando el hilo toca.',s:[['Más','Baño más fluido y ancho, y menos salpicadura.'],['Menos','Arco más duro y concentrado.']]},
+ 'Gatillo':{q:'2T: aprietas y suelda, sueltas y para. 4T: aprietas y sueltas para empezar, y aprietas y sueltas otra vez para acabar.',s:[['Cuándo','2T para puntos y cordones cortos. 4T para cordones largos sin cansar el dedo.']]},
+ 'Gas pre-flow':{q:'Gas antes de que salga el arco, para echar el aire de la manguera. En el U82 va de 0,1 a 25 s (manual).',s:[['Si te quedas corto','Arranque con poro.']]},
+ 'Creep start':{q:'El hilo avanza despacio hasta tocar la pieza y cebar, y luego pasa a la velocidad normal.',s:[['Para qué','Arranques más suaves, sin golpe ni salpicadura.']]},
+ 'Hot start':{q:'Al empezar, da más energía durante un tiempo (0–10 s en el U82, según el manual).',s:[['Por qué en aluminio','El aluminio se lleva el calor muy rápido: sin Hot start, el inicio del cordón queda frío y sin fundir.']]},
+ 'Crater filling':{q:'Al soltar, la corriente baja poco a poco durante el tiempo fijado (0–10 s en el U82) para llenar el cráter final.',s:[['Por qué','El cráter que queda al cortar de golpe se agrieta con facilidad, sobre todo en aluminio e inox.']]},
+ 'Termination':{q:'Cómo corta la máquina el hilo al acabar, para que no quede pegado al baño ni con una bola gorda en la punta.',s:[['Final pulse','Un pulso final que deja la punta del hilo limpia para el siguiente arranque.']]},
+ 'Burnback time':{q:'Tiempo que sigue habiendo corriente después de que el hilo se para, para quemar la punta. En el U82 va de 0 a 1 s (manual).',s:[['Si te quedas corto','El hilo se queda pegado al baño.'],['Si te pasas','El hilo se quema hasta el tubo de contacto.'],['Cómo ajustarlo','Pasos de 0,01–0,02 s.']]},
+ 'Gas post-flow':{q:'Gas después de apagar el arco, para proteger el final del cordón. En el U82 va de 0,1 a 25 s (manual).',s:[['Si te quedas corto','Final del cordón oxidado o con poro.']]},
+ 'Caudal de gas':{q:'Se regula en el caudalímetro de la botella.',s:[['Si te quedas corto','Poros.'],['Si te pasas','El chorro hace remolinos y mete aire: también poros.']]}
+};
+EXPM['Linea sinergica']=EXPM['Línea sinérgica'];
+function expHTML(o,extra){
+  return `<h2>${esc(o.t)}</h2><p>${o.q}</p>${extra||''}${o.s.map(([a,b])=>`<h3>${a}</h3><p>${b}</p>`).join('')}${o.src?`<p class="src">Fuente: ${o.src}</p>`:''}`;
+}
+function twChips(){return `<div class="twc">${Object.entries(TW).map(([k,o])=>`<button data-tw="${k}" aria-pressed="${k===tw}"><i style="background:${o.c}"></i>${o.n}</button>`).join('')}</div>`}
+function openExp(k){
+  const o=EXP[k];if(!o)return;
+  let extra='';
+  if(o.rec){const r=prec(k),ok=inRec(k);const un=UNIT[k]==='uP'?' %':UNIT[k]==='uH'?' Hz':UNIT[k]==='uS'?' s':'';
+    extra=`<div class="exr"><span>Tu valor: <b>${pfmt(k).replace('.',',')}${un}</b></span><span>Recomendado: <b>${r}${/^[\d,–]+$/.test(String(r))?un:''}</b></span>${ok===true?'<span class="ok">✓ dentro</span>':ok===false?'<span class="ko">fuera</span>':''}</div>`;
+    if(k==='bal')extra+=`<p class="mut">Recomendado para ${NAME[mat]}.</p>`}
+  if(o.tw){const t=TW[tw];extra+=twChips()+`<p class="mut">${t.n} mm: ${t.t}. ${t.m?'Valor de la tabla del manual ESAB.':'Aproximado: el manual no trae este tungsteno; es el valor del lantanado WL10 del mismo grosor.'}</p>`}
+  $('expBody').innerHTML=expHTML(o,extra);$('expDlg').dataset.k=k;if(!$('expDlg').open)$('expDlg').showModal();
+}
+function openExpMig(l,e){
+  const o=EXPM[l];
+  $('expBody').innerHTML=o?expHTML({t:l,q:o.q,s:o.s,src:'<a href="https://ldgsesabwe.blob.core.windows.net/manuals/InstructionManuals/0460%20896%20287%20US.pdf">manual ESAB Aristo U82</a>'},e?`<div class="exr"><span>Para ${esc(MT[mt].n.toLowerCase())}: <b>${esc(e)}</b></span></div>`:''):`<h2>${esc(l)}</h2><p>${esc(e||'')}</p>`;
+  $('expDlg').dataset.k='';if(!$('expDlg').open)$('expDlg').showModal();
+}
+
+/* Deshacer / rehacer */
+function snapState(){return JSON.stringify({vals,pv,fixOn,tw,mat})}
+function pushHist(){const now=Date.now();const s=snapState();if(now-H.t>700||!H.past.length){if(H.past[H.past.length-1]!==s){H.past.push(s);if(H.past.length>100)H.past.shift()}}H.t=now;H.fut=[]}
+function applyState(s){const o=JSON.parse(s);vals=o.vals;Object.assign(pv,o.pv);Object.assign(fixOn,o.fixOn);if(TW[o.tw])tw=o.tw;if(o.mat&&NAME[o.mat])mat=o.mat;
+  try{localStorage.setItem('wbPv',JSON.stringify(pv));localStorage.setItem('wbFix',JSON.stringify(fixOn));localStorage.setItem('wbTw',tw)}catch(x){}saveValsSoon();renderAll()}
+function undo(){if(!H.past.length)return;H.fut.push(snapState());applyState(H.past.pop());H.t=0;flash('Deshecho')}
+function redo(){if(!H.fut.length)return;H.past.push(snapState());applyState(H.fut.pop());H.t=0;flash('Rehecho')}
+function flash(t){const e=$('saveMsg');if(!e)return;e.textContent=t;clearTimeout(flash.t);flash.t=setTimeout(()=>{e.textContent=''},1200)}
+
+/* Planos */
+let planos=[],plOpen=null,plAdd=false,plMk=null,plZoom=1;
+const imgCache=new Map();
+function imgSrc(id){if(GHMODE)return GH.photo(id);return Promise.resolve('/_blob/'+encodeURIComponent(id))}
+function curParams(){
+  if(maq==='tig')return{maq:'tig',union:mat,bal:vals[mat].bal,hz:vals[mat].hz,up:pv.up,dn:pv.dn,post:pv.post,pre:pv.pre,ex:pv.ex,tw,fix:{...fixOn}};
+  return{maq:'mig',mt,wire,gas,vel:$('mkVel')?+$('mkVel').value||null:null,volt:$('mkVolt')?+$('mkVolt').value||0:0};
+}
+function paramRows(p){
+  const f=v=>String(v).replace('.',',');
+  if(p.maq==='tig')return[['Máquina','TIG · Tig 4300i'],['Unión',NAME[p.union]||p.union],['Corriente',p.fix&&p.fix.ac===false?'—':'AC'],['Mando',p.fix&&p.fix.loc===false?'—':'Pedal'],['Balance',p.bal+' %'],['Frecuencia',p.hz+' Hz'],['Rampa subida',f(p.up)+' s'],['Rampa bajada',f(p.dn)+' s'],['Postgás',f(p.post)+' s'],['Pregás',f(p.pre)+' s'],['Tungsteno',TW[p.tw]?TW[p.tw].n:'—'],['Precalentamiento',String(p.ex)]];
+  const M=MT[p.mt]||MT.alu;return[['Máquina','HILO · Aristo U82'],['Material',M.n],['Hilo',M.wn+' · '+f(p.wire)+' mm'],['Gas',M.gases[p.gas]||p.gas],['Velocidad de hilo',p.vel!=null?f(p.vel)+' m/min':'—'],['Corrección de voltaje',(p.volt>0?'+':'')+f(p.volt||0)+' V']];
+}
+function loadParams(p){
+  pushHist();
+  if(p.maq==='tig'){maq='tig';if(NAME[p.union])mat=p.union;vals[mat]={bal:p.bal,hz:p.hz};for(const k of ['up','dn','post','pre','ex'])if(typeof p[k]==='number')pv[k]=p[k];if(p.fix)Object.assign(fixOn,p.fix);if(TW[p.tw])tw=p.tw;
+    try{localStorage.setItem('wbPv',JSON.stringify(pv));localStorage.setItem('wbFix',JSON.stringify(fixOn));localStorage.setItem('wbTw',tw)}catch(x){}saveValsSoon()}
+  else{maq='mig';if(MT[p.mt])mt=p.mt;wire=p.wire;gas=p.gas}
+  renderAll();renderMaqSel();goView('maq');
+}
+function renderPlanos(){
+  if(!$('plList'))return;
+  if(!db){$('plMsg').textContent=GHMODE?'Conecta la sincronización (abajo) para guardar planos.':'El guardado no está disponible en esta vista.';$('plList').innerHTML='';$('plView').hidden=true;return}
+  const P=planos.find(x=>x.id===plOpen);
+  $('plHome').hidden=!!P;$('plView').hidden=!P;
+  if(!P){
+    $('plMsg').textContent=planos.length?'':'Todavía no hay planos. Añade el primero.';
+    $('plList').innerHTML=planos.map(x=>{const d=x.data();return `<button class="plc" data-id="${esc(x.id)}"><img data-pid="${esc(d.img)}" alt=""><span><b>${esc(d.nombre||'Plano')}</b><small>${(d.marcas||[]).length} punto${(d.marcas||[]).length===1?'':'s'}</small></span></button>`}).join('');
+    for(const im of $('plList').querySelectorAll('img[data-pid]'))imgSrc(im.dataset.pid).then(u=>{if(u)im.src=u}).catch(()=>{});
+    return;
+  }
+  const d=P.data();
+  $('plName').textContent=d.nombre||'Plano';
+  $('plAddBtn').setAttribute('aria-pressed',plAdd);$('plAddBtn').textContent=plAdd?'Toca en el plano…':'+ Marcar punto';
+  $('plStage').style.width=(plZoom*100)+'%';
+  const im=$('plImg');if(im.dataset.pid!==d.img){im.dataset.pid=d.img;im.removeAttribute('src');imgSrc(d.img).then(u=>{if(u&&im.dataset.pid===d.img)im.src=u}).catch(()=>{})}
+  $('plMarks').innerHTML=(d.marcas||[]).map((m,i)=>`<button class="mk${m.id===plMk?' on':''} ${m.p&&m.p.maq==='mig'?'mig':''}" data-mk="${esc(m.id)}" style="left:${m.x*100}%;top:${m.y*100}%" aria-label="${esc(m.nombre||'Punto '+(i+1))}">${i+1}</button>`).join('');
+  const M=(d.marcas||[]).find(m=>m.id===plMk);
+  $('plSide').innerHTML=M?`<div class="card mkc"><h3>${esc(M.nombre||'Punto')}</h3>${M.nota?`<p style="white-space:pre-wrap;margin:4px 0 8px">${esc(M.nota)}</p>`:''}<table class="pt">${paramRows(M.p).map(([a,b])=>`<tr><td>${a}</td><td><b>${esc(b)}</b></td></tr>`).join('')}</table><p class="mut">Guardado el ${esc(new Date(M.ts||0).toLocaleDateString('es-ES'))}</p><div class="acts"><button class="btn y" data-act="load">Cargar en la máquina</button><button class="btn ghost" data-act="upd">Poner los valores actuales</button><button class="btn ghost" data-act="del">Borrar punto</button></div><p class="err" id="mkErr"></p></div>`
+   :`<p class="mut">${(d.marcas||[]).length?'Toca un número para ver sus parámetros.':'Pulsa «+ Marcar punto» y toca en el plano donde va la soldadura.'}</p>`;
+}
+async function plUpdate(fn,msg){const P=planos.find(x=>x.id===plOpen);if(!P)return;const d=JSON.parse(JSON.stringify(P.data()));fn(d);await db.doc('planos/'+P.id).set(d)}
+async function renderPdf(file){
+  if(!window.pdfjsLib){await new Promise((ok,ko)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';s.onload=ok;s.onerror=()=>ko(new Error('No se ha podido cargar el lector de PDF'));document.head.appendChild(s)});
+    pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'}
+  const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;const out=[];
+  for(let i=1;i<=Math.min(pdf.numPages,10);i++){const pg=await pdf.getPage(i);const v0=pg.getViewport({scale:1});const sc=Math.min(4,2400/Math.max(v0.width,v0.height));const v=pg.getViewport({scale:sc});
+    const c=document.createElement('canvas');c.width=Math.round(v.width);c.height=Math.round(v.height);const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);
+    await pg.render({canvasContext:g,viewport:v}).promise;out.push(await new Promise(z=>c.toBlob(z,'image/jpeg',.9)))}
+  return{pages:out,total:pdf.numPages};
+}
+function planosInit(){
+  $('plFile').addEventListener('change',async e=>{
+    const f=e.target.files[0];e.target.value='';if(!f)return;$('plErr').textContent='';
+    if(!db){$('plErr').textContent='Primero conecta la sincronización.';return}
+    const base=($('plNew').value.trim()||f.name.replace(/\.[^.]+$/,'')).slice(0,80);$('plBusy').textContent='Subiendo…';
+    try{
+      let imgs=[f];let note='';
+      if(/pdf$/i.test(f.type)||/\.pdf$/i.test(f.name)){const r=await renderPdf(f);imgs=r.pages;if(r.total>10)note=' (solo las 10 primeras páginas)'}
+      let first=null;
+      for(let i=0;i<imgs.length;i++){const a=await assets.upload(imgs[i],{max:2400});const r=await db.collection('planos').add({ts:Date.now()+i,nombre:imgs.length>1?`${base} · pág. ${i+1}`:base,img:a.id,marcas:[]});if(!first)first=r.id}
+      $('plNew').value='';$('plBusy').textContent='Plano añadido'+note+'.';setTimeout(()=>{$('plBusy').textContent=''},3000);
+      if(first&&imgs.length===1){plOpen=first;plMk=null;plAdd=false;renderPlanos()}
+    }catch(x){$('plBusy').textContent='';$('plErr').textContent='No se ha podido subir: '+(x&&x.message||x)}
+  });
+  $('plList').addEventListener('click',e=>{const b=e.target.closest('.plc');if(!b)return;plOpen=b.dataset.id;plMk=null;plAdd=false;plZoom=1;renderPlanos();window.scrollTo(0,0)});
+  $('plBack').addEventListener('click',()=>{plOpen=null;plMk=null;plAdd=false;renderPlanos()});
+  $('plAddBtn').addEventListener('click',()=>{plAdd=!plAdd;renderPlanos()});
+  $('plZin').addEventListener('click',()=>{plZoom=Math.min(4,plZoom+0.5);renderPlanos()});
+  $('plZout').addEventListener('click',()=>{plZoom=Math.max(1,plZoom-0.5);renderPlanos()});
+  $('plDel').addEventListener('click',async e=>{const b=e.currentTarget;if(b.dataset.s!=='1'){b.dataset.s='1';b.textContent='Pulsa otra vez para borrar el plano';return}b.dataset.s='';b.textContent='Borrar plano';const P=planos.find(x=>x.id===plOpen);if(!P)return;const img=P.data().img;plOpen=null;try{await db.doc('planos/'+P.id).delete();assets&&assets.delete(img).catch(()=>{})}catch(x){}renderPlanos()});
+  $('plRen').addEventListener('click',async()=>{const P=planos.find(x=>x.id===plOpen);if(!P)return;const n=prompt('Nombre del plano',P.data().nombre||'');if(n==null)return;await plUpdate(d=>{d.nombre=n.trim().slice(0,80)||d.nombre})});
+  $('plStage').addEventListener('click',e=>{
+    const mk=e.target.closest('.mk');if(mk){plMk=mk.dataset.mk===plMk?null:mk.dataset.mk;plAdd=false;renderPlanos();if(plMk&&window.innerWidth<900)$('plSide').scrollIntoView({behavior:'smooth',block:'nearest'});return}
+    if(!plAdd)return;const r=$('plImg').getBoundingClientRect();if(!r.width)return;
+    const x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;if(x<0||x>1||y<0||y>1)return;
+    plAdd=false;openMkForm({x,y});
+  });
+  $('plSide').addEventListener('click',async e=>{
+    const b=e.target.closest('[data-act]');if(!b)return;const P=planos.find(x=>x.id===plOpen);if(!P)return;const M=(P.data().marcas||[]).find(m=>m.id===plMk);if(!M)return;
+    if(b.dataset.act==='load'){loadParams(M.p);return}
+    if(b.dataset.act==='upd'){openMkForm(M);return}
+    if(b.dataset.act==='del'){if(b.dataset.s!=='1'){b.dataset.s='1';b.textContent='Pulsa otra vez para borrar';return}const id=M.id;plMk=null;try{await plUpdate(d=>{d.marcas=(d.marcas||[]).filter(m=>m.id!==id)})}catch(x){}}
+  });
+  $('mkForm').addEventListener('submit',async e=>{
+    e.preventDefault();if(e.submitter&&e.submitter.value==='cancel'){$('mkDlg').close();return}
+    const o=mkEdit;if(!o)return;const btn=$('mkOk');btn.disabled=true;$('mkErr2').textContent='';
+    const m={id:o.id||(Date.now().toString(36)+Math.random().toString(36).slice(2,6)),x:o.x,y:o.y,ts:Date.now(),nombre:$('mkName').value.trim().slice(0,80),nota:$('mkNota').value.slice(0,2000),p:curParams()};
+    try{await plUpdate(d=>{d.marcas=d.marcas||[];const i=d.marcas.findIndex(z=>z.id===m.id);if(i>=0)d.marcas[i]=m;else d.marcas.push(m)});plMk=m.id;$('mkDlg').close();renderPlanos()}
+    catch(x){$('mkErr2').textContent='No se ha podido guardar: '+(x&&x.message||x)}
+    btn.disabled=false;
+  });
+}
+let mkEdit=null;
+function openMkForm(o){
+  mkEdit=o;const P=planos.find(x=>x.id===plOpen);const n=P?(P.data().marcas||[]).length+1:1;
+  $('mkName').value=o.nombre||('Soldadura '+n);$('mkNota').value=o.nota||'';
+  const p=curParams();
+  $('mkMig').hidden=maq!=='mig';if(maq==='mig'&&o.p&&o.p.maq==='mig'){$('mkVel').value=o.p.vel??'';$('mkVolt').value=o.p.volt??0}
+  $('mkPrev').innerHTML=`<p class="mut" style="margin:0 0 6px">Se guardan los parámetros que tienes ahora en <b>${maq==='tig'?'TIG':'HILO'}</b>:</p><table class="pt">${paramRows(p).filter(r=>!/Velocidad|Corrección/.test(r[0])).map(([a,b])=>`<tr><td>${a}</td><td><b>${esc(b)}</b></td></tr>`).join('')}</table>`;
+  $('mkErr2').textContent='';$('mkDlg').showModal();
+}
+
+function goView(v){for(const x of document.querySelectorAll('nav button'))x.setAttribute('aria-current',x.dataset.v===v);
+  for(const x of document.querySelectorAll('.view'))x.classList.toggle('on',x.id==='v-'+v);$('maqSel').hidden=v!=='maq';window.scrollTo(0,0);if(v==='pla')renderPlanos()}
+$('expX').addEventListener('click',()=>$('expDlg').close());
+$('expDlg').addEventListener('click',e=>{if(e.target===$('expDlg'))$('expDlg').close()});
+document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='z'&&!/input|textarea/i.test(document.activeElement.tagName)&&$('v-maq').classList.contains('on')){e.preventDefault();e.shiftKey?redo():undo()}});
+planosInit();
 /*save*/
 let saved={};try{saved=JSON.parse(localStorage.getItem('wbSaved')||'{}')||{}}catch(x){}
 function renderSaved(){
@@ -845,7 +1104,7 @@ $('saveSet').addEventListener('click',async()=>{
   if(db)try{await db.doc('ajustes/guardado').set(JSON.parse(JSON.stringify(saved)));await db.doc('ajustes/valores').set(JSON.parse(JSON.stringify(vals)))}catch(x){$('saveMsg').textContent='Guardado en este aparato (no se ha podido sincronizar).'}
   $('savedBox').scrollIntoView({behavior:'smooth',block:'nearest'});
 });
-$('savedBox').addEventListener('click',e=>{if(e.target.id!=='loadSet')return;const g=saved[mat];if(!g)return;vals[mat]={bal:g.bal,hz:g.hz};for(const k of ['up','dn','post','pre','ex'])pv[k]=g[k];if(g.fix)Object.assign(fixOn,g.fix);if(TW[g.tw]){tw=g.tw;try{localStorage.setItem('wbTw',tw)}catch(x){}}try{localStorage.setItem('wbPv',JSON.stringify(pv));localStorage.setItem('wbFix',JSON.stringify(fixOn))}catch(x){}renderAll();});
+$('savedBox').addEventListener('click',e=>{if(e.target.id!=='loadSet')return;const g=saved[mat];if(!g)return;pushHist();vals[mat]={bal:g.bal,hz:g.hz};for(const k of ['up','dn','post','pre','ex'])pv[k]=g[k];if(g.fix)Object.assign(fixOn,g.fix);if(TW[g.tw]){tw=g.tw;try{localStorage.setItem('wbTw',tw)}catch(x){}}try{localStorage.setItem('wbPv',JSON.stringify(pv));localStorage.setItem('wbFix',JSON.stringify(fixOn))}catch(x){}renderAll();});
 
 document.body.insertAdjacentHTML('beforeend',`<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><path id="ptr" d="${PTRACE}"/></defs></svg>`);
 renderAll();fillForm();renderMaqSel();renderMan();renderSaved();
@@ -873,13 +1132,14 @@ function drawIconOld(){const c=document.createElement('canvas');c.width=c.height
   try{sample=await claude.use('sample')}catch(x){}
   try{assets=await claude.use('assets')}catch(x){}
   try{db=await claude.use('db')}catch(x){}
-  if(!db&&GHMODE){$('syncCard').hidden=false;GH.ui();if(!GH.cfg){$('listMsg').textContent='Conecta la sincronización (arriba) para guardar pruebas.';return}db=GH.db;assets=GH.assets;GH.start()}
-  if(!db){$('listMsg').textContent='El guardado no está disponible en esta vista.';return}
+  if(!db&&GHMODE){$('syncCard').hidden=false;GH.ui();if(!GH.cfg){$('listMsg').textContent='Conecta la sincronización para guardar.';renderPlanos();return}db=GH.db;assets=GH.assets;GH.start()}
+  if(!db){$('listMsg').textContent='El guardado no está disponible en esta vista.';renderPlanos();return}
   db.doc('ajustes/guardado').onSnapshot(s=>{if(s.exists){const d=s.data();if(d&&typeof d==='object'){saved=JSON.parse(JSON.stringify(d));try{renderSaved()}catch(x){}}}},()=>{});
   db.doc('ajustes/valores').onSnapshot(s=>{
     if(s.exists){const v=s.data();for(const k of Object.keys(DEF))if(v[k]&&+v[k].bal&&+v[k].hz)vals[k]={bal:+v[k].bal,hz:+v[k].hz};renderAll();fillForm()}
   },()=>{});
   const t=setTimeout(()=>{$('listMsg').textContent='No se pueden cargar las pruebas todavía.'},10000);
+  db.collection('planos').orderBy('ts','desc').limit(200).onSnapshot(s=>{planos=s.docs.slice().sort((a,b)=>(b.data().ts||0)-(a.data().ts||0));renderPlanos()},()=>{});
   db.collection('pruebas').orderBy('ts','desc').limit(200).onSnapshot(s=>{
     if(!s.metadata.fromCache)clearTimeout(t);
     entries=s.docs;renderList();
