@@ -153,6 +153,7 @@ main{padding:10px max(3vw,10px)}
   <button data-v="maq" aria-current="true">Máquina</button>
   <button data-v="pla">Planos</button>
   <button data-v="man">Manual</button>
+  <button data-v="aju">⚙️ Ajustes</button>
 </nav>
 
 <main>
@@ -257,6 +258,11 @@ main{padding:10px max(3vw,10px)}
     <div class="pltool"><button class="btn" id="plAddBtn">+ Marcar punto</button><button class="btn ghost" id="plZout" aria-label="Alejar">−</button><button class="btn ghost" id="plZin" aria-label="Acercar">+</button><button class="btn ghost" id="plRen">Renombrar</button><button class="btn ghost" id="plDel">Borrar plano</button></div>
     <div class="plbody"><div class="plwrap" id="plWrap"><div id="plStage"><img id="plImg" alt="Plano"><div id="plMarks"></div></div></div><div id="plSide"></div></div>
   </div>
+</section>
+
+<!-- AJUSTES -->
+<section class="view" id="v-aju">
+  <h2>Ajustes</h2>
   <div class="card" id="syncCard" hidden>
     <h2 style="font-size:20px">Sincronizar Mac y móvil</h2>
     <p class="mut" id="syncSt">Sin conectar: los planos y lo guardado solo se quedan en este aparato.</p>
@@ -270,6 +276,11 @@ main{padding:10px max(3vw,10px)}
     </div>
     <div class="acts" id="syncOn" hidden><button class="btn ghost" id="gNow">Sincronizar ahora</button><button class="btn ghost" id="gOff">Desconectar</button></div>
     <p class="err" id="syncErr"></p>
+  </div>
+  <div class="card">
+    <h2 style="font-size:20px">Actualizar la app</h2>
+    <p class="mut">Cuando te diga que he subido cambios, pulsa aquí para cargar la última versión.</p>
+    <div class="acts"><button class="btn y" id="updBtn">Buscar actualización</button></div>
   </div>
 </section>
 
@@ -649,9 +660,9 @@ $('panelBox').addEventListener('pointerdown',e=>{const t=e.target.closest('[data
 window.addEventListener('pointermove',e=>{if(!drag)return;const a=Math.atan2(e.clientY-drag.cy,e.clientX-drag.cx);let d=a-drag.a;if(d>Math.PI)d-=2*Math.PI;if(d<-Math.PI)d+=2*Math.PI;drag.a=a;drag.acc+=d;while(Math.abs(drag.acc)>0.26){const s=Math.sign(drag.acc);drag.acc-=s*0.26;drag.moved=true;step(s)}});
 window.addEventListener('pointerup',e=>{if(!drag)return;if(!drag.moved){step(e.clientX>=drag.cx?1:-1)}drag=null});
 $('panelBox').addEventListener('wheel',e=>{if(!e.target.closest('[data-a="knob"]'))return;e.preventDefault();step(e.deltaY<0?1:-1)},{passive:false});
-$('fixStrip').addEventListener('click',e=>{const c=e.target.closest('button');if(!c)return;const kk=c.dataset.ic;if(pSel===kk){pushHist();fixOn[kk]=!fixOn[kk];try{localStorage.setItem('wbFix',JSON.stringify(fixOn))}catch(x){}}pSel=kk;renderMaq();renderPanel()});
+$('fixStrip').addEventListener('click',e=>{const c=e.target.closest('button');if(!c)return;const kk=c.dataset.ic;if(pSel===kk){pushHist();fixOn[kk]=!fixOn[kk];try{localStorage.setItem('wbFix',JSON.stringify(fixOn))}catch(x){}}else if(EXP[kk])setTimeout(()=>openExp(kk),0);pSel=kk;renderMaq();renderPanel()});
 $('panelBox').addEventListener('click',e=>{const x=e.target.closest('[data-x]');if(x)openExp(x.dataset.x)});
-$('out').addEventListener('click',e=>{const c=e.target.closest('.cell');if(!c)return;const kk=c.dataset.ic;const pb=e.target.closest('.pm button');if(pb){pSel=kk;step(+pb.dataset.d);return}if(FIXK.includes(kk)&&pSel===kk){pushHist();fixOn[kk]=!fixOn[kk];try{localStorage.setItem('wbFix',JSON.stringify(fixOn))}catch(x){}renderMaq()}pSel=kk;renderPanel();if(window.innerWidth<900)$('panelBox').scrollIntoView({behavior:'smooth',block:'nearest'})});
+$('out').addEventListener('click',e=>{const c=e.target.closest('.cell');if(!c)return;const kk=c.dataset.ic;const pb=e.target.closest('.pm button');if(pb){pSel=kk;step(+pb.dataset.d);return}if(EXP[kk])setTimeout(()=>openExp(kk),0);if(FIXK.includes(kk)&&pSel===kk){pushHist();fixOn[kk]=!fixOn[kk];try{localStorage.setItem('wbFix',JSON.stringify(fixOn))}catch(x){}renderMaq()}pSel=kk;renderPanel();if(window.innerWidth<900)$('panelBox').scrollIntoView({behavior:'smooth',block:'nearest'})});
 
 
 const MT={
@@ -1003,7 +1014,7 @@ function loadParams(p){
 }
 function renderPlanos(){
   if(!$('plList'))return;
-  if(!db){$('plMsg').textContent=GHMODE?'Conecta la sincronización (abajo) para guardar planos.':'El guardado no está disponible en esta vista.';$('plList').innerHTML='';$('plView').hidden=true;return}
+  if(!db){$('plMsg').textContent=GHMODE?'Conecta la sincronización en ⚙️ Ajustes para guardar planos.':'El guardado no está disponible en esta vista.';$('plList').innerHTML='';$('plView').hidden=true;return}
   const P=planos.find(x=>x.id===plOpen);
   $('plHome').hidden=!!P;$('plView').hidden=!P;
   if(!P){
@@ -1035,7 +1046,7 @@ async function renderPdf(file){
 function planosInit(){
   $('plFile').addEventListener('change',async e=>{
     const f=e.target.files[0];e.target.value='';if(!f)return;$('plErr').textContent='';
-    if(!db){$('plErr').textContent='Primero conecta la sincronización.';return}
+    if(!db){$('plErr').textContent='Primero conecta la sincronización en ⚙️ Ajustes.';return}
     const base=($('plNew').value.trim()||f.name.replace(/\.[^.]+$/,'')).slice(0,80);$('plBusy').textContent='Subiendo…';
     try{
       let imgs=[f];let note='';
@@ -1087,6 +1098,7 @@ function openMkForm(o){
 function goView(v){for(const x of document.querySelectorAll('nav button'))x.setAttribute('aria-current',x.dataset.v===v);
   for(const x of document.querySelectorAll('.view'))x.classList.toggle('on',x.id==='v-'+v);$('maqSel').hidden=v!=='maq';window.scrollTo(0,0);if(v==='pla')renderPlanos()}
 $('expX').addEventListener('click',()=>$('expDlg').close());
+$('updBtn').addEventListener('click',()=>{location.href=location.pathname+'?v='+Date.now()});
 $('expDlg').addEventListener('click',e=>{if(e.target===$('expDlg'))$('expDlg').close()});
 document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='z'&&!/input|textarea/i.test(document.activeElement.tagName)&&$('v-maq').classList.contains('on')){e.preventDefault();e.shiftKey?redo():undo()}});
 planosInit();
