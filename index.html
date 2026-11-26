@@ -265,7 +265,7 @@ const GH=(()=>{
   async function pull(){
     const r=await fetch(url('datos.json')+'?t='+Date.now(),{headers:H(),cache:'no-store'});
     if(r.status===404){state=blank();sha=null}
-    else if(!r.ok){const e=new Error('GitHub '+r.status);e.status=r.status;throw e}
+    else if(!r.ok){let m='';try{m=(await r.json()).message||''}catch(x){}const e=new Error('GitHub '+r.status+(m?' · '+m:''));e.status=r.status;throw e}
     else{const j=await r.json();sha=j.sha;try{state=Object.assign(blank(),JSON.parse(dec(j.content)))}catch(x){state=blank()}}
     st('✓ Sincronizado · '+new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}),1);
     for(const f of subs)try{f()}catch(x){}
@@ -320,7 +320,7 @@ const GH=(()=>{
     $('gGo').onclick=async()=>{
       const c={user:$('gU').value.trim(),repo:$('gR').value.trim(),token:$('gT').value.trim()};$('syncErr').textContent='';
       if(!c.user||!c.repo||!c.token){$('syncErr').textContent='Rellena los tres campos.';return}
-      cfg=c;try{await pull()}catch(e){cfg=null;$('syncErr').textContent=e.status===401||e.status===403?'La llave no vale o no tiene permiso en ese repositorio.':e.status===404?'No encuentro el repositorio. Revisa usuario y nombre.':'No se ha podido conectar.';return}
+      cfg=c;try{await pull()}catch(e){cfg=null;$('syncErr').textContent=(e.status===401||e.status===403?'La llave no vale o no tiene permiso en ese repositorio.':e.status===404?'No encuentro el repositorio. Revisa usuario y nombre.':'No se ha podido conectar.')+' ['+(e.message||e)+']';return}
       try{localStorage.setItem('wbGh',JSON.stringify(cfg))}catch(x){}location.reload()};
     $('gNow').onclick=()=>pull().catch(()=>st('Sin conexión.'));
     $('gOff').onclick=()=>{if($('gOff').dataset.s!=='1'){$('gOff').dataset.s='1';$('gOff').textContent='Pulsa otra vez';return}try{localStorage.removeItem('wbGh')}catch(x){}location.reload()};
