@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Welder BeOn</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Welder BeOn">
+<meta name="theme-color" content="#ffd100">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="icono.png">
+<link rel="icon" href="icono.png">
+<link rel="manifest" href="manifest.json">
+<script type="application/json" id="claude-artifacts-manifest">{"permissions": []}</script>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+/* VOICE: taller, directo, cuaderno de soldador.
+   IDEA: el frontal de la ESAB Tig 4300i (panel Origo TA24) + libreta de pruebas.
+   PICTURE: panel negro con displays verdes e iconos copiados de la máquina.
+   COLOUR y TYPE: amarillo ESAB, negro máquina, verde display; Barlow Condensed + Barlow.
+   LAYOUT: app de móvil, pestañas: Máquina, Registro, Manual. */
+:root{color-scheme:light;--bg:light-dark(#f4f3ee,#121212);--ink:light-dark(#151515,#ececec);--mut:light-dark(#5a5a55,#a3a39c);--y:#ffd100;--panel:#1b1c1d;--lcd:#7dff5c;--line:light-dark(#dcdad2,#2e2e2e);--card:light-dark(#fff,#1b1b1b);--bad:light-dark(#b42318,#ff8a7a)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{background:#f4f3ee}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Barlow,system-ui,sans-serif;overflow-x:clip;min-height:100vh;display:flex;flex-direction:column}main{flex:1;width:100%;order:2}header{order:1}nav{order:3}dialog{order:4}@media(min-width:900px){nav{order:2}main{order:3}}
+header{background:var(--y);color:#111;padding:14px max(4vw,14px);padding-top:max(14px,env(safe-area-inset-top))}
+.hd{max-width:980px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.desk header button{app-region:no-drag}
+#inst{background:#111;color:var(--y)}
+.mq{margin-bottom:14px}.mq button{min-height:52px;font-size:17px}.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}.chips span{font-size:14px;color:var(--mut);align-self:center;margin-right:4px}.chips button{min-height:40px;padding:4px 14px;border-radius:20px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:600 15px Barlow,sans-serif;cursor:pointer}.chips button[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.machine{position:relative}.pbox{max-width:620px;margin:0 auto 14px}.pbox svg{display:block;width:100%;height:auto;user-select:none}.pinfo{margin:8px 2px 0;color:#ddd;font-size:15px;min-height:2.6em}.pinfo b{color:#fff;margin-right:6px}.man .card{scroll-margin-top:70px}.mnav{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px}.mnav a{font:600 14px Barlow,sans-serif;padding:6px 12px;border-radius:16px;border:1px solid var(--line);background:var(--card);color:var(--ink);text-decoration:none}.mp{max-width:380px;margin:10px 0;border-radius:12px;overflow:hidden}.mp svg{display:block;width:100%;height:auto}.man table{width:100%;border-collapse:collapse;font-size:15px;margin:8px 0}.man td,.man th{border-bottom:1px solid var(--line);padding:6px 4px;text-align:left;vertical-align:top}.man th{font-weight:700}.man h3{margin-top:14px}.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}.fig{background:#111;border-radius:10px;padding:8px}.fig svg{width:100%;height:auto;display:block}.fig p{color:#ddd;font-size:13px;margin:6px 0 0}
+.saved{margin-top:12px;padding:12px;border:2px solid #1f7a38;border-radius:10px;background:light-dark(#f1fbf3,#0f1f13)}.saved table{width:100%;border-collapse:collapse;margin:8px 0;font-size:15px}.saved td{padding:4px 2px;border-bottom:1px solid var(--line)}
+.cell{position:relative}.pm{display:flex;gap:6px;margin-top:6px}.pm button{flex:1;min-height:36px;border-radius:8px;border:1px solid #555;background:#1d1d1d;color:#fff;font:700 20px Barlow,sans-serif;cursor:pointer}.pm button:active{background:#333}.cell.fix::after{content:"";position:absolute;top:9px;right:9px;width:10px;height:10px;border-radius:50%;background:#7dff5c;box-shadow:0 0 8px #7dff5c}#out .cell.key{border-color:#333}#out .cell.sel{outline:3px solid var(--y);outline-offset:-1px;border-color:var(--y)}#panelBox{position:sticky;top:0;z-index:4;background:var(--panel);padding-bottom:4px}@media(min-width:900px){#tigMaq .machine{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:16px;align-items:start}#tigMaq .mhead,#tigMaq .note{grid-column:1/-1}#panelBox{margin:0;top:60px}#out{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}#out .cell{padding:8px 9px}#out .cell em{font-size:12px;color:#bdbdbd}#out .v{font-size:24px}#out .ic{height:26px;margin-bottom:2px}}.pop{position:absolute;z-index:20;width:min(600px,96%);background:#0c0c0c;border:2px solid var(--y);border-radius:12px;padding:10px 12px;box-shadow:0 14px 30px -10px #000;pointer-events:none}.pop b{color:#fff;font:700 18px "Barlow Condensed",sans-serif}.pop p{margin:6px 0 0;font-size:14px;color:#ddd;line-height:1.35}.pop svg{display:block;width:100%;height:auto;margin-top:6px}.ring{animation:blink 1s infinite}@keyframes blink{50%{opacity:.25}}@media(prefers-reduced-motion:reduce){.ring{animation:none}}#out .cell{cursor:pointer}
+.wm{display:flex;flex-direction:column;align-items:flex-start;gap:0;margin:0;line-height:1}.wm img{height:clamp(30px,6vw,42px);width:auto;display:block}.wm span{font:600 13px Barlow,sans-serif;letter-spacing:3px;margin-top:3px}
+.brand{display:flex;align-items:center;gap:12px}#logo{border-radius:13px;box-shadow:0 0 0 2px #111;flex:none}
+.rec{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:9px;margin:10px 0}
+.rec .cell{background:#0e0f0f}
+.src{font-size:13px;color:var(--mut)}.src a{color:inherit}
+@media(min-width:900px){nav{position:sticky;top:0;bottom:auto;height:52px;width:100%;max-width:980px;margin:0 auto;border-radius:0 0 12px 12px}nav button{height:52px;border-top:0;border-bottom:4px solid transparent}nav button[aria-current=true]{border-bottom-color:var(--y)}}
+h1{font:700 clamp(26px,6vw,38px)/1.05 "Barlow Condensed",sans-serif;margin:0}
+header p{margin:2px 0 0;font-weight:500;font-size:15px}
+main{max-width:980px;margin:0 auto;padding:16px max(4vw,14px)}
+h2{font:700 24px/1.1 "Barlow Condensed",sans-serif;margin:0 0 10px}
+h3{font:700 19px/1.2 "Barlow Condensed",sans-serif;margin:16px 0 6px}
+.view{display:none}.view.on{display:block}
+.seg{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.seg button{flex:1 1 0;min-height:46px;font:600 16px Barlow,sans-serif;border:2px solid var(--ink);background:transparent;color:var(--ink);border-radius:8px;padding:6px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+[hidden]{display:none!important}
+.twl{margin:-6px 0 6px;font:700 13px Barlow,sans-serif;text-transform:uppercase;letter-spacing:.06em}
+#twSel button{display:flex;align-items:center;justify-content:center;gap:8px}#twSel i{width:14px;height:14px;border-radius:50%;border:2px solid #111;flex:none}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid var(--y);outline-offset:2px}
+.machine{background:var(--panel);border-radius:16px;padding:clamp(12px,3vw,22px);color:#ddd;box-shadow:0 14px 30px -14px #0009}
+.mhead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.mhead b{font:700 21px "Barlow Condensed",sans-serif;color:#fff}
+.mhead i{font-style:normal;border:1px solid #666;border-radius:6px;padding:2px 8px;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:9px}
+.cell{background:#0e0f0f;border:1px solid #333;border-radius:10px;padding:9px 11px}
+.cell.key{border-color:var(--y)}
+.ic{color:#f2f2f2;height:31px;margin-bottom:4px}
+.cell small{display:block;font-size:13px;color:#aaa;line-height:1.3}
+.v{font:400 clamp(27px,5vw,34px)/1.1 "Share Tech Mono",monospace;color:var(--lcd);text-shadow:0 0 8px #7dff5c55;white-space:nowrap}
+.v u{text-decoration:none;font-size:.5em;margin-left:4px;color:#b8f5a6}
+.cell em{display:block;font-style:normal;font-size:13px;color:#cfcfcf;margin-top:2px;line-height:1.3}
+.note{margin:12px 0 0;font-size:14px;color:#bdbdbd}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+.mut{color:var(--mut);font-size:14px}
+ul,ol{margin:0;padding-left:20px}li{margin:3px 0}
+.sym{display:flex;flex-direction:column;gap:8px}
+.sym button{min-height:48px;font:500 16px Barlow,sans-serif;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:8px 12px;cursor:pointer;text-align:left;display:flex;gap:10px;align-items:center}
+.sym button span{flex:1}
+.sym button b{font:400 15px "Share Tech Mono",monospace;white-space:nowrap;color:var(--mut)}
+.sym button[aria-pressed=true]{border-color:var(--ink);background:var(--y);color:#111}
+.sym button[aria-pressed=true] b{color:#111}
+.ans{background:var(--panel);color:#eee;border-radius:12px;padding:14px;margin:10px 0 16px}
+.ans .v{font-size:30px}
+.ans p{margin:6px 0 0}
+label{display:block;font-size:14px;font-weight:600;color:var(--mut);margin:10px 0 4px}
+input,select,textarea{width:100%;font:16px Barlow,sans-serif;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);min-height:46px}
+textarea{min-height:90px;resize:vertical}
+.row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.btn{min-height:48px;font:600 16px Barlow,sans-serif;border:0;border-radius:10px;padding:10px 16px;cursor:pointer;background:var(--ink);color:var(--bg)}
+.btn.y{background:var(--y);color:#111}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn:disabled{opacity:.5}
+.acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.thumbs{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;margin-top:10px}
+.thumbs img{height:110px;width:auto;border-radius:8px;scroll-snap-align:start;flex:none;cursor:zoom-in}
+.ent h3{margin:0}
+.meta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px;color:var(--mut);margin-top:4px}
+.meta b{color:var(--ink);font-family:"Share Tech Mono",monospace;font-weight:400}
+.res{display:inline-block;border-radius:6px;padding:1px 8px;font-size:13px;font-weight:600}
+.res.bien{background:#1f7a38;color:#fff}.res.regular{background:#c98a00;color:#111}.res.mal{background:#b42318;color:#fff}
+.cl{white-space:pre-wrap;background:var(--bg);border-left:4px solid var(--y);padding:10px;border-radius:6px;margin-top:10px;font-size:15px}
+.err{color:var(--bad);font-size:14px}
+nav{position:sticky;bottom:0;background:#111;display:flex;height:calc(64px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);z-index:5}
+nav button{flex:1;height:64px;background:none;border:0;color:#bbb;font:600 15px Barlow,sans-serif;cursor:pointer;border-top:4px solid transparent}
+nav button[aria-current=true]{color:#fff;border-top-color:var(--y)}
+dialog{border:0;padding:0;background:transparent;max-width:96vw}
+dialog img{max-width:96vw;max-height:88vh;border-radius:8px;display:block}
+dialog::backdrop{background:#000c}
+</style>
+</head>
+<body>
+<header id="top"><div class="hd"><div class="brand"><img id="logo" alt="" width="56" height="56"><div><h1 class="wm"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAiQAAABgCAQAAACHrKGoAAAsSklEQVR42u2deZhcVZn/P++t6n2r293Z931PJyQh7DuCQWEGYVBBVh0UhR8qzwyuo+Ly4IiMjIq4y4yo4wIKguwoIfvW6ewb2bdOuqq703vVfX9/VCfpJF1V51Td6u5Avv08kHTuufece+55z3ve5fuK+xj3YgxF2vhE4BeHzJt0QWg0r8rItJqeiCY+FHu2IY2GxQQv5Q9SbtNGn+HWSKMPvT5t4JbyLBcZX97ITeEXervP4ObxK24yvryZ28J/6O0+v3PgsJwj5pcL5DEFJ72HyUSp9KXXBTqjKK2GxTCZUpsWqrJSm3zp9RmcwTsWDovZb9NAYVqsLJ1HlcPZpLf+T+31jJbCdBq25lIlQasmDboMz5den8EZvGPhsJO1Ng0EJtM/nUd5RVqF+NFpRabIwLSG68p0tWohe6W63o9On8EZvIPhSKsusGxTySQrI0MnZJBMsVvECe+EjtAx6cgkHcJYyyYrSc8gdAZn8C6Cox4rsLNb5jG7zvpBJehYHeaLQhLvw5wK60aDoIoSmz6oslDb/er0GZzBOxVOGFnPDpsmKkxzrS0UQWSu5PnVbRFmR3Ptm3EWdq0O6yrxR406gzN4ByMI3n5nNdPMmwiM10FstXuQly+zxDeFBBjPEN62a9LqMkXtzDRvsz7sY6e7Q9mxHnXt2cn9jP/dI8o73YVUioPEzfqd//csVebeRSE5SPwA3vmbE0fT9W8eHu+MyIIgRGM58/mwzSLXEYxyt9otMGcY4y0XcXKMZKz7tuUiH8x4ux7Ics2SHCkkt/NjE7SQMorF1X70I0QxRQQlV5V2ojRyhDpqpZZ6GrU+tz2382OMvkM+QTqF6dGZaQvkFpJHDg4Qo4O29mbXO7r0si3W00UpgU7xUEBTMaWUaLn0ox9lFGshQcnB03Y65Ig2UCe1HKKBBq0PRkOAINibC3oDlcQ6BeGJG18QmgitkDosTA5SoDMHvWIzpZVEx8oIk0WsJ3UwYR+KdIa+gsWxIwcmMMDmpanHfPHd9VuGAwixHHEZzjSdxCiGMYhyggQIdFlTdG7IHjHaqGWfs5NtrGcNeyUSiIUAiPjdwR5FCQFA8PIkxEgm6tjcwVRQSiFBoIMW6vMP6R42s56dEnGjoH1qzKGj2mM+LqOY3jxBRjKUQYQIEsA5KepK8YgR01Y5yF5np25lHWs5UBjxVICA77b9spM+qFQId3sPp3OpdZDjeDkaiCtWourF/xsEkO1s5DzzRykyuzZI1LyFIzKLfKM7N6BaZiRK5hKkw7wPIzg8G7sYkn2ssbo+BUrJpwNB8xmp58hc5jCCkuOWoxNHLUf/FyBADvlaxlgBaKGBzd5SlrCEPdLm0kJ+n1papgjhAF4OIzlPLmA2wyiOvw3t8vHH/68tHGGrLuTvLGytdTWXPHb2cv/LAS+uUY7jXM6W2TqUYsk5+boTRiISIABSoC4TBNAm6lnXtJQlLONAtMMFHA77180cploEYW48Oa7MjevNAS1lNOOdYbH+uBQSEIhqlChR7eCVIIB3SKrFQpAITIgOYI95i7Zc52zDS9drLe8zunISA9ht3oeDBc5My6PVBmwPT0ngAp4wyrtQ3svZDJFcDLWvOI5dWSAFDOACWtjNQp5nAbtFK/z89HoELkCJdx4f4FKGS27Xg++pb0UKKNB+cg4fZV3+0zzTf9OuXjaCl+PhBJigF8k8ZjJIA3Y7/zHxUkQRg/UKjugO+Yf8jcWxA0q5b0cdKeIbzDG8WLmP33b9RQhFinUu75GLdASu5nftux49nrfFd2iPt/Sjp0rSJBiuY9w95otMhugEIy0D1stq5pkE4esQJlXsNl8+znAZbTFCQJYPbvBnp3dRyNOZ0X+S98t4gqcaU20hUMA4HcdNuiH/Rf0jq0Lt0mctCKe+D5Ay7wq9Q87XkJyggSQdM1oic2Uud+x+kifd3b1lM3EBimSOfoD3MkrSTBk5aWzFTGEKt7I28Dx/Yl0o5s+xVQQX89SUguN/LMNBi+VKvZPzKO9WvB/9Q/xoU4+7koMMsXqTk3nT1ELhwiQGGy0dZQU1tHUdTsIXVMZ0jK0kLjqaoRYjRNtkvlXQbwKU4UCenMttXM2xeFx/zM4CeVRRJR/xnpf/kcWh1r5vMyklADmcr5/iaoq008NhMWJAJ/AQ1/BtecFt72lR4gIUc4l3m1yO66cjEoAiPVvO5jb9s/zaqw51OH5oJja627FrXRy8STygN4pB7FWnLNW9WmPZOQt7gzpapcVGptY2rWEHewxHPtszsLt0QphhIp66YJeut3wnp6AUlw6HmTzKb7ldBvr+2XVa/Bmkd/F7/R6zNeCSVipUDyFEEAbzH/xGPyBFdoeBE8bsyHn8VD+vFa5dFmZGKCOEBLmQH/O/3BCXKX5DAEZxv/5JvsGkPAn14PiOw8VzYlfypNwpJSbXdwoSr15WWMktqFKjBwBIvpxt9sHIbnZrrW4xu1qr1HgqNYfZVuOD1eyzbHES+hOEfrn36+/4hJ2/yB4C/fRf+Z3zIINyfMqN9B9lRETn6s95EB+EqlbyOXmUoUELzT0TlBOE4folnuJDGDkEMoEM4wH5Q+s9uEEbl6ovKKVAnHk8rrNNhUKnIBFlsWWk0xDGmF6q/XWK0XWwVQ62N7HR7L4yUCYb97cfE63G58mySEaxXy5TRM/hJ/ItGZfJfcwhyGi+ov8TvTzmZGWzzBBlEAzdwK/kKgL+jJdcbtb/9obHeqD3IQh4V/EkX7Q7ImcwPmGyPsJPvdmHs6P8JESQ5vN4RMaYa4ydgqQerVa7/beSKWYqdBkyTQaYSDaBDU6jo9QY5reU6YwZRheWIhNlkNX4GlmYyT4XgoKVd/Brvc4yKD9DaFAulyfzP02Zy//25INTogzNk3/l+zrB19s6XCePOINcS4XaFiG0zPsMv5SL02XjSQ+SJ9fLb9y7KAj12DPL8YbzTcbbtDn+UmpZYTXAHKow8vOoozMwspDQTrXqEagx1I4cZm43snuo6BSsZkK3szHd0KA8QojLl+S/dHS2FeCTIYAOlm/wqI78ZA/vY8kQgrzAp+Sb0t/3NyJc731ZS7OXE+USgqHyHR7StMgrMsZYHtWH6N9T1iAvj/vkArs2xwRJtEWWWAr1mRSbXBYokrMMNaQmXVMHsNssPkSRKjE6PgbymGlp11uqaZrLXYqRQXyHB9Qq09g/COTpHfJjZ5r2EcNrCA3K3Xw5G90R1NHb5C4NZEcpKUdhLD+QuySvd+YTKOF++R6jnB4QJS5cwEds9a5jlweUldTZzISMc4wOC1ppmhKoO2UPgNTLOrOjkA7TsSa7rpSI2Rko3g/okGXnpEUfUEAMb6h+l9vJ6bXPLi5MrtQfMzvXThHLCspQx7lRvpitVSBQwGfkomww2ZXjwWS+z7V+JoqlMcYAN/HfjM3J9tagFMpH7anLjgmSery1usv8XSmEmG5iRZDJxh6LtV4YILeZGlEjUVIkRr4YHaMWUTICh1m+Iq39LQ8ZqN+Wm3r2JJ1gHOfww46zersXEEDO1Yfol8WRwlD+nSwcPGLIePkvrupVKdI5SL2Gx2Jjs9wTT+ekM9oun7uEWWa+dgQKqUod01cBcwy9kcqa+laAmOpqPWI0mAAzNSXLSQiqLC0kW3XLQctXSTzsrVS+yk29u3sdh8yRx5jcu5YSF2+EfNPcx5cu9GLO9fueIWQQD3Nl35hOQa7m2wxNh5/QEEpuevExXQRBpEMWiGcuShSmxVLGksSKdIbhsmqUGkcBDqFrqDXsxZTUapiXQ5VVAgCy0LHg1j+KSiTX+X/clly8qu8/SXE+DzOk9443FVAgn+WC7C9FcSwDDlPChWK+pNcmvyo785lgVoXr+IqWZW1r8Bgpl6XTsEt06k/4txr2M9i0qcAU7UcKZmQZZEompHWy7ughVw6yAbPMmDEykl3JL3FCNsRNirSxtMkitzmOUsqk7lruT8wDpx4H5aC02t45BYQyBiQ+Ost79UF9MNTUO6HzxdLwPm7tCwc9W7gQ4E5uT9R3RaJ6QGrFbypOR10ZKEUJVo0jt+hWvlPakQ2yJ4WLSOvw1EWQfIyyzbJVjAUJMIAJ5VuSOTdK0HEMNezYRj2mhXitznLmmTSSImZVvJk8dU8GqYVPXNA91JTQZvkqHeom8UUt7360Cgf5Gb9nl98MJwp5zNCPcm2CQhsBuUNWRX/uZoujKQkqqR8qn+kjriNLOHjnygNakGg+ZTuP8yy1vs+nUMA53COXdCdJBM2T+1ld9NeyVPtnGpAA56cXLHjCp6cNzjIutGidx6zYX1Pc/mxMmVqXa/OxP8dYTZtRS+FsCZAktHEQrdPF7lPe5L1tG0NSglfkfFamJxSah3jA+Y0XzTzvt1vsY6kc5q4Eu2cR/x5Yzir/H5sK6nCrzvFnvKaUV/6gDK+SzzEssRjRT8iLaHbmU/8gy3hM39/dnQX66+dbagLZoWNJM+b4REGizOdem2Q8qXLySaKqWzC1tlLtHBMHDbgb2M8Igz4gE2MDk3Gj5EjrWcbCDABZELBVRyil6RpuSPRNqfKU/E6j2TtehA7xsJ4tVQmeP04+o/e4R3pWJwkRm8Ttkkk4fLPu5RAN0oxKEcVaKYMwzvHKBBrQm+WKRP8qUR4PvORptuazPx3b+brMTBiMf458IvBlG1qvbOMEodGIu55djDJtLDCBQckomJ1hTDCR2IockLVdP3PdznYxECQCo0jKjXKklKk2u4Y2s9g2SrKMpkHcK4njJCI867Rnk3ooQsnbgVdJIEgE/Wee099nOY78JDgBvcW6jlAntIkaeYlFbOeANogHOU60WPszTOdwObMkq66oEIzj44mTG/QAz6qXPbF8EHBrmM8HE1zgcHvH39y/9wYbS7ea4Smn6p26jlEWqtpIHZGYgrmS6FgZbni3t+XEohjNspKLjVqGmJaMG0UHY0SqdAzb2GQ7QZ4Erpe5if9d6tmVbQYzx5PtRBPqk8XcI38vP9BzFMMuOp4b0lH8tY23+Km86tTGFEAJA4O9aISIbpJXvcflbD6s12WBDeRoD4JymySxq0mtHsz6m2zV7YnGJ+hA+bis6Cn+b4U2qdN97JKwtIPmEJQCCimgmGIpJHzSZ1fY1LSMeRZzX8SMyjcSLbuAxIyYWkFgidfc9TfqyWJihie2ufpEIgbZHBiHVbqerLUhkQTIJzCIW5JlHqmXfTW0HrctcWynwFze7/ysB3WSgF4raeQa6S4e5dd6UPAIdqFC3gvAQFqhXl6W+fpneZCzs2E2yUHGc2NiT5Mi7U7236OS3B90tZ5f+bfsl4FUZC+v8ZouZw9tRMUDFZzOnwAByaXlJEHSQGABLRiXv1JkdkNCU2drrjPX8EYduuRE67eDrmevDDPqxTQtJ0H8WDnts82SCzvhsVAtF30x0StIEUHaE+s3+e6v+XJz9JmeK0CqFfyzrdtXoZoH5HWNOQlIFOPMxCUEW3iGGr7IzVaza4SocL0YH/CzhXDSuDCBkH6k/R80W9zSEgpIHb/VX8oaWvSE35983UkT3QgbZbtVfOvE9oRx8jLU2O26++RCVGF4m81mw5WhzoREFrjWPJ1p9fYaWWJrQuso4kbpUbKA7iEp/lXncGFPRbm6cCFTrZst42O5rxCLpOBibSSMwFY+y/es/fQpUTaIa0+LyJcrnenZyztQBJZwm35GlmpLExEiRAhTR7jzT11/TnldzgFWWj1uhI7pfjAhZJIMMRRKm2X7yb/yGmS5SVOBcp3mJVhFzlCxMvfperWs3+fizJRzToe6nlLE9RbklBlB87haLInadJN8Wpc2GhI6hwmjdXyNJ2wKo6RGBZzL9J55S5lB+sl1wax5xEX1OW7T52gLEyFV1N0pgiTQqkttJkYqmJTf7WA8R6u0yHCcS71TVLQGWJiy/52jkFm53WoEpTAao+PRsfGsEkvlXx0upbJvZGOkxIW2TPppYzAXWbaI8NXWt+ppsWqijXxdn/VTjGtQ5vlXpTq70MtbskbhqS/qvYENkVSh6504RZBEYYlh2ziEqsZu1UAnj1mG3KvtLOruFrpe9xr2Ykb30QUqOtmKwLSNxWK5v0kxl9u16EUM5bye4DftD7NkuE0LVX2Kp3OtJUIOUqsPscmvnl+JDmHu6aBfAjCZGdngc1V0DQ8GtptH/5+yfsPIFtlm9SKnJ/DMlDPJ8A47dWN36qzuwbAehA7Vbo1jwQBWFhKt02W2bj0dbxOA38sIcKnaVRtMD45cpHaHqC08TovNDhZHLe0Eqvm+ITlnSsxHp+nI00S/RIrkgqyE+x7h4aLVLRbe5e4UgXqWWPVteHcVca5EJogRPYoia51uNY/fNBpz24eY3p0ZUYplsk0+s6wVi9p9AOXIjGwybfgLQaZ5NtlUaaK9XKusviHlf2Pr0osTPYJ6/E7m+9PzAkfOsrXt9CrOixr7WE2hyPP8uVltDpndCBKnXZeqjSW8kvGnqlcvw1RCRovY0xXRbjla58FiM/eW5DKtu1AsHc1gq+JLS8QyxCeWo9OkJ/Z4vzBcR/v+5Z2KoZac/TvkT07ayW9hOMgvrYwrCeHl6azsvx7/oKNkpO83DevPvEa7oMxuBMlhWGnKBkKcxnDiqfk0oTydhmO0iFtYlCglWteactvLND0lQL0MHafGJgGFIyzDsrKBFGJUaqNHYFA9QMuYEM2y5u7CBDMu3c4+wSvORvtjzXFE4CX1JymxDKPiIdm3opi9QOkvY3xnsFzIYluSgu695dssjVdTYqdauUtNXWiyO3EdG6kVU2f0xG4OUo5MMre/C7pfV1kHPpdisiPkSFG2IzhCUGwU/TApP8sxEoJMt8kilTZeyDTyN1bL836sbhmeOotH0GINZjtizXGMyNULGR3zdWPQKC941mQn3X5S0iILrR49TU8d8hDT5D9Nov8EmlmuZiqvyynFsqRAreIBZLWz3+Z6ABmUmqJAkQqZmHUDXi5TNeXyFRjrZPsoFrA82GxjZaaZSOLxmlro0QkxjBIDedSfsdnNnRpMtNQwoG90rr/zWcsi+9Ie3e9NMV1iZWkZenK6cyVUiZnG5cmKSMJneaorMJOO+Zx1ylZSZuw3iru8FqTBXjbYKJuokA9rhcvPrW9vBhcX5up7jPKsBzlZDkpT16ogPVRnWhwV6tE1mTuBP40OoMBA5Jdzq2SxZFUZEbgCswSTYf4mCcgO2Wx/zOxWloUJrWOXRaWtUiaXrer6cHGoMuQAqWdZQBMZJuoIrWGPEXGz6FQtOrGwloy1otUPY1v/mFLol7qSngA6jy/Itz+9PzsfX660zeFbJux2ghZruVWkkD0qbYrVqke1+kA/6TTpYizLOp2MH1BYaXI8FIebZYf3w1BW3qMQDeZexlfNmOV0oB0fcUqsTcdsnUAp0p2y3kKQFDBVpesijJaKKVPrbtYns29KmJWG5swJMoBtx/9aik6h1OJAsYP1NuqqC+TSVmk4jbncS5XzjK73x7vQ9RVR0XaO3GDK/CH5WacGqrDiIW9hnS/rMcYKvPRzZEJATiBaaUh8UMyXnXP0Obb6nuvjMCBwER9QU39jyN/IIN0SS8NelaAL9e3uAq4zvYmgE50iuvCua39TDhBZTtLwgUBbdLHcbDS3wxnRVZAQZLKNY1ZWicUZ26WV/NFtN/Ihs+9OIKiXyUW0+F7GSQia52uD5lrF+qYBDdlQW0ozltlNCe+0k7CNLtQVRcQkMLXjJrnGeOvJ51qupi0L85kjNnz4eT6z5+8zKil1EhIsNBeW6BExKskZpzukvKsgYaxZUSz1WJaTVKJ7Kqs5jIETVwp0pvv6ce+3U2pjIUF5q8Iz99mEcS/mYZljswMKBKVHiAKTDVMC/ifenwTXnK4TOIQvdsswoX3U2ridT3gvTuB6vmb1xcTjl3o/69vxsw/aTn0alVgSLYMwusUsiZ+4RjJEu5hbXWSWodv1MNXJS+nUwXp2GolIkVkn8INWiEXde63V6npjSVyGO5XHdO5pkWx+AgScdAl+zeCCVQUnPWgV/phsbIclzTOSS+5FPCKTTpfQ+BOHbSW2U6EjvaNawoXg7afG4j6FXUPUJRfDoliyU1LaJaSOVYYTPF67BKvLBKsPeiNbzWvrOXnczfTT8bNT0GzUyO3yBLG0wRz2zcpwRCPphZJoMffbJRn2HQi+FsSIpRfRk3hHjcpC8yhPCTL9uOjQgYw1mVBFV6T2H5R7usDQmzKSkUfFWQitskobW9luExM8kKtOmwzREyDg2Ubv2iEglrkqjb7xiXgSTlO4T+acbL6TbEI99ZGPRdQ+hoRkgqQBlmIj38cdDVF3YRgjTCZUlEWa8qMOq9QYhuxX6Phj20oOk1JXJj4K7WB+zGKwOlQrTkd9BN8/vFMRQ63O7OKbudJDW9IT7zLKMOqpD0LUX2Kn9JBsqe1kveliUWRElxD1iSYecIWDsia1/DsM29hqaCWp2n10ROXmZTWAfdRY6denqxQBiPpPTtgVjlgmMXb4dtTStEfmnMYz2iFZnU8zJBEkXp2uML2NwNBjVYMdM5ZUQbeyxeQ80XZYqw3nuco7auTtb0Xfu9qSOX5vlkO6son2bBIGA2qd+OjTgx2TrMXuu7xTe6iwQxbQ3BcKZSXTSGKyGPOIw3ydFPcWS4EYkv7KqrCRXSKg8pbhxzniWHD2SPO8X1SWz7D6kGSfvHZ62kiAds2qIIlh6YXJ9cv35YnmpzkrazDeNPscGrNrPDdDkimsR5ebp0GpMC2enq7DDFlSYywwo9ZrhNXUGplv++tYNx66Ps08WkKP6KI3rF5bY4v+yNw93sfQKukEChgjTy0zlvJ8dKKnGZqVW89jeiCbbyWLiGTXeG6G5FO4z9wFLMiEwgIoQceoWTDaQa0x5sfbzTqjXpQyUQU8hykW9p09YkjpeBSlsIIHdL15C+0zP9SL30H6J2CAraWi1K8AuZyAWEWwHEcb3kt8Uc3ilaBPzafW2tZhygaSmsXkCEuYZ3yvITqIrSoywSQEW5H1GNMaxiJOtVxmdOk0yaUt6GLMli6wzLZsVB0hr+XZgu16KxczI7VxUVtlle85NulB9HUvq1b+GkItNnYPrfCrJlC0mLL0bCT1lEX1F7JebtELmWhQ9rxRqvuCZQIQe7rybCDpEvA8WU6DsWNskA5ja05uokLWp6A61zhyQzxZTKtJwr5Mp4g2GcoQw6RBJMbSRuvs0whlymrv35xJPG3AqbVfP+nsMLpxtiG0RrOsCosdS19/9av4Q6VRnni3qCcU4y1ZrBfyFAOTX6vIZrnDsPxOtiHSFOsDNpKkgqQet5q9mAqSMsaWvoEp9WCbLvKMNcl63FXUGtleBjOUOh0uAwyTBtE6lhekYbSvB0IeO9lqIEg8DfuTUZIptCd81+EkxcxPRQX9MC07kgQDaBssGdBwRwA3ymoOpxIkQAeH+4ggQUmPNNtfpJhuPcgqzLm9pogw3KRktyIHqbYhtNL91KSuBKxIiInuap1knsgk29mQru8vQqiN7UaXStar1/cZaEQaLYgEChlTXp352xkuW0aaMXgkRphQC7sMtkJ5N82nCVLYy712WWButGSqBnW8mqmXNVjRGkqjLE+twAgUMpGATLO49RK1Zqg8jmiHYbDcuwgSttqt85mS44OStDXArMz9P9LOpjPzaY8UL15Uq9VQJRdkuDOAcWLAjSGw0rFTAzxWmLgtFSbQ37xklXZkZqxylE1k1Z16GuIQdRaF6B2Z3u4Do4aWMMeHvsdkjaRDyPEuRwpBUo9sEHPamXKZhlnq/hFjUudOhKEaA0+/wASmmpXmAmC/rs6EfbwBNvUN60ffQbRO91t4baCKjIt2ueh0NSokkbI7m4mcvvHyvYWUqqAewrQgBIR0phk1jB5U61OxHjCLatGhXEClsWzYYhamnxiyW7alvEac0465JH0UdYgFDbPASOZkzGXryOXpRpF0RRhvi6YISxAI6BlZcwJSft4RT+cb6w5BuVTGmFwoq8U6jlBadZHRdSVcq8Wm8ywLvQwDxqWZt1Jdo7lqyDb3TkAbrLYK287ReZm5gMtgMO/zxx2l+6hOeU1J6sIf7y6kFCT9oMZi0V9g6MlfErQPz/JkFSYkZoVqTDmkbSxyMjwQi6eLkmevKFIsA20I7U9vhGGDYRGRo7hUpmTCQRkTvUYnZ3CDLgh5vJn8sKtIqfTvgRLKpxFSCpJa5G02GN8v38Rurg26ys5CQvzzXMceI54T82PEDt2QqRf+MLIqpSpfytTTOFHdHrvYYiOfZYjcmP4eX0FwMB8xr6mYHI0qi9mTovdlTD9jYe8KgyUXqbewkphhL2stY9Lj2K9rfO7JOt2Z+U28ffqPZB+eoMLl0dOWOsce0YO6xkZuKnwoZ0a6RU3FkVvErJiUAcLIJpYmfR5awGU5fsXjviNgIEgKVef7Rc8bh6xR69KYxKuSLvB19CqLgn6MzJO/SmNyUcK5en62q//2HQSizLdMJRvBvZSkI2tDRM/lHl9ru7TwnKTq/VWxqRlGv72jYCBImpA14kMIcxcsyEsr4UlUVqqPhELaxCI/PLf1sJSFyXdgLdNPaeW7RZREYJGJs/4oBEVv1Js9x+4NzSIEQ/mKDvfz3FgHryTPNhd0CPdIYfaKdp5uMLIm6D5Nacc2h9brqvQifsLoFrb6OPrN6tPdBof1jyTlRBDkcrmbnGw5b8oJ4ab46VHswMjH1uX9FPK54NUBi9pa5WyFSh6Sy/w2P3m7+Utyv5OI3MhNUcnWW3VTzmffEmJGCmGsKbCca/2in5HtbE63bLx3wFnLWb6NvhrzChRJsZPgX7kzRdHnXO5ne8dvQp7/SVYuMWRQ0mQzZUdPppmVN4Vf4To7phEZzn9GW3Nfcw07qjgD9Gt6i//VhcTj//iwjkkqoEr4Us5uXjbtrQ1CtJM7goqE3iMhyra+FFFtJEgclcUcMc4CToW1Ttq1552YLORmfz4c7WAJxsxKydFIxd7YL5iRwnNQybcL0N+Fon6KkhBAofM+vY8RCS8SNnJnTwqSRuVV3raoHx3HZB7v+IL8xW2PpfAfuwg6Vb/CPxmwh1gjQsUG7ym+kPxLk1E8xv3eS2V+nrcpR9FQzge5m35JBMlCudv/cacPI0FSj7vOKCfSAKosTF2CIhEihJYT8SOCEYiw2L8FrSpPc4NekcJSMphHZQhPhOo9y0CL7lGBhwZkBvdwo5QkOS96fF93+TZYA9QS2sHzYitIkPH6BDP4SXCHG3f5n4JOld71ruOzpuzA9tAoT8q1qbh1dKI8IQ/pU6EW8UVKlyGQxzncxzzyE0sRbeEv2hfYA47BcG/Xw7rU7MqUqGd5RgnYO9joU0824CPVUB3RgzwqKbzagvTja/yI2a2Om1HOeykuIfIcnSBf5Y/cSQlIgh+Qf8gve5oiONAhf7AxuB5DOZ/jj94ndbQE47aA4z8uLp7IYLmJ/+GHZE2MQB1s1e+lYrUTGMF35btMaCOU0Xz2xyWE5nCWPsLv5HrJTzafPK3P2EdiZROGTrOOttyl3OJHjVHZZMjfkQCxQ4HVnOvL2Jf4qpGSQ+xV+RWfThUOJ3l8UOcU/oqnWraF1MGzJKZx47GVkMfElg/IjUxIFeomh/Q77fuzW4PiVHQQXK4v6y22hlBBHWZRJZ/UN1hCDXtpIwYaIFcGMMk5mwuYSkHW4/uUP+p7+GCq50ipfpzzcn/OHwr3xBe63UZZhgBtBAp1mvNB/llTFJdT2Maj2uiHRusfDEVDUFlJnfb3YfLWBNK1tMYRk6XckXn9dW1hub8VyuoItfE9ZnNx6mtlDF/RDxT+nr/oRmkPoYZlcsoQFHHor+fIPLlKhyGp5kQ75IfOywVZLmZzKhqobI39Qt5rX5NQAII6iUlyJ/XUc5gjIEW4uJSY0FT4gTDlDbFvyrTUR3qB6fqf/EvL//E8b3tRF8cwIbwcBbygDHHO0/fLpTrQ4F0187Cs6GupPoaCpJ7QBt62SM5PhA6WZEY93Ii7jAiZ9+QgK/yucRXB3aX/ob+SEQYXO1Kl0/mYvikvsJJtpW2BThpEB+nCRV1BtPP8qSiSxwgmcgGXy3iKDUkTn9Uf0N4bfF4xvAXO0/LR9FoLQB79pX9XKkszJl5/0ETbmtBD/MBEFEoO5+lc7uF1eZHV7HQ7FEHhpE2ilOMioIQjhYzSyXIJFzNG803Ke6nHr3gKr4/wPB6D8WFFG2UxGYchawPLMn0Fupv1Poi0teYc9uZoJ/Cm8wW+R4XJ1SKMYAQfZLuznhW6ih3UUS9N0Q73GLdqrkSLKZZirZDRMoXpOp7h5FuwfSzkC3Kwdz67MOWt+jhXMNK/e/ZkwlIbJeo8rcPlKxhpQRJgPOO5jbe9tbpCqtlDHfXaXB7VY/PZEQgUUUIJlTquYYpMY5wM06CYC8jn+IYc6WtixEKQFEZbF/EJzZQTbwMZ57ZoRJaZHB+SQ97KRnmIJso8+b0OlC9bOMuDMpaxvJ+ohHUftbF6aaBZ2nDIJ6+1QMooV5f+lODYLSRF1vJZNvTeZ1dHqFoe56HMj6K9g0bK2/kh/bnPYgT5TGISN9DBIfZzyKn36mmVNoKaL3nBQkK4lNOfQpy4+BBDAanIm/Ige/qeGLEQJE0E1rAXE6U92YtYaVmqoDvEZAUt6dZU6+xJIyskK1bvetx2HtccPk+JndCVIP2k38nKe/xvaXK/b9D7xizyMxQ4DcT4hV7ENT2gSXh6OBMW+e5Rh9vENzTIJ8UuuA5yGCSDTvpd52xaaCDHoMgi7mtd3zdlsnFoVwOyLeMilW3qg4GzHlZyKEMSkV2szZZcD0Mzj8k3JU0/v3Tzt7SKY6+TTzW/vq2Xww0iFNbyDekBgmzdyW+zcd8wRPRr8gOLOtgpYKqBnDA6ZAGf9FYV9dHq9RYxos3NZgxlSVDHCl+MfrvZkOEOtzq9/GMzRKBZvsuDerC3SIQVXcBd4dcKtPfV4HpYzEPSkN13oTF5UpZn595hJMyX9FuZVBvIdHj8VT/mrQjYloTsMVgIkkKVhZJZ0v3GzC0kxMkNF2d4h/m5WS1zGEHbvZ9xt6zO5lMSQTv4vdyli1x/A2XSxBHw5Lc8kuG3kwpL9Md+JTyciggc0Ye5X82J0P1EC0/Ix2VdrmWESk/CQpDUwSYye5GLSbcS1QmQmC7PJCxC63RlNMvKQhii8gy36J96vEbsYfkW93gbIn2lFBwRaOO/+LG/cTvHoXBAvh7Y43/y3nGEoa35l3K7/r3HI0p38u/8G7vDZBaAlV1YvXrZpWvTXX8KrbIy6EvVWQ/WaiYMKZszZY43QT2KU8PH+XI2HM3dQUFZzF3ydQ75yfOTOeqgga/qzy3JjgwhLTzCy9mW1/Xka+wfehuPmlZ68gExXuJW+QGNfZ2n006Gt7Ekg4yN/dT4c8ILo7skk4ybau2Ro2aEDqh1/lNv0V+zW2NZVoLapEYf1puDf9aOSJ8rtROGw3yBH/pnsjyGKD/hR3Rk34DRQAB2yOe5Q5/RA5lUQ0oFRaFZl+mXuF3/rl64Dx9q4rDauOoILaSJNOm+dUtmWTZdkdMWW8g1aTaOyls9pZ42AG5M/q5LdQyX8l6dI0ahapaI6VYWygss1D1OrL2P2vXDhA7JlzmgD/iUvQ2ARuXnPERjzxzjwoDbrs/KGzKBq/QKOcs3co2j40GgTTawgOdYdWRfiTp9XohgK0iIu4DTIhYSWCi+7UaqLKPZLN7wlLa1rOzJpRYGQs1SQ43+kmlcxRVM0VKfVFXVHSzmBRbGtgWigj/J7NlChFCDPiKb9D+Y5s/4tUV+pF+nridd3GEqiTbqMlnG48zgvXoF433L/4nKVhbwAkuKdh5RKOzT89kVtoLkoLeSs9L5CLSVpVHf9IDDhDaxXdKrZLKGHmXmIG5uBEINvNXyVsFjzOEqvYLRknZQnSLKPl0hz7HA2xhoV8Qyh7h3EKGsnT+ykc9yAxmzTupeecR7gqae1sCOnotDdfpa/uutg+Vs5uklMsKOD+6ksUTZIwv0BVkk27yY0HpazOdx2NrkOljKR9IKeN7FxmJ/nDZx7GY96QgSlRXRXtL9I5RSAId4wXvZGcz5XM3FDNGgtWA+JCt4idfZ4DULip5GH109LqzRe/VluZtz0025UOiQN/kmbxDLYPVmiAiVOMoefdp5TkdyCVdyPgPVsUxj8DigS3iRf7DFaYvHMJ8ueshxWAqSOkJL0su9lY2yM22Gxe7QIYu5Po2Az5bMa+ulj7hBMIQTZSc7eYZRXCbv4RytTE0HAIo0aDWvy8us0YgAgdPi/HwiwpTiHHGe0je4Xj6iMyTXOlzck3X6C57S/fSyPSium5SjHWyObQ48xTiukvdwlgkzsyJwWJbyOi+xNdAYA2J91L6VGvZewh2yziy3tSsUFvtnISF+3l5Mg1irx7qH6t6erLj+UI62sC62LvAkk7haLqdKS5OETrfoWl7Xv1GTW9uR/V3Lw9xRH7P1XzQAIWRv2/fz/sQV+k8yl8EYUARonGRwlTwtT9dtKcc5+R1oNnudGHFh3o9oE6tiqwI/1SkyTy9jGvkkDoZvkGpe5WVZF4s4QIcv1JsJYDebacF6Ry8P6EQdYJ0poGyQff5++qEimZnGIateayJZi4C0x3Aa4yl5lVol13A5E8g7vqAUgVY2MZ+/anXxniaUmJ8HxG7hBpluUe0gytpwWt7mSmKAV+hM5Dy9hIkyVMsSprMptWzXJbzIMvZLt8c5d6DFYTfG+rBPNQS6ogIPGMyewcxinlzC2JM3a21kA6/xoqzRWgGCWQ40c3OYbsECGWVNOA01116QxAl2LFvpsX3YxxeUdsu+dwKNM2X1l4NDda5cxSUM11yQNrYznxdYHN0b8CDaQ/UH7N9sJm80zvpGjgyW0TqKMQxnoIS0AEdEY9JKHfvYrptlq2yOHXZUE2pjtv3O3ndQQB5CLBAYyfnM03NlCAGgia36Bi+yPHLQVaxJGdNDz8xmXw+YexchxPt4HoVcxuvV8j6O6AvyqmzTdmii+DS0hphiKE3EcBCEqCM5EpSg5mqOCO3STpRooCPmgeBlYUPKFso6qZpjBTKVa3gPu3lBXvX2OlEF/Kki0Hfw/wF5FQVT9WtMCwAAAABJRU5ErkJggg==" alt="Welder" height="40"><span>BeOn</span></h1><p>Aluminio · ER5356 · motos de carreras</p></div></div><button class="btn" id="inst" hidden>Instalar en el Mac</button></div></header>
+<nav>
+  <button data-v="maq" aria-current="true">Máquina</button>
+  <button data-v="reg">Registro</button>
+  <button data-v="man">Manual</button>
+</nav>
+
+<main>
+<div class="seg mq" id="maqSel"><button data-m="tig">TIG · Tig 4300i</button><button data-m="mig">HILO · Aristo 500ix U82</button></div>
+<!-- MÁQUINA -->
+<section class="view on" id="v-maq">
+<div id="tigMaq">
+  <div class="seg" id="mat"></div>
+  <p class="twl">Tungsteno</p><div class="seg" id="twSel"></div>
+  <div class="machine" aria-live="polite">
+    <div class="mhead"><b>Origo TA24 AC/DC</b><i id="tag"></i></div>
+    <div id="panelBox" class="pbox"><div id="panel"></div><p id="pinfo" class="pinfo"></p></div>
+    <div class="grid" id="out"></div>
+    <p class="note">Toca una casilla o los botones del panel: se enciende su LED como en la máquina. Para cambiar un valor, muévete con las flechas ◀ ▶ hasta que se encienda el LED de ese icono y gira la rueda. El pregás está en las funciones ocultas.</p>
+  </div>
+  <div class="card" hidden style="margin-top:14px">
+    <h2>Ajuste fino recomendado</h2>
+    <p class="mut" style="margin-top:0" id="recIntro"></p>
+    <div class="machine" style="padding:12px"><div class="rec" id="rec"></div><p class="note" id="recTxt" style="margin-top:4px"></p></div>
+    <p class="src">Fuentes: <a href="https://www.weldingtipsandtricks.com/tig-welding-cast-aluminum-cleaning-action.html">Welding Tips and Tricks</a> · <a href="https://welders-supply.com/welding-processes/tig-welding/tig-welding-aluminum-settings/">Welders Supply</a> · <a href="https://tiptig.com/knowledge/tig-welding-aluminum/">TIP TIG</a> · <a href="https://metalworkinghub.com/how-to-set-up-a-tig-welder-for-aluminum/">Metalworking Hub</a> · <a href="https://yeswelder.com/blogs/yeswelder/tig-welding-aluminum-tips-and-tricks">YesWelder</a> · <a href="https://manualmachine.com/esab/ta34acdc/27007739-instruction-manual">manual ESAB TA34</a>. Son cifras de varias marcas: el efecto del balance cambia de una máquina a otra. Cambia un valor cada vez.</p>
+  </div>
+  <div class="card" hidden style="margin-top:14px">
+    <h2>Mis valores</h2>
+    <p class="mut" style="margin-top:0">Los que tú usas. Si los cambias aquí, cambian en toda la app.</p>
+    <div class="row">
+      <div><label for="mb">Balance %</label><input id="mb" type="number" inputmode="numeric" min="50" max="98"></div>
+      <div><label for="mh">Frecuencia Hz</label><input id="mh" type="number" inputmode="numeric" min="10" max="152"></div>
+    </div>
+    <div class="acts"><button class="btn" id="saveVals">Guardar mis valores</button><span class="mut" id="valsMsg" style="align-self:center"></span></div>
+  </div>
+<div class="card" id="saveCard" style="margin-top:14px"><div class="acts" style="margin-top:0"><button class="btn y" id="saveSet">Guardar estos parámetros</button><span class="mut" id="saveMsg" style="align-self:center"></span></div><div id="savedBox"></div></div>
+</div>
+
+<div id="migMaq" hidden>
+  <div class="chips" id="mtSel"><span>Material</span><button data-v="fe">Hierro</button><button data-v="inox">Inox</button><button data-v="alu">Aluminio</button></div>
+  <div class="chips" id="wireSel"></div>
+  <div class="chips" id="gasSel"></div>
+  <div class="machine" aria-live="polite">
+    <div class="mhead"><b id="migTitle">Aristo U82</b><i id="tagMig"></i></div>
+    <div class="grid" id="outMig"></div>
+    <p class="note">El U82 es un panel de menús con texto: los nombres son los de su menú «Weld Data Setting» (en inglés si tu panel está en inglés). Los iconos son orientativos, no los del panel. Son valores de partida: la velocidad de hilo va según espesor y la ajustas tú.</p>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h2 id="migPrepT">Antes de soldar con HILO</h2>
+    <ul id="migPrep"></ul>
+    <p class="src">Rangos y funciones del panel: <a href="https://ldgsesabwe.blob.core.windows.net/manuals/InstructionManuals/0460%20896%20287%20US.pdf">manual ESAB Aristo U82</a>. Las cifras de partida (gas, tiempos) son orientativas: compruébalas con probetas.</p>
+  </div>
+</div>
+</section>
+
+<!-- AJUSTE FINO -->
+<section class="view" id="v-fino" hidden>
+  <h2>Ajuste fino</h2>
+<div id="tigFino">
+  <div class="seg" id="mat2"></div>
+  <div class="card">
+    <b>Reglas</b>
+    <ol>
+      <li>Cambia <b>un solo parámetro</b> cada vez y haz una probeta.</li>
+      <li>Balance en pasos de <b>1–2 %</b>. Frecuencia en pasos de <b>5–10 Hz</b>.</li>
+      <li>Antes de tocar la máquina, descarta limpieza, gas y tungsteno: la mayoría de defectos vienen de ahí.</li>
+      <li>Apunta cada prueba en el Registro, con foto.</li>
+    </ol>
+  </div>
+  <p class="mut">¿Qué ves en el cordón? Al lado tienes el cambio que te propongo.</p>
+  <div id="ansBox"></div>
+  <div class="sym" id="sym"></div>
+  <p class="mut" style="margin-top:16px">En los paneles ESAB de esta familia el balance va del 50 al 98 % y la frecuencia AC de 10 a 152 Hz. Balance más bajo: más limpieza de óxido y más calor en el tungsteno. Balance más alto: más calor en la pieza y más penetración. Frecuencia más baja: baño más ancho. Fuente: <a href="https://manualmachine.com/esab/ta34acdc/27007739-instruction-manual" style="color:inherit">manual del panel ESAB TA34 AC/DC</a>.</p>
+</div>
+<div id="migFino" hidden>
+  <div class="card">
+    <b>Reglas (HILO)</b>
+    <ol>
+      <li>Cambia <b>un solo parámetro</b> cada vez y haz una probeta.</li>
+      <li>Voltaje en pasos de <b>0,5 V</b> (el U82 va de 0,25 en 0,25). Tiempos en pasos de <b>0,5 s</b>.</li>
+      <li>Antes de tocar la máquina, mira el arrastre del hilo (rodillos, sirga, tubo de contacto), el gas y la limpieza.</li>
+      <li>Apunta cada prueba en el Registro, con foto.</li>
+    </ol>
+  </div>
+  <div class="chips" id="mtSel2"><span>Material</span><button data-v="fe">Hierro</button><button data-v="inox">Inox</button><button data-v="alu">Aluminio</button></div>
+  <p class="mut">¿Qué ves en el cordón?</p>
+  <div id="ansMig"></div>
+  <div class="sym" id="symMig"></div>
+</div>
+</section>
+
+
+<!-- MANUAL -->
+<section class="view man" id="v-man">
+  <h2>Manual fácil · Tig 4300iw AC/DC + panel TA24 AC/DC</h2>
+  <p class="mut">Resumen en palabras sencillas de los dos manuales de ESAB: el de la máquina y el del panel. Lo que el manual no dice, aquí tampoco.</p>
+  <div class="mnav" id="mnav"></div>
+  <div id="mbody"></div>
+</section>
+
+<!-- REGISTRO -->
+<section class="view" id="v-reg">
+  <div class="card" id="syncCard" hidden>
+    <h2>Sincronizar Mac y móvil</h2>
+    <p class="mut" id="syncSt">Sin conectar: las pruebas y los guardados solo se quedan en este aparato.</p>
+    <div id="syncForm">
+      <div class="row">
+        <div><label for="gU">Usuario de GitHub</label><input id="gU" autocomplete="off" autocapitalize="off" value="Carreterobike"></div>
+        <div><label for="gR">Repositorio de datos</label><input id="gR" autocomplete="off" autocapitalize="off" value="welder-beon-datos"></div>
+      </div>
+      <label for="gT">Llave (token)</label><input id="gT" type="password" autocomplete="off" autocapitalize="off" placeholder="github_pat_…">
+      <div class="acts"><button class="btn y" id="gGo">Conectar</button></div>
+    </div>
+    <div class="acts" id="syncOn" hidden><button class="btn ghost" id="gNow">Sincronizar ahora</button><button class="btn ghost" id="gOff">Desconectar</button></div>
+    <p class="err" id="syncErr"></p>
+  </div>
+  <div class="card" id="form">
+    <h2>Nueva prueba</h2>
+    <div id="fuWrap"><label for="fu">Unión</label>
+    <select id="fu"><option value="fund">6082 + fundición 5000</option><option value="7020">7020 + 7020</option></select></div>
+    <div class="row">
+      <div><label for="fb" id="lfb">Balance %</label><input id="fb" type="number" inputmode="numeric"></div>
+      <div><label for="fh" id="lfh">Frecuencia Hz</label><input id="fh" type="number" inputmode="numeric"></div>
+    </div>
+    <label for="fr">Resultado</label>
+    <select id="fr"><option value="bien">Bien</option><option value="regular">Regular</option><option value="mal">Mal</option></select>
+    <label for="fc">Comentario</label>
+    <textarea id="fc" placeholder="Pieza, espesor, qué has visto, qué has cambiado…"></textarea>
+    <label for="ff">Fotos</label>
+    <input id="ff" type="file" accept="image/*" multiple>
+    <div class="thumbs" id="prev"></div>
+    <div class="acts"><button class="btn y" id="saveEnt">Guardar prueba</button></div>
+    <p class="err" id="formErr"></p>
+  </div>
+  <h2>Pruebas guardadas</h2>
+  <p class="mut" id="listMsg">Cargando…</p>
+  <div id="list"></div>
+</section>
+</main>
+
+
+<dialog id="dlg"><img id="dlgImg" alt=""></dialog>
+
+<script>
+{
+const DEF={fund:{bal:68,hz:109},'7020':{bal:80,hz:119}};
+const NAME={fund:'6082 + fundición',"7020":'7020 + 7020'};
+const NOTE={fund:'Más limpieza: la fundición trae más óxido y suciedad.',"7020":'Más penetración y arco concentrado para meter poco calor.'};
+let maq='tig',mt='fe',wire='1.0',gas='M21';try{const m=JSON.parse(localStorage.getItem('wbMaq')||'null');if(m){if(m.maq==='mig'||m.maq==='tig')maq=m.maq;if(['fe','inox','alu'].includes(m.mt))mt=m.mt;if(typeof m.wire==='string')wire=m.wire;if(typeof m.gas==='string')gas=m.gas}}catch(x){}
+let vals=JSON.parse(JSON.stringify(DEF)),mat='fund',db=null,assets=null,sample=null,entries=[],sel=-1,files=[];
+const GHMODE=typeof claude==='undefined';
+const GH=(()=>{
+  let cfg=null;try{cfg=JSON.parse(localStorage.getItem('wbGh')||'null')}catch(x){}
+  let state=null,sha=null,timer=null;const subs=new Set(),phc=new Map();
+  const enc=s=>{const b=new TextEncoder().encode(s);let o='';for(let i=0;i<b.length;i+=8192)o+=String.fromCharCode.apply(null,b.subarray(i,i+8192));return btoa(o)};
+  const dec=s=>{const bin=atob(s.replace(/\s/g,''));const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new TextDecoder().decode(u)};
+  const url=p=>`https://api.github.com/repos/${encodeURIComponent(cfg.user)}/${encodeURIComponent(cfg.repo)}/contents/${p}`;
+  const H=(x)=>Object.assign({Authorization:'Bearer '+cfg.token,'X-GitHub-Api-Version':'2022-11-28',Accept:'application/vnd.github+json'},x||{});
+  const blank=()=>({guardado:null,valores:null,pruebas:{}});
+  function st(t,ok){const e=$('syncSt');if(e){e.textContent=t;e.style.color=ok?'#1a7f37':''}}
+  async function pull(){
+    const r=await fetch(url('datos.json')+'?t='+Date.now(),{headers:H(),cache:'no-store'});
+    if(r.status===404){state=blank();sha=null}
+    else if(!r.ok){const e=new Error('GitHub '+r.status);e.status=r.status;throw e}
+    else{const j=await r.json();sha=j.sha;try{state=Object.assign(blank(),JSON.parse(dec(j.content)))}catch(x){state=blank()}}
+    st('✓ Sincronizado · '+new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}),1);
+    for(const f of subs)try{f()}catch(x){}
+  }
+  async function mutate(fn,msg){
+    for(let i=0;i<5;i++){
+      await pull();fn(state);
+      const r=await fetch(url('datos.json'),{method:'PUT',headers:H({'Content-Type':'application/json'}),body:JSON.stringify({message:msg||'Welder BeOn',content:enc(JSON.stringify(state)),...(sha?{sha}:{})})});
+      if(r.ok){sha=(await r.json()).content.sha;for(const f of subs)try{f()}catch(x){}return}
+      if(r.status!==409&&r.status!==422){const e=new Error('GitHub '+r.status);e.status=r.status;throw e}
+      await new Promise(z=>setTimeout(z,400+i*500));
+    }
+    throw new Error('No se ha podido sincronizar');
+  }
+  const key=p=>p==='ajustes/guardado'?['guardado']:p==='ajustes/valores'?['valores']:p.startsWith('pruebas/')?['pruebas',p.slice(8)]:null;
+  const get=k=>!state?undefined:k.length===1?state[k[0]]:(state.pruebas||{})[k[1]];
+  const put=(k,v)=>{if(k.length===1)state[k[0]]=v;else{state.pruebas=state.pruebas||{};if(v===undefined)delete state.pruebas[k[1]];else state.pruebas[k[1]]=v}};
+  const snap=v=>({exists:v!=null,data:()=>JSON.parse(JSON.stringify(v))});
+  const db={
+    doc:p=>{const k=key(p);return{
+      set:v=>mutate(()=>put(k,JSON.parse(JSON.stringify(v))),'Guardar '+p),
+      update:o=>mutate(()=>{const c=get(k);if(c)put(k,Object.assign(c,o))},'Actualizar '+p),
+      delete:()=>mutate(()=>put(k,undefined),'Borrar '+p),
+      onSnapshot:(cb)=>{const f=()=>{if(state)cb(snap(get(k)))};subs.add(f);f();return()=>subs.delete(f)}}},
+    collection:()=>{const q={
+      add:v=>{const id=Date.now().toString(36)+Math.random().toString(36).slice(2,7);return mutate(()=>{state.pruebas=state.pruebas||{};state.pruebas[id]=JSON.parse(JSON.stringify(v))},'Nueva prueba').then(()=>({id}))},
+      orderBy:()=>q,limit:()=>q,
+      onSnapshot:(cb)=>{const f=()=>{if(!state)return;const docs=Object.entries(state.pruebas||{}).map(([id,v])=>({id,data:()=>v})).sort((a,b)=>(b.data().ts||0)-(a.data().ts||0));cb({docs,metadata:{fromCache:false}})};subs.add(f);f();return()=>subs.delete(f)}};return q}
+  };
+  async function shrink(f){
+    try{const bm=await createImageBitmap(f);const m=1600,sc=Math.min(1,m/Math.max(bm.width,bm.height));const c=document.createElement('canvas');c.width=Math.round(bm.width*sc);c.height=Math.round(bm.height*sc);c.getContext('2d').drawImage(bm,0,0,c.width,c.height);return await new Promise(z=>c.toBlob(z,'image/jpeg',.85))}catch(x){return f}
+  }
+  const b64blob=b=>new Promise((ok,ko)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(',')[1]);r.onerror=ko;r.readAsDataURL(b)});
+  const assets={
+    upload:async f=>{const id=Date.now().toString(36)+Math.random().toString(36).slice(2,7);const b=await shrink(f);
+      const r=await fetch(url('fotos/'+id+'.jpg'),{method:'PUT',headers:H({'Content-Type':'application/json'}),body:JSON.stringify({message:'Foto',content:await b64blob(b)})});
+      if(!r.ok)throw new Error('No se ha podido subir la foto ('+r.status+')');return{id}},
+    delete:async id=>{const r=await fetch(url('fotos/'+id+'.jpg'),{headers:H()});if(!r.ok)return;const j=await r.json();await fetch(url('fotos/'+id+'.jpg'),{method:'DELETE',headers:H({'Content-Type':'application/json'}),body:JSON.stringify({message:'Borrar foto',sha:j.sha})})}
+  };
+  async function photo(id){
+    if(phc.has(id))return phc.get(id);
+    const p=fetch(url('fotos/'+encodeURIComponent(id)+'.jpg'),{headers:H({Accept:'application/vnd.github.raw'})}).then(r=>r.ok?r.blob():null).then(b=>b?URL.createObjectURL(b):null);
+    phc.set(id,p);return p;
+  }
+  function start(){
+    pull().catch(e=>st(e.status===401||e.status===403?'La llave no vale o no tiene permiso. Revísala.':e.status===404?'No encuentro el repositorio. Revisa usuario y nombre.':'Sin conexión: se reintentará.'));
+    clearInterval(timer);timer=setInterval(()=>{if(document.visibilityState==='visible')pull().catch(()=>{})},20000);
+    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')pull().catch(()=>{})});
+  }
+  function ui(){
+    $('syncForm').hidden=!!cfg;$('syncOn').hidden=!cfg;
+    $('gGo').onclick=async()=>{
+      const c={user:$('gU').value.trim(),repo:$('gR').value.trim(),token:$('gT').value.trim()};$('syncErr').textContent='';
+      if(!c.user||!c.repo||!c.token){$('syncErr').textContent='Rellena los tres campos.';return}
+      cfg=c;try{await pull()}catch(e){cfg=null;$('syncErr').textContent=e.status===401||e.status===403?'La llave no vale o no tiene permiso en ese repositorio.':e.status===404?'No encuentro el repositorio. Revisa usuario y nombre.':'No se ha podido conectar.';return}
+      try{localStorage.setItem('wbGh',JSON.stringify(cfg))}catch(x){}location.reload()};
+    $('gNow').onclick=()=>pull().catch(()=>st('Sin conexión.'));
+    $('gOff').onclick=()=>{if($('gOff').dataset.s!=='1'){$('gOff').dataset.s='1';$('gOff').textContent='Pulsa otra vez';return}try{localStorage.removeItem('wbGh')}catch(x){}location.reload()};
+    if(cfg)st('Conectando…');
+  }
+  return{get cfg(){return cfg},db,assets,photo,start,ui};
+})();
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+
+const torch='<g transform="rotate(32 20 13)"><rect x="17" y="3" width="6" height="14" rx="1.5"/><path d="M20 17v5"/></g><path d="M26 12h7M26 15.5h7"/>';
+const T=(x,y,t,s,st)=>`<text x="${x}" y="${y}" font-size="${s}" font-weight="700" ${st||''} fill="currentColor" stroke="none" font-family="Barlow,sans-serif">${t}</text>`;
+const I={
+  tig:torch+'<path d="M8 26h26"/>',
+  ac:T(7,21,'AC',16),
+  hf:'<path d="M9 2l-4 9h5l-4 10"/>'+torch+'<path d="M8 26h26"/>',
+  t2:'<path d="M14 3v20M9 18l5 6 5-6M26 25V5M21 10l5-6 5 6"/>',
+  pul:'<path d="M3 20h6V7h6v13h4V7h6v13h6"/><path d="M3 25h28"/>',
+  up:'<path d="M2 25h36M14 5h18l6 20" opacity=".45"/><path d="M2 25L14 5" stroke="#ffd100" stroke-width="3.2"/>',
+  dn:'<path d="M2 25h36M2 25L8 5h18" opacity=".45"/><path d="M26 5l12 20" stroke="#ffd100" stroke-width="3.2"/>',
+  post:'<g transform="rotate(-28 18 12)"><rect x="15" y="1" width="6" height="13" rx="1.5"/><path d="M18 14v4"/></g><path d="M23 9h8M23 12.5h8M14 19l-5 7M10 21l-1 5 4-2M19 20l1 7M17 24l3 3 2-3"/>',
+  bal:'<path d="M4 6h16M12 6v16h10V6"/>'+T(28,25,'%',11),
+  hz:'<path d="M3 25V5h4v20M7 5h4v20M11 5h4v20M15 5h4v20M3 5h16"/>'+T(25,20,'f',12,'font-style="italic"'),
+  spool:'<circle cx="14" cy="14" r="11"/><circle cx="14" cy="14" r="3"/><path d="M25 14h12"/>',
+  flame:'<path d="M20 26c-6 0-9-4-9-8 0-6 6-8 6-14 4 3 5 6 4 9 2-1 3-3 3-5 3 3 5 6 5 10 0 4-3 8-9 8z"/>',
+  crater:'<path d="M3 20h8c2 0 3 4 9 4s7-4 9-4h8"/><path d="M14 12q6-8 12 0"/>',
+  cut:'<path d="M20 3v14"/><path d="M14 22h12"/><path d="M16 17l8 0"/>',
+  syn:'<path d="M4 24L36 4"/><circle cx="12" cy="19" r="2.5"/><circle cx="28" cy="9" r="2.5"/>',
+  volt:'<path d="M22 2L10 16h9l-3 10 12-14h-9z"/>',
+  gas:'<circle cx="16" cy="15" r="10"/><path d="M16 15l5-6M26 15h8"/>'
+};
+const ico=k=>`<svg viewBox="0 0 40 28" width="44" height="31" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[k]}</svg>`;
+const IB={"ex":[513.7,417,38.4,37.3],"loc":[396,111.6,30.1,27.7],"tig":[64,48,56,48],"ac":[146.4,66.8,48.1,20.8],"hf":[220,48,62,48],"t2":[312,54,46,40],"pul":[144.8,113.3,55.1,27.8],"rem":[394,58,36,34],"post":[388.5,409.1,37.1,45.9],"bal":[427.3,416.0,44.0,37.4],"hz":[470.5,416.5,46.7,37.4]};
+const pico=k=>`<svg viewBox="${IB[k].join(' ')}" height="31" style="max-width:60px" aria-hidden="true"><use href="#ptr" fill="#f2f2f2" fill-rule="evenodd"/></svg>`;
+let fixOn={tig:true,ac:true,loc:true};try{const f=JSON.parse(localStorage.getItem('wbFix')||'null');if(f)fixOn=Object.assign(fixOn,f)}catch(x){}
+const FIXK=['tig','ac','loc'];const isFix=k=>FIXK.includes(k)&&fixOn[k];
+const cell=(ic,l,v,u,e,k,pi)=>`<div class="cell${k?' key':''}${pi&&isFix(ic)?' fix':''}" data-ic="${ic}"><div class="ic">${pi&&IB[ic]?pico(ic):ico(ic)}</div><small>${l}</small><div class="v">${esc(v)}${u?`<u>${u}</u>`:''}</div>${e?`<em>${e}</em>`:''}${pi&&typeof EDIT!=='undefined'&&EDIT.has(ic)?'<div class="pm"><button data-d="-1" aria-label="Bajar">−</button><button data-d="1" aria-label="Subir">+</button></div>':''}</div>`;
+
+function segs(){
+  for(const id of ['mat','mat2'])$(id).innerHTML=Object.keys(NAME).map(k=>`<button data-v="${k}" aria-pressed="${k===mat}">${NAME[k]}</button>`).join('');
+}
+const TW={az:{n:'Azul 3,2',c:'#1e5fd6',t:'lantanado 2 % (WL20)',r:'60–70',m:0},ve:{n:'Verde 3,2',c:'#1f9d3a',t:'puro (WP)',r:'55–65',m:1},do:{n:'Dorado 2,4',c:'#d9a400',t:'lantanado 1,5 % (WL15)',r:'40–50',m:0}};
+let tw='ve';try{const t=localStorage.getItem('wbTw');if(TW[t])tw=t}catch(x){}
+function renderTw(){const e=document.getElementById('twSel');if(e)e.innerHTML=Object.entries(TW).map(([k,o])=>`<button data-tw="${k}" aria-pressed="${k===tw}"><i style="background:${o.c}"></i>${o.n}</button>`).join('')}
+document.addEventListener('click',e=>{const b=e.target.closest('#twSel button');if(!b)return;tw=b.dataset.tw;try{localStorage.setItem('wbTw',tw)}catch(x){}pSel='ex';renderAll()});
+function PVF(k){const v=(typeof pv!=='undefined'?pv[k]:{up:0,dn:0,post:10,pre:0.5,ex:40}[k]);return RNG[k]&&RNG[k][2]===1?String(v):v.toFixed(1).replace('.',',')}
+function renderMaq(){
+  const p=vals[mat];
+  $('tag').textContent=NAME[mat];
+  $('out').innerHTML=[
+    cell('tig','Proceso','TIG','','Soldadura con tungsteno y la varilla aparte. Botón 1',0,1),
+    cell('ac','Corriente','AC','','Alterna: limpia el óxido del aluminio mientras suelda. Botón 2',0,1),
+    cell('loc','Mando','PEDAL','','La corriente la controlas con el pie. Botón 5, tercer LED',0,1),
+    cell('bal','Balance',p.bal,'%','Reparto entre limpiar óxido (menos %) y meter calor y penetrar (más %)',1,1),
+    cell('hz','Frecuencia AC',p.hz,'Hz','Más Hz: arco más estrecho y con más fuerza. Menos Hz: baño más ancho',1,1),
+    cell('up','Rampa subida',PVF('up'),'s','Tiempo que tarda en subir la corriente al empezar. A 0, la subes tú con el pedal',0,1),
+    cell('dn','Rampa bajada',PVF('dn'),'s','Tiempo que tarda en bajar al acabar. A 0, la bajas tú levantando el pie',0,1),
+    cell('post','Postgás',PVF('post'),'s','Gas que sigue saliendo al acabar: protege el tungsteno y el final del cordón',0,1),
+    cell('pre','Pregás (oculto)',PVF('pre'),'s','Gas antes de encender el arco. Función oculta A, 0–5 s',0,1),
+    cell('ex','Precalentamiento',PVF('ex'),'','Calienta el tungsteno para que arranque bien en AC. Recomendado con '+TW[tw].n+': '+TW[tw].r,0,1),
+    cell('gas','Argón puro','7–9,5','l/min','Gas que protege el baño del aire. Se regula en la botella')
+  ].join('');
+  $('mb').value=p.bal;$('mh').value=p.hz;
+}
+
+/* Ajuste fino: d = cambio propuesto */
+const S=[
+ {t:'Puntitos negros o una piel gris flotando en el baño',p:'bal',d:-2,w:'Le falta limpieza de óxido. Antes, repasa con cepillo de inox y acetona. Si sigue, baja el balance.'},
+ {t:'El baño tarda en abrir y no se ve brillante',p:'bal',d:-1,w:'La capa de óxido no rompe bien. Baja 1 % y prueba. Si sigue igual, revisa la limpieza antes de bajar más.'},
+ {t:'Franja blanca mate a los lados de más de 2–3 mm',p:'bal',d:+2,w:'Sobra limpieza: el arco gasta calor limpiando de más y el tungsteno sufre. Sube el balance.'},
+ {t:'El tungsteno se embola o el arco baila',p:'bal',d:+3,w:'Demasiado calor en el tungsteno. Sube el balance. Si sigue, revisa que el tungsteno sea del diámetro adecuado y esté bien afilado.'},
+ {t:'En ángulo no funde la raíz, el arco se abre a los lados',p:'hz',d:+10,w:'Sube la frecuencia para estrechar el arco y meterlo en la raíz.'},
+ {t:'Cordón alto y estrecho que no moja los bordes',p:'hz',d:-10,w:'Baja la frecuencia: el baño se abre y moja mejor los bordes.'},
+ {t:'7020: la pieza se calienta mucho alrededor',p:'hz',d:+5,w:'Arco algo más concentrado. Además, avanza más rápido y deja enfriar entre pasadas (por debajo de unos 100 °C).'},
+ {t:'Hollín negro al lado del cordón que sale con el cepillo',p:null,w:'Con 5356 es normal: es el magnesio de la varilla que se quema. No es cosa del balance. Se reduce con buena protección de gas (tobera grande o lente de gas, antorcha menos inclinada) y se quita con cepillo de inox.'},
+ {t:'Fundición: el baño hierve y salen poros aunque esté limpia',p:null,w:'La fundición puede llevar gas o suciedad dentro. No es la máquina. Amola hasta metal sano y avanza un poco más despacio para que el gas salga antes de que solidifique.'},
+ {t:'Poros en el 6082 o en el 7020',p:null,w:'Repite la limpieza (acetona y cepillo de inox de uso solo para aluminio), mira que la varilla esté limpia y seca, y comprueba el caudal de argón, las fugas y las corrientes de aire.'},
+ {t:'Grieta en el cráter final',p:null,w:'Al acabar, levanta el pedal más despacio y añade una gota de varilla mientras baja la corriente.'},
+ {t:'El final queda oscuro o el tungsteno sale de color',p:'post',d:+3,w:'Al tungsteno le falta gas mientras se enfría. Alarga el postgás y no retires la antorcha hasta que acabe.'}
+];
+function renderFino(){
+  const p=vals[mat];
+  $('sym').innerHTML=S.map((s,i)=>{
+    let r='';
+    if(s.p==='bal')r=`${p.bal}→${clamp(p.bal+s.d,50,98)} %`;
+    else if(s.p==='hz')r=`${p.hz}→${clamp(p.hz+s.d,10,152)} Hz`;
+    else if(s.p==='post')r=`+${s.d} s`;
+    else r='técnica';
+    return `<button data-i="${i}" aria-pressed="${i===sel}"><span>${s.t}</span><b>${r}</b></button>`;
+  }).join('');
+  if(sel<0){$('ansBox').innerHTML='';return}
+  const s=S[sel];let big='',ic='';
+  if(s.p==='bal'){ic='bal';big=`${clamp(p.bal+s.d,50,98)}<u>%</u>`}
+  else if(s.p==='hz'){ic='hz';big=`${clamp(p.hz+s.d,10,152)}<u>Hz</u>`}
+  else if(s.p==='post'){ic='post';big=`+${s.d}<u>s</u>`}
+  $('ansBox').innerHTML=`<div class="ans">${ic?`<div class="ic">${ico(ic)}</div><div class="v">${big}</div>`:''}<p>${s.w}</p></div>`;
+}
+
+const REC={
+ fund:{intro:'Tu valor es de aluminio limpio; para fundición las fuentes recomiendan más limpieza.',
+   a:{l:'Balance',ic:'bal',v:'65',u:'%',e:'Si siguen puntitos negros o piel gris en la fundición: 62 %. No bajes de 60.'},
+   b:{l:'Frecuencia',ic:'hz',v:'109',u:'Hz',e:'Mantener. Si la fundición no moja: 95–100 Hz.'},
+   t:'En ESAB, más % = más penetración; menos % = más limpieza. Para fundición o material sucio las fuentes dan 55–60 %, y unos 70 % para aluminio nuevo.'},
+ '7020':{intro:'Tu 80 % está en el límite alto: vale con material recién limpiado y grueso.',
+   a:{l:'Balance',ic:'bal',v:'80',u:'%',e:'Si el cordón sale escarchado o con puntitos: 76 %.'},
+   b:{l:'Frecuencia',ic:'hz',v:'119',u:'Hz',e:'Mantener. En ángulo interior que no funde la raíz: 125–130 Hz.'},
+   t:'Las fuentes dan 75–80 % solo para material grueso y recién limpio; por encima del 75 % el cordón puede salir escarchado o sucio.'}
+};
+function renderRec(){const r=REC[mat];$('recIntro').textContent=NAME[mat]+': '+r.intro;$('rec').innerHTML=cell(r.a.ic,r.a.l,r.a.v,r.a.u,r.a.e,1)+cell(r.b.ic,r.b.l,r.b.v,r.b.u,r.b.e,1);$('recTxt').textContent=r.t}
+function renderAll(){segs();renderTw();renderMaq();renderRec();renderFino();if(typeof renderPanel==='function')renderPanel();if(typeof renderSaved==='function'&&$('savedBox'))try{renderSaved()}catch(x){}}
+const PTRACE="M410.8,480.0 L410.8,482.0 L411.5,483.0 L416.2,483.0 L416.8,482.5 L416.8,480.2 L416.0,479.2 L411.8,479.2ZM402.5,480.2 L402.5,482.2 L403.2,483.0 L407.5,483.2 L408.2,482.8 L408.5,480.5 L407.8,479.5 L404.0,479.2ZM394.2,480.0 L394.0,481.8 L395.2,483.2 L399.0,483.2 L400.2,482.2 L400.2,480.2 L399.2,479.2 L395.5,479.2ZM468.5,479.8 L468.5,481.8 L469.5,482.5 L473.5,482.8 L474.8,481.8 L474.0,479.0 L469.5,479.0ZM452.0,479.5 L452.0,481.8 L453.2,483.0 L456.0,483.0 L458.0,482.2 L458.0,480.0 L457.5,479.2 L452.8,479.0ZM443.8,479.5 L443.8,482.0 L445.0,483.0 L448.8,483.0 L449.8,482.0 L449.8,479.5 L449.2,479.0 L444.5,479.0ZM435.5,480.2 L435.8,482.2 L437.0,483.0 L440.5,483.0 L441.5,482.0 L441.5,480.0 L440.5,479.0 L436.8,479.0ZM427.2,480.0 L427.2,481.8 L428.2,483.2 L432.5,483.0 L433.2,482.0 L433.2,480.2 L432.0,479.0 L428.5,479.0ZM518.2,479.2 L518.2,481.5 L519.2,482.2 L523.5,482.5 L524.2,482.0 L524.2,479.5 L523.5,478.8 L518.8,478.8ZM510.0,479.0 L510.0,481.5 L511.2,482.5 L515.0,482.5 L516.0,481.8 L516.0,479.5 L515.2,478.8ZM501.5,480.0 L501.5,481.0 L502.8,482.5 L507.0,482.5 L507.8,481.5 L507.2,478.8 L502.2,478.8ZM485.0,479.8 L485.0,481.2 L486.0,482.5 L490.0,482.8 L491.0,482.2 L491.2,480.2 L490.5,478.8 L486.0,478.8ZM476.8,480.0 L477.0,481.8 L477.8,482.5 L482.0,482.8 L483.0,481.8 L482.8,479.8 L481.2,478.8 L477.8,478.8ZM460.2,479.8 L460.2,481.8 L461.8,483.0 L465.5,482.8 L466.2,482.0 L466.2,480.0 L465.5,479.0 L462.2,478.8 L461.0,479.0ZM419.2,479.5 L419.2,482.8 L424.8,482.8 L425.0,480.2 L424.2,479.2 L420.2,478.8ZM526.5,479.5 L526.5,481.0 L527.5,482.2 L531.8,482.2 L532.8,481.2 L532.5,479.2 L531.2,478.5 L528.0,478.5ZM493.5,481.8 L494.2,482.5 L498.5,482.5 L499.5,481.5 L499.2,479.5 L498.0,478.5 L495.2,478.5 L493.8,479.0ZM224.0,463.5 L224.2,465.2 L230.2,468.5 L232.0,468.5 L232.5,467.5 L234.0,466.5 L239.5,466.5 L240.5,465.2 L240.2,462.0 L233.0,462.0 L232.2,461.0 L232.2,459.8 L231.0,459.8ZM282.0,463.2 L282.2,464.5 L288.8,468.0 L290.0,468.0 L291.2,466.0 L298.2,466.0 L298.8,465.5 L298.8,462.0 L298.2,461.5 L291.5,461.5 L290.5,461.0 L290.0,459.2 L289.0,459.2ZM275.5,463.2 L269.0,459.5 L267.5,459.2 L267.0,461.0 L266.2,461.5 L259.5,461.8 L258.8,462.8 L258.8,465.2 L260.2,466.5 L266.2,466.5 L267.2,468.2 L268.8,468.2 L275.5,464.5ZM333.8,462.8 L326.8,459.0 L325.2,459.0 L325.0,460.5 L323.8,461.2 L317.2,461.2 L317.0,465.5 L317.5,466.2 L324.5,466.0 L325.2,467.8 L326.5,468.0 L333.0,464.5 L333.8,463.8ZM189.5,484.0 L190.5,484.8 L294.8,483.8 L354.0,483.8 L355.2,483.2 L387.2,483.5 L388.2,482.5 L388.5,480.5 L387.8,479.2 L381.0,479.2 L379.2,477.2 L376.5,470.8 L375.8,470.0 L374.2,470.0 L373.0,471.0 L373.0,472.5 L376.2,478.2 L376.2,479.0 L375.2,479.8 L322.5,479.8 L298.2,480.2 L268.2,480.0 L244.8,480.8 L220.8,480.5 L200.0,481.0 L199.2,480.5 L199.2,479.5 L208.5,460.8 L208.2,459.2 L207.5,458.8 L205.8,458.8 L199.5,471.0 L195.8,479.5 L194.0,481.0 L190.0,481.2 L189.5,481.8ZM64.8,448.5 L62.8,449.2 L57.5,453.8 L57.5,456.0 L62.5,460.5 L63.8,461.0 L68.0,460.8 L68.0,459.8 L67.0,458.5 L67.5,457.5 L71.2,457.8 L72.2,457.0 L72.5,452.2 L71.8,451.5 L67.5,451.8 L67.0,451.0 L68.0,449.8 L68.0,448.5ZM397.5,447.8 L396.8,450.0 L396.8,452.0 L395.2,453.2 L395.2,454.2 L397.2,457.2 L398.5,457.2 L400.0,454.8 L400.0,453.0 L398.8,451.5 L399.0,447.8ZM147.0,447.8 L146.5,448.0 L146.5,449.0 L147.8,450.0 L147.8,450.5 L146.8,451.2 L142.8,451.2 L142.0,452.2 L142.0,456.0 L142.8,457.0 L147.2,457.0 L147.5,458.0 L146.2,459.0 L146.2,460.2 L150.2,460.2 L153.2,458.2 L156.5,455.2 L157.0,453.2 L155.8,451.5 L151.2,448.0ZM394.5,446.2 L393.0,446.5 L392.5,447.8 L390.8,449.2 L390.0,448.8 L388.8,449.0 L388.2,451.0 L387.5,452.0 L387.8,453.5 L389.8,453.8 L392.5,452.5 L392.5,450.8 L394.5,448.2ZM459.2,436.5 L458.0,438.0 L458.5,442.0 L461.0,441.2 L461.8,441.5 L461.8,442.5 L460.2,445.0 L460.2,446.0 L462.0,446.2 L463.0,444.2 L463.8,443.8 L465.2,446.0 L466.2,446.5 L468.0,446.2 L469.2,444.0 L469.0,442.5 L467.8,441.2 L465.5,441.2 L465.0,440.8 L466.5,438.0 L466.5,436.5 L465.0,436.5 L463.5,439.0 L462.5,438.5 L462.2,437.2 L461.5,436.5ZM90.2,432.2 L88.5,430.8 L86.2,429.8 L45.0,430.2 L42.2,431.8 L40.8,433.5 L39.8,438.0 L38.8,473.5 L39.8,476.0 L42.0,478.0 L44.2,478.8 L84.0,478.5 L87.5,477.0 L90.0,473.8 L90.5,471.2 L91.2,433.8ZM44.5,433.5 L46.2,432.8 L86.5,432.8 L88.0,434.2 L88.5,435.8 L87.8,469.0 L87.2,473.5 L85.2,475.2 L83.8,475.8 L50.2,476.2 L44.8,476.0 L43.2,475.0 L41.8,473.0 L42.2,461.2 L42.0,456.8 L42.8,446.0 L42.8,436.5ZM126.2,431.8 L125.0,433.8 L124.5,437.0 L123.8,473.0 L124.5,475.0 L126.2,476.8 L128.8,478.0 L166.5,477.8 L171.0,477.0 L173.0,475.2 L174.5,472.8 L175.5,437.0 L175.2,433.8 L173.5,430.8 L172.0,429.8 L169.8,429.2 L131.2,429.2 L128.2,430.2ZM172.2,433.8 L172.8,435.0 L172.0,471.8 L170.0,474.5 L166.0,475.2 L129.5,475.2 L127.2,473.8 L126.5,472.5 L127.0,443.0 L127.5,434.8 L128.8,433.0 L130.8,432.0 L169.8,431.8ZM507.5,429.0 L504.5,429.5 L502.5,432.8 L502.5,434.0 L503.5,435.2 L503.8,440.2 L504.5,441.0 L506.0,441.0 L506.5,440.5 L506.5,435.2 L508.2,434.0 L508.2,432.8 L507.0,431.8 L508.5,430.8 L508.5,429.5ZM498.5,421.2 L493.0,421.2 L491.0,422.0 L491.0,431.2 L490.2,432.0 L488.8,431.2 L488.8,422.2 L488.0,421.5 L481.2,421.5 L480.5,422.2 L480.5,431.2 L478.5,432.8 L478.5,434.0 L480.5,435.8 L480.8,443.2 L479.8,445.0 L476.5,445.0 L476.5,446.0 L478.0,447.8 L482.8,448.0 L483.5,447.5 L483.5,436.2 L484.5,434.8 L485.8,435.5 L486.0,436.5 L485.8,442.2 L486.0,447.2 L486.5,447.8 L494.0,447.5 L494.0,435.5 L494.8,434.8 L495.5,434.8 L496.2,435.5 L496.5,447.0 L497.5,447.8 L502.0,447.8 L502.8,447.0 L502.5,445.0 L500.2,444.5 L499.5,443.8 L499.5,435.8 L500.8,434.0 L500.8,432.5 L499.5,430.8 L499.5,422.5ZM489.5,435.0 L490.5,435.0 L491.0,435.5 L491.2,443.5 L490.5,444.8 L489.5,444.8 L489.0,444.0 L488.8,438.5 L489.0,435.5ZM494.8,424.5 L495.8,424.5 L496.2,425.0 L496.2,431.0 L495.5,431.8 L494.8,431.8 L494.0,431.0 L494.0,425.8ZM528.0,421.0 L527.2,421.8 L527.2,429.0 L526.0,429.5 L525.0,428.8 L523.8,428.8 L521.8,430.0 L521.8,431.0 L524.0,432.5 L525.0,432.5 L526.0,431.8 L527.2,432.2 L527.5,437.2 L526.8,438.2 L522.5,438.2 L522.2,439.5 L523.2,440.0 L532.5,440.0 L533.2,440.8 L533.2,446.5 L534.5,447.5 L542.5,447.2 L543.0,446.8 L542.8,444.8 L537.2,444.5 L536.8,444.0 L536.5,440.8 L537.2,440.0 L547.2,439.8 L547.5,438.5 L546.5,438.0 L537.0,437.8 L536.5,437.2 L536.5,432.0 L537.5,431.8 L538.2,432.2 L540.0,432.2 L541.8,431.0 L541.8,429.8 L539.8,428.8 L537.2,429.2 L536.2,428.8 L536.2,421.8 L535.8,421.2ZM531.2,424.0 L532.8,424.2 L533.2,425.2 L533.2,437.2 L532.2,438.2 L531.2,438.0 L530.5,436.8 L530.5,424.5ZM436.2,420.2 L436.0,430.8 L435.2,431.8 L433.8,432.0 L433.5,433.5 L434.5,434.8 L440.5,434.5 L441.5,435.2 L441.5,444.5 L442.0,447.2 L442.8,448.0 L455.8,447.8 L456.5,446.8 L456.5,435.0 L459.2,434.0 L459.5,432.5 L458.5,431.5 L445.0,431.5 L444.5,430.8 L444.5,420.8 L443.8,420.0ZM452.8,434.5 L453.5,435.8 L453.2,444.5 L452.8,445.0 L445.2,444.8 L444.8,444.0 L444.8,435.2 L445.8,434.5ZM440.0,422.8 L440.5,422.8 L441.5,424.0 L441.5,431.0 L440.8,431.8 L439.5,431.5 L439.0,430.8 L439.0,424.0ZM241.0,420.5 L240.0,420.0 L224.5,420.5 L222.2,424.0 L222.0,425.5 L217.8,433.5 L217.2,435.2 L216.5,436.0 L216.0,437.8 L215.2,438.5 L215.0,439.8 L214.0,441.0 L214.0,442.0 L215.0,443.0 L217.0,442.8 L225.8,424.8 L226.5,424.0 L240.2,423.8 L241.2,422.8ZM283.0,420.8 L283.0,422.8 L284.0,423.5 L287.8,423.5 L288.8,422.5 L288.8,420.8 L288.0,419.8 L283.8,419.8ZM259.2,420.8 L259.2,422.8 L260.0,423.5 L277.0,423.5 L277.5,424.0 L277.2,436.2 L278.5,437.8 L298.5,437.5 L299.0,437.0 L299.0,434.8 L298.2,434.0 L282.0,434.0 L281.0,432.5 L281.2,420.8 L280.8,419.8 L260.0,420.0ZM324.0,420.0 L324.0,422.5 L324.8,423.2 L328.5,423.2 L329.8,422.2 L329.8,420.2 L329.0,419.5 L324.8,419.5ZM316.0,420.0 L315.8,422.0 L316.5,423.2 L320.8,423.2 L321.5,422.5 L321.5,420.0 L321.0,419.5 L316.5,419.5ZM307.8,420.0 L307.8,422.8 L308.2,423.2 L312.8,423.2 L313.2,422.8 L313.5,420.5 L312.8,419.5 L308.5,419.5ZM299.5,420.2 L299.2,422.2 L300.0,423.2 L303.8,423.5 L305.0,422.8 L305.0,420.0 L304.5,419.5 L300.2,419.5ZM296.8,420.2 L296.0,419.5 L292.0,419.8 L291.2,420.5 L291.2,422.8 L292.5,423.5 L295.8,423.5 L297.0,422.0ZM317.2,434.2 L317.2,436.8 L318.0,437.5 L335.5,437.5 L336.5,437.0 L337.0,436.0 L337.0,423.8 L337.8,423.0 L350.0,423.0 L351.0,424.0 L364.5,453.8 L365.2,454.8 L366.8,454.8 L368.2,453.5 L368.2,452.2 L367.2,451.0 L363.0,442.2 L353.2,420.5 L352.0,419.2 L332.8,419.5 L332.0,420.2 L332.2,422.5 L333.2,424.0 L332.8,433.5 L317.8,433.8ZM410.5,415.2 L408.5,415.5 L407.0,417.2 L404.2,423.5 L400.5,426.5 L396.0,435.8 L393.8,442.0 L393.8,444.0 L396.0,446.8 L398.5,446.2 L399.5,447.0 L400.5,447.0 L404.0,441.8 L406.8,436.0 L415.5,435.8 L416.2,435.2 L416.2,434.2 L415.2,433.8 L408.8,433.8 L408.0,433.2 L408.0,432.8 L409.0,432.0 L416.5,431.8 L416.5,430.5 L416.0,430.2 L409.8,430.2 L409.0,429.2 L408.5,425.8 L411.8,418.8 L411.8,416.5ZM397.2,439.8 L401.2,441.5 L401.2,442.5 L399.5,444.5 L398.0,444.2 L396.0,442.8 L396.5,440.5ZM402.5,429.2 L405.5,430.5 L406.2,432.0 L403.5,437.0 L403.0,438.8 L401.8,439.5 L398.8,438.0 L398.0,437.2 L398.0,436.2 L401.0,430.0 L401.8,429.2ZM666.2,365.8 L662.2,366.0 L659.2,367.0 L655.5,367.2 L651.5,369.5 L650.2,369.8 L650.0,371.0 L652.8,371.0 L659.2,368.5 L666.2,366.8ZM388.0,354.0 L387.5,354.5 L387.5,356.0 L388.0,356.5 L390.5,356.2 L391.0,357.5 L387.8,361.0 L387.0,362.2 L387.0,363.5 L387.5,364.0 L396.0,364.0 L396.5,363.2 L396.2,361.5 L393.0,361.5 L392.0,360.5 L396.0,356.5 L396.2,354.2ZM374.2,350.8 L374.0,363.8 L374.8,364.2 L376.5,364.2 L377.2,363.5 L377.2,359.2 L377.8,358.5 L381.2,358.2 L382.5,359.5 L382.5,363.8 L383.2,364.2 L385.0,364.0 L385.5,363.5 L385.8,360.5 L385.5,350.8 L383.0,350.5 L382.2,351.2 L382.5,354.8 L381.5,355.8 L377.8,355.5 L377.2,355.0 L377.2,351.0 L376.8,350.5ZM742.0,344.2 L738.0,342.5 L726.5,339.0 L714.0,336.8 L698.8,335.5 L690.5,335.5 L679.0,336.5 L664.0,339.2 L658.0,341.2 L655.8,341.5 L645.0,345.5 L633.8,350.8 L624.8,355.8 L617.5,360.5 L617.2,361.8 L619.0,361.5 L619.8,360.8 L627.0,357.5 L635.0,354.5 L649.2,350.8 L664.8,348.5 L683.0,348.5 L695.5,350.0 L704.5,352.0 L715.0,355.2 L725.2,359.5 L730.0,362.0 L731.5,362.0 L732.5,361.0 L741.8,345.8ZM375.2,333.5 L373.8,334.8 L373.8,337.5 L375.5,339.0 L379.0,339.8 L379.2,341.0 L378.0,341.5 L375.5,340.0 L373.5,340.2 L373.5,341.5 L375.2,343.0 L376.8,343.5 L379.5,343.5 L381.0,343.0 L382.5,341.8 L383.0,339.2 L382.2,338.0 L380.2,337.0 L378.5,336.8 L377.5,336.2 L377.2,335.5 L378.2,335.0 L379.5,336.0 L382.0,336.0 L382.2,334.5 L380.0,333.0 L376.8,333.0ZM73.8,320.8 L73.5,322.2 L77.0,331.2 L77.5,331.8 L80.0,331.5 L84.0,322.5 L84.0,321.0 L81.5,321.0 L79.8,326.2 L78.8,327.2 L77.8,326.0 L77.2,323.2 L76.2,321.2 L75.5,320.8ZM384.2,318.8 L382.2,321.0 L382.2,323.8 L383.2,325.0 L386.0,325.5 L387.8,324.2 L388.2,323.0 L388.2,321.0 L387.0,319.0ZM71.5,313.5 L70.2,313.5 L69.5,314.2 L67.0,323.0 L67.2,325.0 L68.2,325.0 L69.0,324.2 L70.8,318.5 L70.8,317.0 L71.8,315.0ZM385.0,312.2 L383.8,312.2 L382.2,314.0 L376.8,324.2 L376.8,325.5 L378.0,325.5 L379.2,324.2 L380.5,321.0 L385.0,313.5ZM376.0,312.2 L374.8,312.8 L373.8,314.0 L373.5,317.0 L374.5,318.5 L375.5,319.0 L377.5,319.0 L379.2,317.2 L379.5,314.2 L378.0,312.5ZM58.2,307.5 L57.2,308.8 L53.8,316.8 L53.8,318.2 L55.8,318.2 L57.8,316.0 L61.0,316.0 L63.0,318.5 L65.0,318.2 L64.5,315.2 L61.5,308.0 L60.8,307.2ZM44.8,298.8 L44.0,301.5 L43.0,338.0 L44.0,340.2 L45.5,341.8 L48.8,343.0 L88.0,343.0 L91.2,341.8 L93.0,340.0 L94.0,338.0 L95.0,301.0 L94.0,298.2 L92.5,296.8 L90.5,295.5 L49.5,295.5 L47.0,296.5ZM47.5,300.0 L50.0,298.0 L89.2,298.0 L90.2,298.5 L92.0,301.0 L91.2,329.8 L91.5,333.2 L91.2,337.2 L90.8,338.5 L89.0,340.0 L87.2,340.5 L53.0,340.8 L48.8,340.5 L47.8,340.0 L46.0,338.0 L46.0,326.0 L47.0,309.2 L46.8,305.5 L47.0,301.2ZM373.5,292.5 L373.2,294.5 L374.2,296.2 L377.5,305.5 L378.2,306.2 L380.8,306.0 L382.5,303.2 L386.0,293.8 L386.0,292.5 L383.2,292.5 L382.8,293.0 L380.0,300.5 L379.2,300.5 L378.5,299.8 L378.5,298.2 L376.5,293.0 L376.0,292.5ZM378.8,273.5 L377.8,274.8 L374.5,283.2 L373.5,284.8 L373.2,286.8 L375.5,287.0 L378.0,284.0 L382.2,284.0 L384.5,287.0 L386.5,287.0 L387.0,286.5 L387.0,285.2 L382.2,274.2 L381.0,273.2ZM235.5,136.2 L235.5,138.2 L236.0,138.8 L256.8,139.0 L263.8,138.8 L264.5,138.0 L264.5,136.0 L263.8,135.5 L236.5,135.5ZM68.8,136.2 L68.8,137.5 L98.2,137.5 L98.2,136.0 L97.2,135.2 L69.5,135.2ZM152.2,130.5 L152.2,132.2 L153.5,132.8 L179.0,132.8 L180.0,132.0 L180.0,130.8 L179.0,130.0 L153.0,130.0ZM152.2,126.0 L152.2,127.5 L153.5,128.2 L159.8,128.0 L160.0,120.0 L160.8,119.0 L161.8,119.0 L162.5,120.0 L162.2,127.8 L163.2,128.2 L169.5,128.2 L170.0,127.5 L170.2,119.5 L170.8,119.0 L171.8,119.0 L172.5,120.0 L172.2,128.0 L179.2,128.2 L180.0,127.5 L180.0,126.2 L179.5,125.5 L176.0,125.5 L175.0,124.5 L175.2,116.8 L174.8,116.2 L169.0,116.0 L167.5,116.5 L167.2,125.0 L166.2,125.8 L165.0,124.8 L165.0,116.5 L164.0,116.0 L158.2,116.2 L157.2,117.2 L157.2,125.0 L156.2,125.8 L152.8,125.5ZM71.8,133.8 L73.0,134.0 L73.5,133.5 L77.0,124.2 L79.0,120.8 L101.2,120.5 L102.0,119.5 L102.0,114.8 L101.2,113.8 L72.8,114.0 L72.2,115.0 L72.5,120.0 L73.0,120.5 L75.5,120.5 L76.2,121.5 L72.0,131.5ZM85.0,116.8 L86.0,115.5 L99.0,115.5 L100.0,116.2 L100.0,118.0 L98.2,119.0 L85.8,118.8 L85.0,117.8ZM74.2,116.5 L75.2,115.5 L82.2,115.5 L83.0,116.0 L83.2,117.2 L82.5,118.8 L75.0,118.8 L74.2,117.8ZM423.0,114.0 L419.2,113.5 L404.0,114.0 L403.5,114.5 L403.2,131.8 L404.0,132.5 L422.5,132.2 L423.2,131.5ZM421.2,119.5 L421.2,129.5 L420.5,130.5 L407.5,130.2 L407.5,129.8 L417.5,120.2 L420.8,119.0ZM417.2,115.8 L417.5,116.2 L416.8,117.0 L416.5,118.8 L407.0,128.0 L405.8,128.5 L405.2,128.0 L405.5,116.5 L406.2,115.8 L407.5,115.5ZM243.5,111.0 L239.2,117.8 L239.2,118.8 L241.5,119.0 L242.0,119.5 L242.2,127.0 L243.0,127.5 L244.8,127.5 L245.5,126.8 L245.5,120.0 L246.2,119.0 L248.0,119.0 L248.5,118.5 L248.5,117.5 L244.8,111.2ZM337.2,110.2 L333.0,117.0 L333.2,118.2 L334.5,118.2 L335.2,119.0 L335.2,128.0 L334.2,129.0 L333.0,129.0 L333.0,130.2 L336.8,136.5 L338.0,136.8 L342.2,130.0 L342.2,129.0 L340.8,128.8 L339.8,127.5 L340.0,119.2 L340.5,118.5 L342.0,118.0 L342.0,116.2 L340.8,114.8 L338.2,110.2ZM323.2,110.2 L319.2,116.8 L319.2,118.0 L320.5,118.2 L321.2,119.0 L321.5,122.2 L321.2,128.2 L320.5,129.0 L319.2,129.0 L319.0,130.2 L323.0,137.0 L324.0,137.0 L328.2,130.0 L328.0,128.8 L326.8,128.8 L326.0,128.0 L326.0,119.5 L326.8,118.5 L328.2,117.8 L328.2,116.8 L324.2,110.2ZM261.0,108.0 L259.5,108.0 L258.2,109.0 L255.5,114.5 L253.0,116.5 L248.5,125.2 L247.2,129.2 L247.2,131.0 L249.2,133.0 L252.8,133.0 L258.0,124.5 L265.0,124.2 L264.8,122.8 L259.8,122.8 L259.2,122.2 L260.0,121.5 L262.0,122.0 L265.0,121.8 L265.5,121.0 L265.2,119.8 L260.8,119.8 L259.8,119.0 L259.5,115.8 L262.0,110.8 L262.0,109.2ZM253.8,119.5 L256.5,120.2 L257.0,121.2 L254.5,126.5 L253.0,126.8 L251.0,125.5 L251.0,124.5ZM406.8,98.2 L406.8,99.8 L410.0,102.2 L411.2,102.2 L413.0,100.8 L414.8,100.8 L415.8,102.2 L417.0,102.2 L421.0,99.2 L421.0,98.2 L417.5,95.8 L416.0,95.8 L414.5,97.2 L412.5,97.0 L411.5,95.8 L410.2,95.8ZM403.8,93.0 L402.2,93.2 L398.8,96.5 L398.8,97.8 L400.5,97.2 L401.5,97.5 L401.5,103.8 L402.2,104.5 L403.2,104.5 L404.2,103.5 L404.2,93.5ZM428.8,93.5 L425.5,92.8 L423.8,93.5 L422.2,95.0 L422.5,96.8 L424.0,96.8 L425.5,95.2 L426.5,95.2 L427.2,96.2 L427.0,97.2 L422.2,102.2 L422.2,104.2 L428.8,104.2 L430.0,103.2 L430.0,102.2 L429.5,101.8 L427.0,101.8 L426.5,101.2 L428.8,99.0 L430.0,97.0 L429.8,94.8ZM173.0,92.8 L171.0,93.5 L169.0,95.2 L167.8,98.8 L168.0,102.5 L169.2,104.5 L172.0,106.5 L176.2,106.5 L179.2,104.5 L180.0,103.5 L180.0,102.2 L179.0,101.5 L177.2,101.5 L175.2,103.8 L173.0,103.8 L171.2,101.5 L171.2,98.0 L173.5,95.5 L175.2,95.5 L177.5,97.5 L179.5,97.2 L180.0,96.8 L180.0,95.8 L178.8,94.0 L176.5,92.8ZM154.8,93.0 L154.2,93.8 L154.0,97.8 L154.2,106.0 L155.2,106.5 L160.5,106.5 L164.2,105.0 L165.0,104.2 L166.2,101.2 L166.2,98.5 L165.5,95.5 L163.8,93.8 L162.2,93.0ZM158.5,95.5 L161.0,95.8 L162.8,97.5 L162.8,101.8 L161.2,103.5 L158.2,103.8 L157.5,103.2 L157.5,96.2ZM194.0,92.2 L193.8,93.8 L195.0,96.5 L195.2,100.5 L193.8,106.8 L195.2,106.8 L196.8,104.5 L198.0,99.0 L196.2,93.5 L195.0,92.2ZM185.5,92.2 L185.0,92.5 L183.2,96.2 L182.8,100.5 L183.2,103.0 L184.5,105.8 L185.5,107.0 L186.5,107.0 L187.0,106.5 L187.0,105.5 L185.5,102.2 L185.5,97.2 L186.8,94.2 L186.8,92.5ZM236.0,88.0 L236.0,89.8 L237.0,90.5 L264.0,90.5 L265.0,89.5 L265.0,87.8 L264.0,87.0 L237.0,87.2ZM70.0,87.5 L70.2,89.8 L73.2,90.2 L98.2,90.2 L99.2,89.5 L99.2,87.5 L98.5,87.0 L71.5,86.8ZM485.2,69.0 L484.8,69.5 L484.8,79.8 L491.0,80.0 L492.2,79.5 L494.2,77.5 L495.0,75.2 L495.0,73.2 L494.0,70.5 L491.2,68.8ZM488.8,71.0 L490.8,71.5 L492.0,73.2 L492.0,75.8 L490.2,77.8 L488.5,77.8 L487.5,76.2 L487.5,72.0ZM473.0,69.8 L473.0,79.5 L473.5,80.0 L475.2,80.0 L476.0,79.0 L475.8,76.5 L476.5,75.8 L477.2,75.8 L480.5,79.8 L481.5,80.2 L483.0,80.0 L482.8,77.8 L481.0,75.5 L483.0,72.5 L482.5,70.0 L480.0,68.8 L474.8,68.8ZM462.2,68.8 L461.5,69.5 L461.5,71.0 L463.0,73.8 L464.8,79.0 L465.8,80.2 L467.8,80.2 L470.0,76.0 L471.8,71.2 L472.0,69.0 L470.2,68.8 L469.5,69.5 L468.2,72.2 L468.0,74.0 L467.2,75.2 L466.5,75.5 L466.0,75.0 L465.8,73.0 L464.2,69.2 L463.5,68.8ZM176.8,68.0 L173.8,68.0 L172.0,68.5 L169.2,70.8 L168.2,73.0 L168.5,78.0 L170.8,80.8 L173.2,82.0 L177.2,81.5 L180.2,78.8 L180.2,77.5 L179.2,76.5 L177.5,76.8 L177.0,77.8 L175.0,79.2 L173.5,79.0 L171.8,77.0 L171.5,74.2 L172.0,72.5 L173.0,71.2 L174.0,70.8 L175.8,70.8 L178.0,72.8 L179.5,72.8 L180.2,72.0 L180.2,70.5 L178.8,69.0ZM159.0,68.2 L155.0,76.2 L153.5,80.0 L153.5,81.2 L154.2,81.8 L156.0,81.5 L158.0,78.8 L162.5,78.8 L164.2,81.5 L167.0,81.5 L167.2,80.2 L162.2,68.8 L161.0,68.0ZM696.8,69.2 L696.8,70.2 L698.5,70.5 L700.2,69.2 L701.2,70.2 L696.0,76.0 L696.0,77.2 L696.5,77.5 L702.0,77.5 L703.5,75.5 L706.8,75.5 L707.5,77.2 L709.2,77.2 L711.8,74.2 L711.8,73.2 L711.0,72.5 L711.8,68.8 L711.5,67.0 L710.2,67.0 L709.0,67.8 L704.5,72.5 L703.2,74.8 L702.0,75.2 L701.0,75.2 L700.5,74.8 L703.8,70.8 L703.8,68.5 L701.8,67.0 L699.5,67.0 L697.8,68.0ZM693.0,67.2 L691.2,67.0 L689.5,68.0 L684.5,76.2 L684.8,77.5 L686.8,77.2 L688.2,75.5 L689.0,75.2 L691.2,75.5 L692.5,77.5 L694.2,77.2 L694.2,72.2 L693.5,70.5ZM686.0,67.2 L678.2,67.2 L677.0,68.0 L677.0,69.2 L679.0,69.2 L679.8,70.0 L679.0,73.2 L678.2,74.2 L678.5,77.5 L680.0,77.5 L681.0,76.8 L682.5,70.2 L683.2,69.5 L685.0,69.2 L686.0,68.2ZM403.2,67.0 L400.8,73.0 L400.8,77.2 L402.2,81.0 L405.8,84.8 L411.0,87.0 L416.5,86.8 L420.5,85.0 L424.8,80.8 L426.5,76.0 L426.2,72.5 L424.0,67.8 L423.2,67.0 L421.5,67.0 L421.5,68.2 L423.8,71.2 L424.2,73.2 L424.0,78.0 L422.5,80.8 L419.5,83.5 L415.8,85.0 L411.2,85.0 L407.0,83.2 L404.0,80.0 L402.8,76.8 L402.8,73.8 L404.0,69.8 L404.8,69.0 L405.8,69.0 L410.8,73.8 L412.0,73.5 L412.0,72.0 L408.5,69.0 L407.0,67.0ZM334.8,67.0 L333.5,68.5 L333.5,69.8 L335.2,70.2 L335.8,71.0 L335.5,88.8 L336.2,89.2 L339.0,89.2 L340.2,88.0 L340.5,70.8 L342.2,70.0 L342.5,68.5 L341.5,67.0ZM321.8,67.0 L321.8,79.8 L321.0,80.8 L319.5,81.0 L319.5,82.0 L323.2,88.5 L324.5,88.5 L328.2,82.5 L328.5,80.8 L326.5,80.0 L326.5,67.0ZM266.0,72.0 L260.8,71.5 L260.0,70.0 L260.0,67.0 L255.5,67.0 L252.8,69.5 L250.5,74.8 L249.2,76.5 L247.5,82.5 L249.8,85.0 L253.5,84.8 L256.5,80.0 L257.5,77.5 L258.8,76.2 L262.8,76.5 L265.5,76.0 L265.2,74.5 L260.2,74.5 L260.0,74.0 L260.8,73.5 L265.5,73.5 L266.0,73.0ZM255.0,71.2 L257.0,72.2 L257.5,73.5 L255.2,78.0 L254.5,78.8 L253.8,78.8 L251.8,77.8 L251.5,76.5 L253.5,72.2ZM242.2,67.0 L240.2,67.2 L237.0,74.2 L237.0,75.5 L238.5,75.5 L240.0,74.8 L241.0,75.2 L241.0,76.0 L237.0,83.8 L237.0,85.2 L238.2,85.2 L238.8,84.8 L244.2,73.5 L244.2,72.0 L243.0,72.0 L241.5,72.8 L240.5,72.8 L240.0,72.2 L242.2,68.0ZM100.5,71.8 L95.5,71.5 L94.5,70.5 L94.5,67.0 L89.5,67.0 L88.0,68.0 L86.8,69.8 L82.8,77.8 L81.8,82.2 L84.0,84.8 L87.5,84.5 L93.0,76.0 L99.5,75.8 L99.5,74.5 L99.0,74.2 L94.8,74.2 L94.8,73.5 L99.8,73.2 L100.5,72.8ZM89.5,71.0 L91.2,72.0 L91.8,73.2 L89.8,77.5 L88.8,78.5 L87.8,78.5 L85.8,77.0 L85.8,76.2 L87.8,72.0 L88.8,71.0ZM723.8,67.0 L722.2,66.8 L720.0,68.2 L715.5,76.0 L715.5,77.2 L717.5,77.2 L719.2,75.5 L722.0,75.2 L723.5,77.5 L724.5,77.5 L725.5,76.8 L725.0,71.2ZM762.5,68.5 L760.2,66.8 L757.2,66.5 L755.2,67.5 L753.8,69.0 L752.2,72.0 L751.5,70.5 L751.2,68.2 L749.2,67.0 L741.0,67.0 L739.8,68.8 L737.8,73.2 L736.8,74.2 L736.2,73.5 L734.5,73.5 L732.0,75.2 L730.8,74.8 L730.2,74.0 L730.2,71.5 L730.8,70.5 L732.2,69.2 L733.5,69.2 L735.0,70.5 L736.5,70.5 L737.0,70.0 L737.0,68.5 L736.5,67.8 L734.5,66.8 L732.0,66.8 L729.0,68.2 L728.0,69.5 L727.2,71.2 L727.2,74.0 L727.8,75.8 L730.2,77.5 L733.0,77.5 L735.8,75.8 L736.2,77.2 L737.5,77.2 L739.2,75.0 L740.8,71.0 L742.2,68.8 L742.8,69.2 L742.8,70.2 L741.5,74.8 L741.8,77.2 L748.0,77.0 L749.8,76.0 L752.0,73.2 L753.8,76.2 L755.0,77.0 L757.5,77.5 L759.8,76.8 L762.0,75.0 L762.0,73.2 L760.2,73.2 L758.2,74.8 L756.8,75.0 L755.5,73.5 L756.0,70.5 L757.5,69.0 L758.8,69.0 L760.0,70.2 L761.5,70.5 L762.5,69.8ZM748.0,69.2 L749.0,70.5 L749.0,72.5 L747.8,74.5 L745.2,75.0 L745.0,72.5 L745.5,70.2 L746.5,69.0ZM591.8,63.5 L589.5,63.2 L588.0,63.5 L587.2,64.2 L585.5,73.0 L584.5,75.5 L584.5,78.0 L585.0,78.2 L588.0,78.2 L589.2,77.2 L592.0,65.5ZM585.8,63.2 L583.2,63.0 L581.0,64.2 L580.0,64.2 L579.0,63.2 L577.0,63.2 L575.5,64.2 L572.8,78.0 L576.2,78.5 L577.2,77.5 L578.2,75.0 L578.8,71.5 L579.8,69.2 L580.8,68.0 L584.0,67.0 L585.5,65.0ZM625.2,64.0 L622.0,62.8 L618.8,62.8 L614.8,64.2 L612.5,66.5 L611.0,70.5 L611.2,74.0 L612.0,75.5 L614.2,77.5 L616.8,78.5 L620.8,78.2 L625.2,75.8 L627.8,71.2 L627.5,67.0ZM621.2,66.5 L622.8,68.5 L622.8,71.2 L621.0,74.0 L619.5,74.8 L618.0,74.8 L616.2,73.0 L616.0,70.8 L616.5,68.8 L618.8,66.5ZM609.5,63.0 L607.2,63.0 L604.2,64.2 L602.5,63.0 L600.2,62.8 L596.2,64.5 L594.5,66.5 L593.2,69.5 L593.0,73.5 L594.0,76.0 L596.5,78.2 L599.5,78.2 L602.2,77.2 L602.5,78.8 L601.2,80.2 L599.5,80.8 L598.2,80.5 L596.8,78.8 L592.8,78.8 L592.2,79.2 L592.2,80.8 L594.0,83.0 L596.2,83.8 L602.0,83.8 L604.2,83.0 L606.2,81.0 L607.5,78.2 L608.8,70.2 L609.8,66.8 L610.0,63.5ZM602.0,66.2 L604.0,68.2 L604.0,71.2 L602.2,74.0 L600.0,74.8 L598.2,73.2 L598.0,70.0 L598.8,68.2 L600.8,66.2ZM643.0,58.0 L641.0,58.0 L638.8,60.5 L638.2,60.2 L638.2,58.5 L637.5,58.0 L629.8,58.0 L628.8,58.5 L628.8,59.5 L630.5,60.5 L629.8,63.2 L629.8,65.2 L631.0,65.5 L631.8,64.8 L632.5,61.2 L633.0,60.2 L634.2,59.5 L635.2,60.0 L634.0,64.0 L634.2,65.2 L635.5,65.2 L636.2,64.5 L637.0,65.2 L641.8,65.0 L642.5,63.5ZM593.2,58.5 L592.2,57.8 L588.8,58.2 L587.8,60.2 L587.8,61.5 L592.0,61.8 L592.8,61.0ZM568.8,59.0 L565.5,57.8 L561.0,57.8 L556.8,59.5 L554.0,62.0 L552.2,65.0 L551.2,68.8 L551.2,72.5 L553.2,76.2 L555.2,77.8 L557.8,78.8 L562.0,78.8 L566.8,77.0 L569.8,74.2 L572.0,69.8 L572.5,67.8 L572.5,64.0 L571.0,61.0ZM564.8,62.0 L567.2,64.8 L567.2,68.8 L565.8,71.8 L564.0,73.8 L562.0,74.8 L559.5,74.8 L557.5,73.5 L556.5,72.2 L556.2,67.8 L558.2,64.0 L560.0,62.5 L561.5,61.8ZM772.8,55.2 L772.5,54.0 L770.5,50.8 L767.5,48.5 L763.2,47.0 L744.2,46.8 L718.8,47.2 L640.8,47.2 L551.0,48.0 L549.0,48.2 L545.0,50.0 L542.0,52.8 L540.5,55.8 L540.5,79.8 L541.8,83.2 L543.8,85.5 L547.8,87.8 L550.0,88.2 L763.5,87.0 L767.0,86.0 L769.5,84.5 L772.0,82.2 L773.2,79.5ZM769.5,55.2 L770.2,78.0 L769.5,80.5 L767.5,82.5 L763.2,84.2 L614.5,85.0 L604.0,85.5 L550.0,85.5 L546.2,83.8 L544.5,81.8 L543.5,79.2 L543.8,55.2 L546.5,52.2 L548.5,51.2 L551.8,50.5 L762.8,49.8 L767.0,51.8 L768.5,53.2Z";
+const PL={"tig":[61.4,75.0],"mma":[57.0,123.5],"ac":[139.4,75.6],"dc":[137.8,98.8],"pul":[138.0,124.2],"hf":[221.4,76.2],"lift":[219.2,123.9],"t2":[303.6,75.9],"t4":[302.5,123.7],"rem":[384.0,75.6],"mem":[384.1,98.9],"loc":[384.1,124.3],"vrd":[448.9,76.1],"uA":[361.3,278.8],"uV":[361.2,297.8],"uP":[361.1,318.1],"uS":[361.0,337.5],"uH":[360.8,358.2],"up":[211.7,451.2],"cur":[250.7,420.3],"bg":[308.5,433.9],"pt":[249.2,462.6],"bt":[308.0,462.2],"dn":[371.2,461.9],"post":[411.5,461.4],"bal":[450.8,460.7],"hz":[491.2,460.2],"ex":[531.6,459.6],"m1":[118.6,531.2],"m2":[267.8,533.2]};
+const PBTN=[[72.7,169.9],[154.8,170.6],[237.1,171.3],[319.6,172.0],[400.2,172.7]];
+const COLS=[['tig','mma'],['ac','dc','pul'],['hf','lift'],['t2','t4'],['rem','mem','loc']];
+const SEQ=['up','cur','dn','post','bal','hz','ex'];
+const RNG={bal:[50,98,1],hz:[10,152,1],up:[0,10,0.1],dn:[0,10,0.1],post:[0,25,0.1],pre:[0,5,0.1],ex:[1,100,1]};
+const EDIT=new Set(Object.keys(RNG));
+const PN={tig:'Proceso TIG',mma:'Electrodo (MMA)',ac:'Corriente AC',dc:'Corriente DC(-)',pul:'DC con pulso',hf:'Cebado HF',lift:'Cebado LiftArc',t2:'Gatillo 2T',t4:'Gatillo 4T',rem:'Panel',mem:'Cambio de memoria con el pulsador (1↔2)',loc:'Mando a distancia (pedal)',
+ up:'Rampa subida',cur:'Corriente de soldadura',dn:'Rampa bajada',post:'Postgás',bal:'Balance',hz:'Frecuencia AC',ex:'Precalentamiento del electrodo',pre:'Pregás'};
+const UNIT={up:'uS',dn:'uS',post:'uS',pre:'uS',bal:'uP',hz:'uH',cur:'uA'};
+const WANT={tig:'tig',mma:'tig',ac:'ac',dc:'ac',pul:'ac',hf:'hf',lift:'hf',t2:'t2',t4:'t2',rem:'loc',mem:'loc',loc:'loc'};
+let pSel=null,pv={up:0,dn:0,post:10,pre:1,ex:40};try{const q=JSON.parse(localStorage.getItem('wbPv')||'null');if(q)for(const kk in pv)if(typeof q[kk]==='number')pv[kk]=q[kk]}catch(x){}
+function pval(k){if(k==='bal')return vals[mat].bal;if(k==='hz')return vals[mat].hz;return pv[k]}
+function pfmt(k){const v=pval(k);if(k==='cur')return '';if(RNG[k]&&RNG[k][2]===1)return String(v);return v.toFixed(1)}
+function prec(k){return k==='bal'?(mat==='fund'?'60–65':'75–80'):k==='hz'?'100–120':k==='post'?'1 s por cada 10 A':k==='pre'?'1–1,5':k==='ex'?TW[tw].r:'0'}
+function inRec(k){const r=String(prec(k)).replace(/,/g,'.');const m=r.match(/^([\d.]+)(?:–([\d.]+))?$/);if(!m)return null;const v=pval(k),a=+m[1],b=m[2]?+m[2]:a;return v>=a&&v<=b}
+function panelSVG(){
+  const ON='#7dff5c',OFF='#1c3a24',k=pSel;
+  const litSet=new Set(FIXK.filter(x=>fixOn[x]));if(k&&PL[k]&&k!=='pul'&&!(FIXK.includes(k)&&!fixOn[k]))litSet.add(k);if(k&&UNIT[k])litSet.add(UNIT[k]);
+  let g=`<rect x="8" y="12" width="808" height="594" rx="44" fill="#2a2b2e" stroke="#3c3d41" stroke-width="3"/>`;
+  g+=`<path d="${PTRACE}" fill="#ececec" fill-rule="evenodd"/>`;
+  g+=`<rect x="32.2" y="51.2" width="403.9" height="158.8" rx="12" fill="none" stroke="#ececec" stroke-width="3"/>`;
+  PBTN.forEach(([x,y],i)=>{g+=`<rect data-a="b${i}" x="${x-29}" y="${y-26}" width="58" height="52" rx="9" fill="#0d0d0e" stroke="#ececec" stroke-width="3" style="cursor:pointer"/>`});
+  g+=`<rect x="37.5" y="512.1" width="97.7" height="39.9" rx="6" fill="#0d0d0e" stroke="#ececec" stroke-width="3"/><rect x="181.6" y="514.0" width="96.7" height="40.0" rx="6" fill="#0d0d0e" stroke="#ececec" stroke-width="3"/><text x="81.3" y="539.0" fill="#ececec" font-size="18" font-weight="700" font-family="Barlow,Arial,sans-serif">1</text><text x="224.9" y="541.0" fill="#ececec" font-size="18" font-weight="700" font-family="Barlow,Arial,sans-serif">2</text>`;
+  const DT={tig:'TIG',mma:'MMA',ac:'AC',dc:'DC',pul:'OFF',hf:'HF',lift:'LIFT',t2:'2T',t4:'4T',rem:'PAn',mem:'1-2',loc:'PEd'};const disp=k&&(SEQ.includes(k)||k==='pre')?(k==='pre'?'A '+pfmt(k):pfmt(k)):(k&&DT[k])||'';
+  g+=`<rect x="128.0" y="272.5" width="208.4" height="89.5" rx="10" fill="#0f2a17" stroke="#6a6a6a" stroke-width="3"/><text x="322.4" y="346.0" text-anchor="end" fill="${ON}" font-size="70" font-family="Share Tech Mono,monospace">${disp}</text>`;
+  g+=`<rect data-a="L" x="32.9" y="428.4" width="64.6" height="50.9" rx="8" fill="transparent" style="cursor:pointer"/><rect data-a="R" x="116.7" y="428.4" width="63.6" height="50.9" rx="8" fill="transparent" style="cursor:pointer"/>`;
+  g+=`<g data-a="knob" style="cursor:grab"><circle cx="690" cy="466" r="92" fill="#111" stroke="#454545" stroke-width="4"/><circle cx="690" cy="466" r="74" fill="#1a1a1a"/><path d="M690 466 L690 407.6" stroke="#555" stroke-width="6" stroke-linecap="round" transform="rotate(${knobA} 690 466)"/></g>`;
+  for(const n in PL){const [x,y]=PL[n];const on=litSet.has(n);g+=`<circle cx="${x}" cy="${y}" r="7" fill="${on?ON:OFF}"/>`+(on?`<circle cx="${x}" cy="${y}" r="13" fill="${ON}" opacity=".25"/>`:'')}
+  return `<svg viewBox="0 0 820 610" role="img" aria-label="Panel Origo TA24 interactivo" style="touch-action:none">${g}</svg>`;
+}
+let knobA=0;
+function pinfo(){
+  const k=pSel;if(!k)return 'Toca una casilla o un botón del panel.';
+  if(k==='gas')return '<b>Argón</b> No está en el panel: se regula en el caudalímetro de la botella. Recomendado para aluminio: 7–9,5 l/min (15–20 CFH).';
+  if(k==='pul')return '<b>DC con pulso</b> Según el manual, el pulso solo existe en DC. En aluminio (AC) no se usa: deja el botón 2 en AC.';
+  if(k==='pre')return `<b>Pregás: ${pfmt('pre')} s</b> Recomendado para aluminio: 1–1,5 s. Gas antes de encender el arco. Es una función oculta (letra A, 0–5 s): mantén pulsado un botón 5 segundos, busca la A con ▶ y cámbiala con la rueda. Aquí la cambias con − y +.`;
+  if(k==='ex'){const o=TW[tw],ok=inRec('ex');return `<b>Precalentamiento del electrodo: ${pfmt('ex')}</b> Tungsteno ${o.n} mm, ${o.t}. Recomendado: ${o.r} ${ok?'· ✓ dentro':'· fuera de lo recomendado'} · rango 1–100<br>${o.m?'Valor de la tabla del manual ESAB.':'Referencia aproximada: el manual ESAB no trae este tungsteno; es el valor del lantanado WL10 del mismo grosor.'} Calienta el tungsteno para que el arco arranque bien en AC.`}
+  if(SEQ.includes(k)){
+    if(k==='cur')return '<b>Corriente de soldadura</b> Con pedal, aquí pones el máximo que dará el pedal pisado a fondo.';
+    const v=pfmt(k),r=prec(k),ok=inRec(k);const un=UNIT[k]==='uP'?' %':UNIT[k]==='uH'?' Hz':UNIT[k]==='uS'?' s':'';const rg=RNG[k]?` · rango ${String(RNG[k][0]).replace('.',',')}–${RNG[k][1]}`:'';
+    return `<b>${PN[k]}: ${v}${un}</b> Recomendado: ${r}${/^[\d,–]+$/.test(String(r))?un:''}${rg} ${ok===true?'· ✓ dentro':ok===false?'· fuera de lo recomendado':''}<br>Gira la rueda del panel o usa − y + en la casilla. ◀ ▶ pasan al siguiente LED.`;
+  }
+  const w=WANT[k];
+  return `<b>${PN[k]}</b> ${w?(w===k?(FIXK.includes(k)?(fixOn[k]?'✓ Fijo y encendido. Toca la casilla otra vez para apagarlo.':'Apagado. Toca la casilla otra vez para encenderlo.'):'✓ correcto para aluminio.'):'Para aluminio tiene que estar en '+PN[w]+': vuelve a pulsar el botón.'):'Pulsa el botón otra vez para cambiar.'}`;
+}
+
+function miniPanel(k){const o=pSel;pSel=k;const v=panelSVG();pSel=o;return `<div class="mp">${v}</div>`}
+function wave(pos,n){let d='M10 60';const w=300/n;for(let i=0;i<n;i++){const x=10+i*w;d+=` L${x} 60 L${x} 25 L${x+w*pos} 25 L${x+w*pos} 95 L${x+w} 95 L${x+w} 60`}return `<svg viewBox="0 0 320 120"><path d="M10 60H310" stroke="#555" stroke-dasharray="4 4"/><path d="${d}" fill="none" stroke="#7dff5c" stroke-width="3"/></svg>`}
+const MAN=[
+['maq','Tu máquina',`<p>Es una <b>Origo Tig 4300iw AC/DC</b> de ESAB con el panel <b>TA24 AC/DC</b>. Suelda <b>TIG</b> y también con <b>electrodo</b> (MMA), en <b>corriente alterna (AC)</b>, que es la del aluminio, o <b>continua (DC)</b>, para acero e inox. La «w» quiere decir que lleva <b>refrigeración por agua</b>.</p>
+<table><tr><th>Dato</th><th>Valor</th></tr>
+<tr><td>Corriente en TIG</td><td>de 4 a 430 A</td></tr>
+<tr><td>Cuánto aguanta seguido (en 10 min)</td><td>430 A el 30 % del tiempo · 350 A el 60 % · 315 A sin parar</td></tr>
+<tr><td>Corriente en electrodo</td><td>de 16 a 430 A</td></tr>
+<tr><td>Enchufe</td><td>400 V trifásica</td></tr>
+<tr><td>Peso</td><td>95 kg</td></tr>
+<tr><td>Líquido de refrigeración</td><td>5,5 litros, solo el de ESAB (ref. 0465 720 002)</td></tr></table>
+<p class="mut">En AC, la corriente mínima depende de la aleación y de lo limpio que esté el aluminio.</p>`],
+['enc','Encender y apagar',`<ol><li>Gira el interruptor a <b>START</b> y suéltalo: vuelve solo a la posición <b>1</b>. La máquina hace una prueba de luces y enseña su versión.</li>
+<li>Para apagar, ponlo en <b>0</b>.</li>
+<li>Si se va la luz mientras sueldas, la máquina <b>no vuelve a arrancar sola</b>: tienes que darle otra vez a START.</li>
+<li>Los ajustes <b>se guardan</b> aunque la apagues o se vaya la luz.</li></ol>
+<p><b>Ventiladores y bomba:</b> siguen funcionando 6,5 minutos después de soldar y luego la máquina se pone en ahorro. Hasta 144 A el ventilador va lento; por encima, a tope.</p>
+<p><b>Piloto naranja:</b> la máquina se ha calentado demasiado y corta. Espera: se rearma sola al enfriarse.</p>`],
+['pan','El panel, botón a botón',`<div class="two">
+<div><h3>Botón 1 · TIG o electrodo</h3>${miniPanel('tig')}<p>Elige soldar con TIG (antorcha) o con electrodo (MMA).</p></div>
+<div><h3>Botón 2 · Tipo de corriente</h3>${miniPanel('ac')}<p>En TIG: <b>AC</b> (aluminio), <b>DC-</b> (acero, inox) o <b>DC- con pulso</b>. El pulso <b>solo existe en DC</b>.</p></div>
+<div><h3>Botón 3 · Cómo se enciende el arco</h3>${miniPanel('hf')}<p><b>HF</b>: salta una chispa al acercar el tungsteno, sin tocar. <b>LiftArc</b>: tocas la pieza con el tungsteno y lo levantas. No se puede cambiar mientras sueldas.</p></div>
+<div><h3>Botón 4 · 2T o 4T</h3>${miniPanel('t2')}<p><b>2T</b>: aprietas el pulsador y suelda; lo sueltas y para. <b>4T</b>: aprietas (arranca flojo), sueltas (sube a la corriente), aprietas otra vez (baja) y sueltas (apaga). No se cambia mientras sueldas.</p></div>
+<div><h3>Botón 5 · Desde dónde se manda</h3>${miniPanel('loc')}<p>Tres LEDs: <b>panel</b> (mandas con la rueda), <b>1↔2</b> (cambias de memoria con dos toques rápidos al pulsador, solo TIG) y <b>mando a distancia</b> (el pedal). Con el mando activo, el panel no responde.</p></div>
+<div><h3>Flechas ◀ ▶ y rueda</h3>${miniPanel('bal')}<p>Con ◀ ▶ vas pasando por los LEDs de abajo (rampas, corriente, postgás, balance, frecuencia, precalentamiento). Con la rueda cambias el valor del que esté encendido.</p></div>
+</div>
+<p><b>Botón A/V:</b> mientras sueldas, la pantalla enseña amperios (A) o voltios (V).</p>
+<p><b>Memorias 1 y 2:</b> guardan dos programas. Para guardar, mantén pulsada la tecla <b>5 segundos</b> hasta que su luz verde parpadee. Para usarla, púlsala. Una pila interna las guarda con la máquina apagada.</p>
+<p><b>VRD:</b> si su LED está encendido, la máquina mantiene la tensión en vacío por debajo de 35 V (más seguro cuando no sueldas).</p>`],
+['aju','Los ajustes y sus rangos',`<table><tr><th>Ajuste</th><th>Qué hace</th><th>Rango</th></tr>
+<tr><td>Pregás (oculto)</td><td>Gas antes de encender el arco</td><td>0–5 s</td></tr>
+<tr><td>Rampa subida</td><td>Sube la corriente poco a poco al empezar, para calentar el tungsteno con suavidad</td><td>0–10 s</td></tr>
+<tr><td>Corriente</td><td>Los amperios. Con pedal es el máximo del pedal</td><td>4 A–máx.</td></tr>
+<tr><td>Rampa bajada</td><td>Baja la corriente poco a poco al acabar, para que no quede cráter ni grieta</td><td>0–10 s</td></tr>
+<tr><td>Postgás</td><td>Gas después de apagar el arco</td><td>0–25 s</td></tr>
+<tr><td>Balance (AC)</td><td>Menos %: limpia más óxido y calienta más el tungsteno. Más %: más calor en la pieza y más penetración</td><td>50–98 %</td></tr>
+<tr><td>Frecuencia (AC)</td><td>Menos Hz: más calor en la pieza y baño más ancho. Más Hz: arco más estrecho, con más fuerza, y baño más estrecho</td><td>10–152 Hz</td></tr>
+<tr><td>Precalentamiento (AC)</td><td>Calienta el tungsteno para que arranque bien</td><td>1–100</td></tr>
+<tr><td>Pulso (solo DC)</td><td>Corriente alta y baja alternándose: tiempo de pulso y tiempo de fondo</td><td>0,01–2,5 s cada uno</td></tr></table>
+<div class="two"><div class="fig">${wave(.3,3)}<p>Balance bajo: más tiempo limpiando (arriba)</p></div><div class="fig">${wave(.7,3)}<p>Balance alto: más tiempo metiendo calor (abajo)</p></div><div class="fig">${wave(.5,2)}<p>Frecuencia baja: baño ancho</p></div><div class="fig">${wave(.5,7)}<p>Frecuencia alta: arco estrecho</p></div></div>
+<p class="mut">El manual dice que el rango del balance depende de la frecuencia.</p>`],
+['pre','Precalentamiento del tungsteno',`<p>Es el último LED de abajo. El valor depende del <b>tipo y grosor del tungsteno</b>. Estos son los tuyos:</p>
+<table><tr><th>Tungsteno</th><th>Qué es</th><th>Valor</th><th>De dónde sale</th></tr>
+<tr><td>Verde 3,2 mm</td><td>Puro (WP)</td><td>55–65</td><td>Tabla del manual ESAB</td></tr>
+<tr><td>Azul 3,2 mm</td><td>Lantanado 2 % (WL20)</td><td>60–70</td><td>Aproximado: el manual no lo trae; valor del lantanado WL10 de 3,2</td></tr>
+<tr><td>Dorado 2,4 mm</td><td>Lantanado 1,5 % (WL15)</td><td>40–50</td><td>Aproximado: el manual no lo trae; valor del lantanado WL10 de 2,4</td></tr></table>
+<p class="mut">Colores según la norma ISO 6848. En algunos casos el manual da dos valores; aquí va el rango.</p>`],
+['ocu','Funciones ocultas',`<p>Hay ajustes que no tienen LED. Para llegar: <b>mantén pulsado un botón 5 segundos</b>, elige la letra con <b>▶</b> y cambia el valor con la <b>rueda</b>. El manual no dice qué botón es; prueba con los del panel hasta que salgan las letras.</p>
+<table><tr><th>Letra</th><th>Qué es</th><th>Valores</th></tr>
+<tr><td>A</td><td>Pregás</td><td>0–5 s</td></tr>
+<tr><td>b</td><td>Micropulso (solo con pulso en DC)</td><td>0 apagado · 1 encendido</td></tr>
+<tr><td>I</td><td>Corriente mínima del pedal</td><td>0–99 %</td></tr></table>`],
+['ped','El pedal',`<ol><li>Conecta el pedal (por ejemplo, el T1 Foot CAN de ESAB) a la toma de <b>mando a distancia</b> de la máquina <b>antes</b> de activarlo.</li>
+<li>Pulsa el <b>botón 5</b> hasta que se encienda el LED del mando (el tercero).</li>
+<li>En el panel pon la corriente <b>máxima</b> que quieres con el pedal pisado a fondo.</li>
+<li>Con la función oculta <b>I</b> eliges la corriente <b>mínima</b> del pedal (0–99 %).</li></ol>
+<p>Mientras el mando está activo, el panel no responde.</p>`],
+['err','Códigos de error',`<p>Sale una <b>E</b> con un número, alternando con una <b>U</b> que dice qué parte falla: U0 panel, U1 refrigeración, U2 máquina, U4 mando a distancia, U5 parte de AC. Para borrarlo, pulsa cualquier botón o gira la rueda (si el mando está activo, desactívalo antes).</p>
+<table><tr><th>Código</th><th>Qué pasa</th><th>Qué hacer</th></tr>
+<tr><td>E5</td><td>Tensión de la red demasiado alta o baja</td><td>Llamar al técnico</td></tr>
+<tr><td>E6 / E7</td><td>Se ha calentado y ha cortado</td><td>Esperar a que enfríe. Mirar que las rejillas no estén tapadas o sucias y no pasarte del tiempo de trabajo</td></tr>
+<tr><td>E12</td><td>Aviso de comunicación (interferencias)</td><td>Revisar cables y aparatos conectados. Si sigue, técnico</td></tr>
+<tr><td>E14</td><td>Fallo grave de comunicación</td><td>Igual que E12</td></tr>
+<tr><td>E16</td><td>Tensión en vacío alta (VRD)</td><td>Apagar la máquina para reiniciar. Si sigue, técnico</td></tr>
+<tr><td>E20</td><td>Mucha inductancia en los cables</td><td>Cables más cortos, sin enrollar, juntos, y arco más corto</td></tr>
+<tr><td>E29</td><td>No circula agua de refrigeración</td><td>Revisar el circuito de agua y la bomba</td></tr>
+<tr><td>E41</td><td>Se ha perdido la conexión con la refrigeración</td><td>Revisar cables. Si sigue, técnico</td></tr></table>
+<p class="mut">Cualquier otro código: técnico.</p>`],
+['ave','Si algo va mal',`<table><tr><th>Problema</th><th>Mira esto</th></tr>
+<tr><td>No sale el arco</td><td>Interruptor encendido · cables de soldadura y masa bien puestos · corriente adecuada · HF o LiftArc · nivel y caudal del refrigerante</td></tr>
+<tr><td>Se corta mientras sueldas</td><td>Sobrecalentamiento (piloto y código) · caudal del refrigerante · fusibles de la red</td></tr>
+<tr><td>Se calienta muy a menudo</td><td>Filtros de aire tapados · no pasarte de lo que aguanta la máquina</td></tr>
+<tr><td>Soldadura mala</td><td>Cables bien puestos · corriente · electrodo o varilla correctos · gas correcto y su caudal · fusibles</td></tr></table>`],
+['man','Mantenimiento',`<p><b>Filtro de aire:</b> quita la rejilla de delante, saca el filtro, límpialo con aire a <b>baja presión</b> y vuelve a ponerlo con la malla más fina hacia la rejilla.</p>
+<p><b>Refrigerante:</b> rellena por el tapón hasta el máximo, solo con el de ESAB. Otro líquido anula la garantía. Si pones una antorcha o mangueras de 5 m o más, rellena.</p>
+<p><b>Antorcha refrigerada:</b> conéctala con la máquina en 0. La bomba arranca sola al darle a START o al empezar a soldar.</p>
+<p>Las reparaciones eléctricas, solo el servicio técnico de ESAB.</p>`],
+['seg','Seguridad en corto',`<ul><li>No toques piezas con tensión ni trabajes con ropa o guantes mojados.</li><li>Careta, guantes y ropa que no arda. Nada de anillos ni ropa suelta.</li><li>Extracción de humos en el arco.</li><li>Si llevas marcapasos, consulta al médico antes de soldar.</li><li>Nada inflamable cerca.</li><li>No usar la máquina para descongelar tuberías.</li></ul>`]
+];
+function renderMan(){
+  $('mnav').innerHTML=MAN.map(([id,t])=>`<a href="#m-${id}">${t}</a>`).join('');
+  $('mbody').innerHTML=MAN.map(([id,t,h])=>`<div class="card" id="m-${id}"><h2>${t}</h2>${h}</div>`).join('');
+}
+
+function renderPanelPre(){}
+function renderPanel(){$('panel').innerHTML=panelSVG();$('pinfo').innerHTML=pinfo();for(const c of $('out').querySelectorAll('.cell'))c.classList.toggle('sel',c.dataset.ic===pSel)}
+function step(dir){
+  const k=pSel;if(!k||!RNG[k])return;const [mn,mx,st]=RNG[k];
+  if(k==='bal'){vals[mat].bal=clamp(vals[mat].bal+dir,mn,mx);saveValsSoon()}
+  else if(k==='hz'){vals[mat].hz=clamp(vals[mat].hz+dir,mn,mx);saveValsSoon()}
+  else{pv[k]=Math.round(clamp(pv[k]+dir*st,mn,mx)*10)/10;try{localStorage.setItem('wbPv',JSON.stringify(pv))}catch(x){}}
+  knobA=(knobA+dir*15)%360;renderMaq();renderFino();renderPanel();
+}
+let svT=null;function saveValsSoon(){clearTimeout(svT);svT=setTimeout(async()=>{if(db)try{await db.doc('ajustes/valores').set(JSON.parse(JSON.stringify(vals)))}catch(x){}},800)}
+$('panelBox').addEventListener('click',e=>{
+  const t=e.target.closest('[data-a]');if(!t)return;const a=t.dataset.a;
+  if(a[0]==='b'){const col=COLS[+a[1]];const i=col.indexOf(pSel);pSel=col[(i+1)%col.length];renderPanel();return}
+  if(a==='L'||a==='R'){let i=SEQ.indexOf(pSel);i=i<0?(a==='R'?0:SEQ.length-1):(i+(a==='R'?1:-1)+SEQ.length)%SEQ.length;pSel=SEQ[i];renderPanel();return}
+});
+let drag=null;
+$('panelBox').addEventListener('pointerdown',e=>{const t=e.target.closest('[data-a="knob"]');if(!t)return;e.preventDefault();const r=$('panel').querySelector('svg').getBoundingClientRect();const cx=r.left+690/820*r.width,cy=r.top+466/610*r.height;drag={cx,cy,a:Math.atan2(e.clientY-cy,e.clientX-cx),acc:0,moved:false};try{e.target.setPointerCapture(e.pointerId)}catch(x){}});
+window.addEventListener('pointermove',e=>{if(!drag)return;const a=Math.atan2(e.clientY-drag.cy,e.clientX-drag.cx);let d=a-drag.a;if(d>Math.PI)d-=2*Math.PI;if(d<-Math.PI)d+=2*Math.PI;drag.a=a;drag.acc+=d;while(Math.abs(drag.acc)>0.26){const s=Math.sign(drag.acc);drag.acc-=s*0.26;drag.moved=true;step(s)}});
+window.addEventListener('pointerup',e=>{if(!drag)return;if(!drag.moved){step(e.clientX>=drag.cx?1:-1)}drag=null});
+$('panelBox').addEventListener('wheel',e=>{if(!e.target.closest('[data-a="knob"]'))return;e.preventDefault();step(e.deltaY<0?1:-1)},{passive:false});
+$('out').addEventListener('click',e=>{const c=e.target.closest('.cell');if(!c)return;const kk=c.dataset.ic;const pb=e.target.closest('.pm button');if(pb){pSel=kk;step(+pb.dataset.d);return}if(FIXK.includes(kk)&&pSel===kk){fixOn[kk]=!fixOn[kk];try{localStorage.setItem('wbFix',JSON.stringify(fixOn))}catch(x){}renderMaq()}pSel=kk;renderPanel();if(window.innerWidth<900)$('panelBox').scrollIntoView({behavior:'smooth',block:'nearest'})});
+
+
+const MT={
+ fe:{n:'Hierro',wires:['0.8','1.0','1.2'],wn:'G3Si1 (ER70S-6)',gases:{M21:'Ar + 18% CO₂',C1:'CO₂ 100%'},line:'Fe',
+   cells:(g)=>[
+    cell('pul','Method','CORTO','','«Short-/sprayarc». Corto en chapa fina, spray con mucha potencia'),
+    cell('syn','Synergy','ON','','El voltaje sigue la línea sinérgica'),
+    cell('spool','Línea sinérgica','Fe','',`Hilo ${WN(wire)} mm · ${g}. Se elige en el menú principal`,1),
+    cell('volt','Voltage (corrección)','0','V','Con sinergia es un ajuste sobre la línea. Empieza en 0',1),
+    cell('syn','Inductance','BASE','','Más: baño más ancho y menos salpicadura. Menos: arco más duro y concentrado',1),
+    cell('t2','Gatillo','2T','','4T para cordones muy largos'),
+    cell('gas','Gas pre-flow','0,2','s','Rango del panel 0,1–25 s'),
+    cell('spool','Creep start','OFF','','En hierro no hace falta'),
+    cell('crater','Crater filling','OFF','','ON solo en cordones grandes que dejen cráter'),
+    cell('dn','Burnback time','BASE','','Deja el de fábrica y ajústalo con probetas'),
+    cell('post','Gas post-flow','0,5–1','s','Rango del panel 0,1–25 s'),
+    cell('gas','Caudal de gas','12–15','l/min','En el caudalímetro')],
+   prep:['Quita calamina, óxido, pintura y aceite de la zona de soldadura.','Rodillos en V para hilo macizo y sirga de acero.','Tubo de contacto de la medida del hilo y tobera limpia de proyecciones.','Hilo fuera de la boquilla corto: 10–15 mm.','Con CO₂ 100% saldrá más salpicadura que con mezcla Ar + CO₂.'],
+   sm:[
+    {t:'Mucha salpicadura gorda',p:'v',d:-0.5,w:'Baja la corrección de voltaje 0,5 V. Si sigue, sube un poco la Inductance.'},
+    {t:'Cordón alto y estrecho que no moja los bordes',p:'v',d:+0.5,w:'Sube la corrección de voltaje 0,5 V.'},
+    {t:'Mordeduras a los lados',p:'v',d:-0.5,w:'Arco demasiado largo o caliente: baja 0,5 V y no avances tan rápido.'},
+    {t:'Arco duro, chisporrotea y el baño no se abre',p:'i',w:'Sube un poco la Inductance para un baño más ancho y suave.'},
+    {t:'Falta de penetración',p:null,w:'Más velocidad de hilo (más corriente) o avanza más despacio. Revisa la preparación de la junta.'},
+    {t:'Al acabar, el hilo queda pegado al baño',p:'b',w:'Sube un poco el Burnback time (pasos de 0,01–0,02 s).'},
+    {t:'El hilo se quema hasta el tubo de contacto',p:'b2',w:'Baja un poco el Burnback time (pasos de 0,01–0,02 s).'},
+    {t:'Poros',p:null,w:'Limpia óxido, pintura y aceite, comprueba el caudal de gas, la tobera y las corrientes de aire.'}]},
+ inox:{n:'Inox',wires:['0.8','1.0','1.2'],wn:'308LSi / 316LSi',gases:{M12:'Ar + 2% CO₂',M13:'Ar + 2% O₂'},line:'CrNi',
+   cells:(g)=>[
+    cell('pul','Method','PULSO','','Menos calor y salpicadura que el arco corto'),
+    cell('syn','Synergy','ON','','El voltaje sigue la línea sinérgica'),
+    cell('spool','Línea sinérgica','CrNi','',`Hilo ${WN(wire)} mm · ${g}. Se elige en el menú principal`,1),
+    cell('volt','Voltage (corrección)','0','V','Con sinergia es un ajuste sobre la línea. Empieza en 0',1),
+    cell('t2','Gatillo','4T','','2T para puntos y cordones cortos'),
+    cell('gas','Gas pre-flow','0,3','s','Rango del panel 0,1–25 s'),
+    cell('spool','Creep start','ON','','Arranque más suave'),
+    cell('crater','Crater filling','ON','','Tiempo 0,5–1 s. El inox se agrieta en el cráter',1),
+    cell('cut','Termination','PULSO','','«Final pulse»: corte limpio del hilo'),
+    cell('dn','Burnback time','BASE','','Deja el de fábrica y ajústalo con probetas'),
+    cell('post','Gas post-flow','1–2','s','Protege el final del cordón mientras se enfría'),
+    cell('gas','Caudal de gas','12–16','l/min','En el caudalímetro')],
+   prep:['Cepillo y disco solo para inox: si tocan hierro, el inox se mancha de óxido.','Desengrasa con acetona.','Rodillos en V y tubo de contacto de la medida del hilo.','Antorcha empujando 5–10°.','Poco calor: así salen menos colores y menos deformación.','No uses CO₂ puro en inox.','Al acabar, decapa y pasiva el cordón si la pieza lo necesita.'],
+   sm:[
+    {t:'Cordón muy oscuro o quemado (azul o negro)',p:null,w:'Demasiado calor: avanza más rápido, cordones más cortos y deja enfriar. Comprueba el caudal de gas y el postgás.'},
+    {t:'Cordón abombado que no moja los bordes',p:'v',d:+0.5,w:'Sube la corrección de voltaje 0,5 V.'},
+    {t:'Mordeduras o arco largo',p:'v',d:-0.5,w:'Baja la corrección de voltaje 0,5 V.'},
+    {t:'Grieta o agujero en el cráter final',p:'c',d:+0.5,w:'Con Crater filling en ON, alarga su tiempo 0,5 s.'},
+    {t:'Al acabar, el hilo queda pegado al baño',p:'b',w:'Sube un poco el Burnback time (pasos de 0,01–0,02 s).'},
+    {t:'El hilo se quema hasta el tubo de contacto',p:'b2',w:'Baja un poco el Burnback time (pasos de 0,01–0,02 s).'},
+    {t:'Manchas de óxido al día siguiente',p:null,w:'Contaminación de hierro: usa cepillos y discos solo para inox y decapa/pasiva el cordón.'},
+    {t:'Poros',p:null,w:'Limpieza con acetona, caudal de gas, tobera limpia y sin corrientes de aire.'}]},
+ alu:{n:'Aluminio',wires:['1.0','1.2','1.6'],wn:'ER5356',gases:{Ar:'Argón puro',ArHe:'Argón + helio'},line:'AlMg5',
+   cells:(g)=>[
+    cell('pul','Method','PULSO','','MIG/MAG con pulsado'),
+    cell('syn','Synergy','ON','','El voltaje sigue la línea sinérgica'),
+    cell('spool','Línea sinérgica','AlMg5','',`Hilo ${WN(wire)} mm · ${g}. Se elige en el menú principal`,1),
+    cell('volt','Voltage (corrección)','0','V','Con sinergia es un ajuste sobre la línea. Empieza en 0',1),
+    cell('t2','Gatillo','4T','','Cordones largos. 2T para puntos y cortos'),
+    cell('gas','Gas pre-flow','0,5','s','Rango del panel 0,1–25 s'),
+    cell('spool','Creep start','ON','','Arranca el hilo despacio hasta tocar'),
+    cell('flame','Hot start','ON','','Tiempo 1 s para empezar caliente en aluminio',1),
+    cell('crater','Crater filling','ON','','Tiempo 1–1,5 s. Evita grieta y poro al final',1),
+    cell('cut','Termination','PULSO','','«Final pulse»: corte limpio del hilo'),
+    cell('dn','Burnback time','BASE','','Deja el de fábrica y ajústalo con probetas'),
+    cell('post','Gas post-flow','1–2','s','Rango del panel 0,1–25 s'),
+    cell('gas','Caudal de gas',gas==='ArHe'?'20–25':'15–20','l/min',gas==='ArHe'?'Argón + helio necesita más caudal':'Argón puro. En el caudalímetro')],
+   prep:['Rodillos de garganta en U para aluminio, con poca presión: si aprietan, deforman el hilo y se enreda.','Sirga de teflón o grafito, no de acero. Manguera lo más corta y recta posible.','Tubo de contacto específico para aluminio (un poco más ancho): el aluminio dilata y se agarrota.','Antorcha empujando, 10–15° hacia delante. Nunca arrastrando en aluminio.','Limpieza igual que en TIG: acetona y cepillo de inox solo para aluminio.','Hilo 5356 guardado en su bolsa y seco: el hilo sucio u oxidado da poros.','7020: poco calor y deja enfriar entre pasadas. 6082 + fundición: dirige el arco hacia la fundición.'],
+   sm:[
+    {t:'Cordón abombado que no moja los bordes',p:'v',d:+0.5,w:'Arco corto o frío. Sube la corrección de voltaje 0,5 V.'},
+    {t:'Arco largo, mordeduras o salpicadura fina',p:'v',d:-0.5,w:'Arco demasiado largo. Baja la corrección de voltaje 0,5 V.'},
+    {t:'Falta de fusión al empezar el cordón',p:'h',d:+0.5,w:'El aluminio está frío al arrancar. Con Hot start en ON, alarga su tiempo 0,5 s.'},
+    {t:'Grieta o agujero en el cráter final',p:'c',d:+0.5,w:'Con Crater filling en ON, alarga su tiempo 0,5 s.'},
+    {t:'Al acabar, el hilo queda pegado al baño',p:'b',w:'Sube un poco el Burnback time (pasos de 0,01–0,02 s).'},
+    {t:'El hilo se quema hasta el tubo de contacto o se suelda a él',p:'b2',w:'Baja un poco el Burnback time. Si sigue, cambia el tubo de contacto.'},
+    {t:'El hilo tartamudea o hace nido en los rodillos',p:null,w:'No es la máquina: rodillos en U y menos presión, sirga de teflón, tubo de contacto de aluminio y manguera recta.'},
+    {t:'Hollín negro a los lados del cordón',p:null,w:'Con 5356 es normal: es el magnesio del hilo. Empuja la antorcha 10–15°, buen caudal de gas y sin alejarte de la pieza.'},
+    {t:'Poros',p:null,w:'Limpieza otra vez, hilo seco y limpio, caudal de gas correcto, sin corrientes de aire y sin fugas.'}]}
+};
+const WN=w=>String(w).replace('.',',');
+function fixMt(){const M=MT[mt];if(!M.wires.includes(wire))wire=M.wires[1];if(!M.gases[gas])gas=Object.keys(M.gases)[0]}
+function renderMig(){
+  fixMt();const M=MT[mt];
+  for(const id of ['mtSel','mtSel2'])for(const b of $(id).querySelectorAll('button'))b.setAttribute('aria-pressed',b.dataset.v===mt);
+  $('wireSel').innerHTML='<span>Hilo '+M.wn+'</span>'+M.wires.map(w=>`<button data-v="${w}" aria-pressed="${w===wire}">${WN(w)} mm</button>`).join('');
+  $('gasSel').innerHTML='<span>Gas</span>'+Object.entries(M.gases).map(([k,v])=>`<button data-v="${k}" aria-pressed="${k===gas}">${v}</button>`).join('');
+  $('migTitle').textContent='Aristo U82 · '+M.n;
+  $('tagMig').textContent=M.wn+' · '+WN(wire)+' mm · '+M.gases[gas];
+  $('outMig').innerHTML=M.cells(M.gases[gas]).join('');
+  $('migPrepT').textContent='Antes de soldar '+M.n.toLowerCase()+' con HILO';
+  $('migPrep').innerHTML=M.prep.map(t=>`<li>${t}</li>`).join('');
+}
+let selM=-1;
+function renderFinoMig(){
+  const SM=MT[mt].sm;if(selM>=SM.length)selM=-1;
+  $('symMig').innerHTML=SM.map((s,i)=>{
+    const r=s.p==='v'?`${s.d>0?'+':''}${String(s.d).replace('.',',')} V`:s.p==='h'?'Hot start +0,5 s':s.p==='c'?'Cráter +0,5 s':s.p==='b'?'Burnback ↑':s.p==='b2'?'Burnback ↓':s.p==='i'?'Inductance ↑':'técnica';
+    return `<button data-i="${i}" aria-pressed="${i===selM}"><span>${s.t}</span><b>${r}</b></button>`}).join('');
+  $('ansMig').innerHTML=selM<0?'':`<div class="ans"><p>${SM[selM].w}</p></div>`;
+}
+function renderMaqSel(){
+  for(const b of $('maqSel').children)b.setAttribute('aria-pressed',b.dataset.m===maq);
+  $('tigMaq').hidden=$('tigFino').hidden=maq!=='tig';
+  $('migMaq').hidden=$('migFino').hidden=maq!=='mig';
+  $('lfb').textContent=maq==='tig'?'Balance %':'Velocidad de hilo m/min';
+  $('lfh').textContent=maq==='tig'?'Frecuencia Hz':'Corrección de voltaje V';
+  $('fb').step=maq==='tig'?'1':'0.1';$('fh').step=maq==='tig'?'1':'0.25';
+  renderMig();renderFinoMig();fillForm();
+  $('fuWrap').hidden=maq==='mig'&&mt!=='alu';
+  try{localStorage.setItem('wbMaq',JSON.stringify({maq,mt,wire,gas}))}catch(x){}
+}
+$('maqSel').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;maq=b.dataset.m;renderMaqSel()});
+for(const id of ['mtSel','mtSel2'])$(id).addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;mt=b.dataset.v;selM=-1;renderMaqSel()});
+$('wireSel').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;wire=b.dataset.v;renderMaqSel()});
+$('gasSel').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;gas=b.dataset.v;renderMaqSel()});
+$('symMig').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;selM=+b.dataset.i===selM?-1:+b.dataset.i;renderFinoMig()});
+
+document.addEventListener('click',e=>{
+  const b=e.target.closest('#mat button,#mat2 button');
+  if(b){mat=b.dataset.v;sel=-1;renderAll();return}
+  const s=e.target.closest('#sym button');
+  if(s){sel=+s.dataset.i===sel?-1:+s.dataset.i;renderFino();$('ansBox').scrollIntoView({block:'nearest'});return}
+  const n=e.target.closest('nav button');
+  if(n){for(const x of document.querySelectorAll('nav button'))x.setAttribute('aria-current',x===n);
+    for(const v of document.querySelectorAll('.view'))v.classList.toggle('on',v.id==='v-'+n.dataset.v);window.scrollTo(0,0);return}
+  const im=e.target.closest('.thumbs img');
+  if(im){$('dlgImg').src=im.src;$('dlg').showModal();return}
+  if(e.target.id==='dlg'||e.target.id==='dlgImg')$('dlg').close();
+});
+
+/* formulario */
+function fillForm(){if(maq==='mig'){$('fb').value='';$('fh').value='0';return}const p=vals[$('fu').value];$('fb').value=p.bal;$('fh').value=p.hz}
+$('fu').addEventListener('change',fillForm);
+$('ff').addEventListener('change',()=>{
+  files=[...$('ff').files];
+  $('prev').innerHTML='';
+  for(const f of files){const i=document.createElement('img');i.src=URL.createObjectURL(f);i.alt='';$('prev').appendChild(i)}
+});
+
+$('saveVals').addEventListener('click',async()=>{
+  const b=+$('mb').value,h=+$('mh').value;
+  if(!(b>=50&&b<=98&&h>=10&&h<=152)){$('valsMsg').textContent='Balance 50–98 y frecuencia 10–152.';return}
+  vals[mat]={bal:b,hz:h};renderAll();fillForm();
+
+
+  if(!db){$('valsMsg').textContent='Cambiado solo en esta pantalla (sin guardado).';return}
+  try{await db.doc('ajustes/valores').set(JSON.parse(JSON.stringify(vals)));$('valsMsg').textContent='Guardado.'}
+  catch(err){$('valsMsg').textContent='No se ha podido guardar.'}
+});
+
+$('saveEnt').addEventListener('click',async()=>{
+  $('formErr').textContent='';
+  if(!db){$('formErr').textContent='El guardado no está disponible ahora mismo.';return}
+  const btn=$('saveEnt');btn.disabled=true;btn.textContent='Guardando…';
+  try{
+    const ph=[];
+    if(files.length&&!assets)throw new Error('Las fotos no se pueden subir desde aquí.');
+    for(const f of files){const r=await assets.upload(f);ph.push(r.id)}
+    await db.collection('pruebas').add(maq==='mig'?{ts:Date.now(),maq:'mig',mt,wire,gas,union:mt==='alu'?$('fu').value:'',vel:+$('fb').value,volt:+$('fh').value,res:$('fr').value,com:$('fc').value.slice(0,4000),fotos:ph,claude:''}:{ts:Date.now(),maq:'tig',union:$('fu').value,bal:+$('fb').value,hz:+$('fh').value,res:$('fr').value,com:$('fc').value.slice(0,4000),fotos:ph,claude:''});
+    $('fc').value='';$('ff').value='';files=[];$('prev').innerHTML='';
+  }catch(err){$('formErr').textContent=(err&&err.code==='quota_exceeded')?'Espacio lleno: borra pruebas antiguas.':'No se ha podido guardar: '+(err&&err.message||'error')}
+  btn.disabled=false;btn.textContent='Guardar prueba';
+});
+
+function renderList(){
+  $('listMsg').textContent=entries.length?'':'Todavía no hay pruebas. Guarda la primera arriba.';
+  $('list').innerHTML=entries.map(d=>{
+    const e=d.data();const f=new Date(e.ts||0);
+    return `<article class="card ent" data-id="${esc(d.id)}">
+      <h3>${e.maq==='mig'?'HILO · '+esc((MT[e.mt||'alu']||{}).n||'')+(e.union?' · '+esc(NAME[e.union]||e.union):''):'TIG · '+esc(NAME[e.union]||e.union)} <span class="res ${esc(e.res)}">${esc(e.res)}</span></h3>
+      <div class="meta"><span>${esc(f.toLocaleDateString('es-ES'))} ${esc(f.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}))}</span>${e.maq==='mig'?`<span>Hilo <b>${esc(WN(e.wire||''))} mm</b></span><span>Vel. hilo <b>${esc(e.vel)} m/min</b></span><span>Voltaje <b>${esc(e.volt)} V</b></span>`:`<span>Balance <b>${esc(e.bal)} %</b></span><span>Frecuencia <b>${esc(e.hz)} Hz</b></span>`}</div>
+      ${e.com?`<p style="margin:8px 0 0;white-space:pre-wrap">${esc(e.com)}</p>`:''}
+      ${(e.fotos||[]).length?`<div class="thumbs">${e.fotos.map(id=>`<img ${GHMODE?`data-ph="${esc(id)}"`:`src="/_blob/${encodeURIComponent(id)}"`} alt="Foto de la soldadura" loading="lazy">`).join('')}</div>`:''}
+      ${e.claude?`<div class="cl"></div>`:''}
+      <div class="acts">${sample?`<button class="btn y ask">Pedir ajuste fino a Claude</button>`:GHMODE?`<button class="btn y ask">Copiar consulta para Claude</button>`:''}<button class="btn ghost del">Borrar</button></div>
+      <p class="err"></p>
+    </article>`}).join('');
+  for(const a of $('list').querySelectorAll('.ent')){
+    const d=entries.find(x=>x.id===a.dataset.id);const c=a.querySelector('.cl');
+    if(c)c.textContent=d.data().claude;
+  }
+  if(GHMODE)for(const im of $('list').querySelectorAll('img[data-ph]'))GH.photo(im.dataset.ph).then(u=>{if(u)im.src=u}).catch(()=>{});
+}
+
+$('list').addEventListener('click',async e=>{
+  const art=e.target.closest('.ent');if(!art)return;
+  const d=entries.find(x=>x.id===art.dataset.id);if(!d)return;
+  const err=art.querySelector('.err');
+  if(e.target.closest('.del')){
+    if(art.dataset.sure!=='1'){art.dataset.sure='1';e.target.textContent='Pulsa otra vez para borrar';return}
+    try{const fo=d.data().fotos||[];await db.doc('pruebas/'+d.id).delete();for(const id of fo)assets&&assets.delete(id).catch(()=>{})}catch(x){err.textContent='No se ha podido borrar.'}
+    return;
+  }
+  if(e.target.closest('.ask'))ask(d,art,e.target.closest('.ask'));
+});
+
+async function ask(d,art,btn){
+  const e=d.data(),err=art.querySelector('.err');
+  let box=art.querySelector('.cl');
+  if(!box){box=document.createElement('div');box.className='cl';art.querySelector('.acts').before(box)}
+  btn.disabled=true;err.textContent='';box.textContent='Mirando la soldadura…';
+  try{
+    const imgs=[];let canImg=false;
+    if(sample)try{canImg=!!(await sample.limits()).images}catch(x){}
+    if(canImg)for(const id of (e.fotos||[]).slice(0,3)){const r=await fetch('/_blob/'+encodeURIComponent(id));if(r.ok)imgs.push(await r.blob())}
+    const prompt=`Eres un experto en soldadura TIG de aluminio. Responde en español, frases cortas y técnicas, sin rodeos. No inventes: si la foto o los datos no bastan para saber algo, dilo y di qué foto o dato falta.
+
+Equipo: ESAB Tig 4300i AC/DC con panel Origo TA24. Corriente AC, cebado HF, 2T, pedal (rampas a 0 s, las hace el soldador con el pie). En este panel ESAB el balance va de 50 a 98 %: más bajo = más limpieza de óxido y más calor en el tungsteno; más alto = más calor en la pieza y más penetración. Frecuencia AC de 10 a 152 Hz: más baja = baño más ancho; más alta = arco más estrecho. El panel no tiene pregás regulable. Varilla ER5356. Piezas de motos de carreras.
+Unión: ${NAME[e.union]||e.union}${e.union==='fund'?' (6082 con fundición de aluminio serie 5000)':' (7020 con 7020)'}.
+Ajustes usados: balance ${e.bal} %, frecuencia ${e.hz} Hz.
+Resultado según el soldador: ${e.res}.
+Comentario del soldador: ${e.com||'(ninguno)'}
+${imgs.length?`Te adjunto ${imgs.length} foto(s) del cordón.`:'No hay fotos.'}
+
+Dame el ajuste fino con este formato:
+1. Qué veo: defectos concretos que se ven o se deducen.
+2. Causa más probable de cada uno.
+3. Cambio en la máquina: UN solo cambio para la próxima probeta, con el valor exacto (balance en pasos de 1-2 %, frecuencia en pasos de 5-10 Hz, postgás en segundos), o di que no hace falta tocar la máquina.
+4. Técnica o preparación a corregir, si aplica.
+5. Qué mirar en la siguiente probeta para saber si ha mejorado.`;
+    const Me=MT[e.mt||'alu']||MT.alu;
+    const promptMig=`Eres un experto en soldadura MIG/MAG. Responde en español, frases cortas y técnicas, sin rodeos. No inventes: si la foto o los datos no bastan para saber algo, dilo y di qué foto o dato falta.
+
+Equipo: ESAB Aristo 500ix con alimentador y panel Aristo U82, sinergia ON. En sinergia, "Voltage" es una corrección sobre la línea sinérgica (pasos de 0,25 V). Funciones del panel: Inductance (solo arco corto/spray: más = baño más ancho y menos salpicadura), Creep start, Hot start, Crater filling, Burnback time (0-1 s), Termination (final pulse o SCT), Gas pre-flow y post-flow.
+Material: ${Me.n}. Hilo ${Me.wn} de ${WN(e.wire||'')} mm. Gas: ${Me.gases[e.gas]||e.gas}.${e.union?` Unión: ${NAME[e.union]||e.union}${e.union==='fund'?' (6082 con fundición de aluminio serie 5000)':' (7020 con 7020)'}.`:''} Piezas de motos de carreras.
+Ajustes usados: velocidad de hilo ${e.vel} m/min, corrección de voltaje ${e.volt} V.
+Resultado según el soldador: ${e.res}.
+Comentario del soldador: ${e.com||'(ninguno)'}
+${imgs.length?`Te adjunto ${imgs.length} foto(s) del cordón.`:'No hay fotos.'}
+
+Dame el ajuste fino con este formato:
+1. Qué veo: defectos concretos que se ven o se deducen.
+2. Causa más probable de cada uno.
+3. Cambio en la máquina: UN solo cambio para la próxima probeta, con el valor exacto (voltaje en pasos de 0,5 V, velocidad de hilo en pasos de 0,2-0,5 m/min, tiempos en pasos de 0,5 s, burnback en pasos de 0,01-0,02 s), o di que no hace falta tocar la máquina.
+4. Técnica, arrastre del hilo o preparación a corregir, si aplica.
+5. Qué mirar en la siguiente probeta para saber si ha mejorado.`;
+    if(!sample){const t=e.maq==='mig'?promptMig:prompt;try{await navigator.clipboard.writeText(t);box.textContent='Copiado. Abre Claude, pégalo y adjunta las fotos de esta prueba.'}catch(x){box.textContent=t}btn.disabled=false;return}
+    const r=await sample(e.maq==='mig'?promptMig:prompt,{images:imgs.length?imgs:undefined,modelTier:'complex',cache:false,onText:({text})=>{box.textContent=text}});
+    box.textContent=r.text;
+    try{await db.doc('pruebas/'+d.id).update({claude:r.text.slice(0,8000)})}catch(x){}
+  }catch(x){
+    box.textContent='';
+    err.textContent=x&&x.code==='rate_limited'?'Demasiadas consultas seguidas. Espera un poco.':x&&x.code==='not_granted'?'No has dado permiso para consultar a Claude.':'No se ha podido consultar.';
+  }
+  btn.disabled=false;
+}
+
+/*save*/
+let saved={};try{saved=JSON.parse(localStorage.getItem('wbSaved')||'{}')||{}}catch(x){}
+function renderSaved(){
+  const g=saved[mat];if(!g){$('savedBox').innerHTML='<p class="mut" style="margin:8px 0 0">Todavía no has guardado parámetros para '+NAME[mat]+'.</p>';return}
+  const f=new Date(g.ts);const rows=[['Proceso',g.fix&&g.fix.tig===false?'—':'TIG'],['Corriente',g.fix&&g.fix.ac===false?'—':'AC'],['Mando',g.fix&&g.fix.loc===false?'—':'Pedal'],['Balance',g.bal+' %'],['Frecuencia',g.hz+' Hz'],['Rampa subida',String(g.up).replace('.',',')+' s'],['Rampa bajada',String(g.dn).replace('.',',')+' s'],['Postgás',String(g.post).replace('.',',')+' s'],['Pregás',String(g.pre).replace('.',',')+' s'],['Tungsteno',TW[g.tw]?TW[g.tw].n:'—'],['Precalentamiento',String(g.ex)]];
+  $('savedBox').innerHTML=`<div class="saved"><b>✓ Guardado · ${esc(NAME[g.union]||g.union)}</b><span class="mut"> ${esc(f.toLocaleDateString('es-ES'))} ${esc(f.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}))}</span><table>${rows.map(([a,b])=>`<tr><td>${a}</td><td><b>${esc(b)}</b></td></tr>`).join('')}</table><button class="btn ghost" id="loadSet">Volver a estos valores</button></div>`;
+}
+$('saveSet').addEventListener('click',async()=>{
+  saved[mat]={ts:Date.now(),union:mat,bal:vals[mat].bal,hz:vals[mat].hz,up:pv.up,dn:pv.dn,post:pv.post,pre:pv.pre,ex:pv.ex,tw,fix:{...fixOn}};
+  try{localStorage.setItem('wbSaved',JSON.stringify(saved))}catch(x){}
+  renderSaved();$('saveMsg').textContent='Guardado.';setTimeout(()=>{$('saveMsg').textContent=''},2500);
+  if(db)try{await db.doc('ajustes/guardado').set(JSON.parse(JSON.stringify(saved)));await db.doc('ajustes/valores').set(JSON.parse(JSON.stringify(vals)))}catch(x){$('saveMsg').textContent='Guardado en este aparato (no se ha podido sincronizar).'}
+  $('savedBox').scrollIntoView({behavior:'smooth',block:'nearest'});
+});
+$('savedBox').addEventListener('click',e=>{if(e.target.id!=='loadSet')return;const g=saved[mat];if(!g)return;vals[mat]={bal:g.bal,hz:g.hz};for(const k of ['up','dn','post','pre','ex'])pv[k]=g[k];if(g.fix)Object.assign(fixOn,g.fix);if(TW[g.tw]){tw=g.tw;try{localStorage.setItem('wbTw',tw)}catch(x){}}try{localStorage.setItem('wbPv',JSON.stringify(pv));localStorage.setItem('wbFix',JSON.stringify(fixOn))}catch(x){}renderAll();});
+
+document.body.insertAdjacentHTML('beforeend',`<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><path id="ptr" d="${PTRACE}"/></defs></svg>`);
+renderAll();fillForm();renderMaqSel();renderMan();renderSaved();
+const ICON="data:image/png;base64,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";
+$("logo").src=ICON;
+function drawIconOld(){const c=document.createElement('canvas');c.width=c.height=256;const g=c.getContext('2d');
+  g.fillStyle='#ffd100';g.beginPath();g.roundRect(0,0,256,256,56);g.fill();
+  g.fillStyle='#111';g.font='700 118px "Barlow Condensed",Arial Narrow,sans-serif';g.textAlign='center';g.fillText('BO',128,142);
+  g.strokeStyle='#111';g.lineWidth=12;g.lineCap='round';g.beginPath();
+  for(let i=0;i<7;i++){const x=40+i*29;g.moveTo(x,196);g.arc(x+14,196,14,Math.PI,0)}g.stroke();
+  return c.toDataURL('image/png')}
+(async()=>{
+  let desktop=null;try{desktop=await claude.use('desktop')}catch(x){}
+  if(!desktop)return;
+  if(desktop.window&&desktop.app){
+    desktop.app.dock.setIcon(ICON).catch(()=>{});
+    try{const o=await desktop.window.getOptions();if(o&&o.options&&Object.keys(o.options).length)await desktop.window.setOptions({})}catch(x){}
+    return;
+  }
+  try{if(await desktop.install.state()==='available'){const b=$('inst');b.hidden=false;b.onclick=()=>desktop.install.request().then(r=>{if(r==='installed')b.hidden=true}).catch(()=>{})}}catch(x){}
+})();
+
+
+(async()=>{
+  try{sample=await claude.use('sample')}catch(x){}
+  try{assets=await claude.use('assets')}catch(x){}
+  try{db=await claude.use('db')}catch(x){}
+  if(!db&&GHMODE){$('syncCard').hidden=false;GH.ui();if(!GH.cfg){$('listMsg').textContent='Conecta la sincronización (arriba) para guardar pruebas.';return}db=GH.db;assets=GH.assets;GH.start()}
+  if(!db){$('listMsg').textContent='El guardado no está disponible en esta vista.';return}
+  db.doc('ajustes/guardado').onSnapshot(s=>{if(s.exists){const d=s.data();if(d&&typeof d==='object'){saved=JSON.parse(JSON.stringify(d));try{renderSaved()}catch(x){}}}},()=>{});
+  db.doc('ajustes/valores').onSnapshot(s=>{
+    if(s.exists){const v=s.data();for(const k of Object.keys(DEF))if(v[k]&&+v[k].bal&&+v[k].hz)vals[k]={bal:+v[k].bal,hz:+v[k].hz};renderAll();fillForm()}
+  },()=>{});
+  const t=setTimeout(()=>{$('listMsg').textContent='No se pueden cargar las pruebas todavía.'},10000);
+  db.collection('pruebas').orderBy('ts','desc').limit(200).onSnapshot(s=>{
+    if(!s.metadata.fromCache)clearTimeout(t);
+    entries=s.docs;renderList();
+  },()=>{clearTimeout(t);$('listMsg').textContent='No se pueden cargar las pruebas.'});
+})();
+}
+</script>
+</body>
+</html>
