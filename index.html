@@ -903,7 +903,7 @@ $('gasSel').addEventListener('change',e=>{if(e.target.id!=='gasTxt')return;gasTx
 $('symMig').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;selM=+b.dataset.i===selM?-1:+b.dataset.i;renderFinoMig()});
 
 document.addEventListener('click',e=>{
-  const mi=e.target.closest('#mat [data-mi],#mat2 [data-mi]');if(mi){openMat(mi.dataset.mi);return}
+  const mi=e.target.closest('#mat [data-mi],#mat2 [data-mi]');if(mi){const k=mi.dataset.mi;if(k!==mat&&NAME[k]){pushHist();mat=k;sel=-1;renderAll()}openMat(k);return}
   const b=e.target.closest('#mat button,#mat2 button');
   if(b){pushHist();mat=b.dataset.v;sel=-1;renderAll();return}
   const s=e.target.closest('#sym button');
@@ -1301,7 +1301,7 @@ function goView(v){for(const x of document.querySelectorAll('nav button'))x.setA
   for(const x of document.querySelectorAll('.view'))x.classList.toggle('on',x.id==='v-'+v);window.scrollTo(0,0);if(v==='pla')renderPlanos()}
 
 /* Auto-actualizar */
-const APPV='20261126222005';
+const APPV='20261126222440';
 (function(){
   if(!GHMODE||location.protocol!=='https:')return;
   try{if(sessionStorage.getItem('wbUpdDone')===APPV){sessionStorage.removeItem('wbUpdDone');toast('✓ App actualizada')}}catch(x){}
