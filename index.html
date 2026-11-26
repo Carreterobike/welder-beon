@@ -338,6 +338,8 @@ let maq='tig',mt='fe',wire='1.0',gas='M21';try{const m=JSON.parse(localStorage.g
 let vals=JSON.parse(JSON.stringify(DEF)),mat='fund',db=null,assets=null,sample=null,entries=[],sel=-1,files=[];
 const GHMODE=typeof claude==='undefined';
 const H={past:[],fut:[],t:0};
+const TG={ar:{n:'Argón puro',v:'7–9,5',c:'#2b7bd6'},arhe:{n:'Argón + helio',v:'≈24 (50/50)',c:'#9b59b6'}};
+let tgas='ar',gasTxt='';try{const t=localStorage.getItem('wbTgas');if(TG[t])tgas=t;gasTxt=localStorage.getItem('wbGasTxt')||''}catch(x){}
 const GH=(()=>{
   let cfg=null;try{cfg=JSON.parse(localStorage.getItem('wbGh')||'null')}catch(x){}
   let state=null,sha=null,timer=null;const subs=new Set(),phc=new Map();
@@ -459,7 +461,7 @@ function renderMaq(){
   $('tag').textContent=NAME[mat];
   $('fixStrip').innerHTML=[['tig','TIG'],['ac','AC'],['loc','PEDAL']].map(([k,l])=>`<button data-ic="${k}" class="${fixOn[k]?'on':''}${pSel===k?' sel':''}"><i></i>${IB[k]?pico(k):''}${l}</button>`).join('');
   const C=(k,l,v,u)=>`<div class="cell${EDIT.has(k)?'':' nopm'}${pSel===k?' sel':''}" data-ic="${k}"><div class="ch">${IB[k]?pico(k):ico(k)}<span>${l}</span></div><div class="v">${esc(v)}${u?`<u>${u}</u>`:''}</div>${EDIT.has(k)?'<div class="pm"><button data-d="-1" aria-label="Bajar">−</button><button data-d="1" aria-label="Subir">+</button></div>':`<small class="r">l/min · botella</small>`}</div>`;
-  $('out').innerHTML=[C('bal','Balance',p.bal,'%'),C('hz','Frec.',p.hz,'Hz'),C('up','Subida',PVF('up'),'s'),C('dn','Bajada',PVF('dn'),'s'),C('post','Postgás',PVF('post'),'s'),C('pre','Pregás',PVF('pre'),'s'),C('ex','Precal.',PVF('ex'),''),C('gas','Argón','7–9,5','')].join('');
+  $('out').innerHTML=[C('bal','Balance',p.bal,'%'),C('hz','Frec.',p.hz,'Hz'),C('up','Subida',PVF('up'),'s'),C('dn','Bajada',PVF('dn'),'s'),C('post','Postgás',PVF('post'),'s'),C('pre','Pregás',PVF('pre'),'s'),C('ex','Precal.',PVF('ex'),''),C('gas',tgas==='ar'?'Argón':'Ar + He',TG[tgas].v.replace(' (50/50)',''),'')].join('');
   $('mb').value=p.bal;$('mh').value=p.hz;
 }
 
@@ -544,7 +546,7 @@ let knobA=0;
 function pinfo(){
   const k=pSel;if(!k)return '<span>Toca una casilla o un botón del panel.</span>';
   const xb=EXP[k]?`<button class="xbtn" data-x="${k}">Explicación ›</button>`:'';
-  if(k==='gas')return `<b>Argón puro</b><span>7–9,5 l/min · en el caudalímetro</span>${xb}`;
+  if(k==='gas')return `<b>${TG[tgas].n}</b><span>${TG[tgas].v} l/min · en el caudalímetro</span>${xb}`;
   if(k==='ex'){const ok=inRec('ex');return `<b>Precalentamiento: ${pfmt('ex')}</b><span>${TW[tw].n}: ${TW[tw].r}</span>${ok?'<span class="ok">✓ dentro</span>':'<span class="ko">fuera</span>'}${xb}`}
   if(k==='pre'){const ok=inRec('pre');return `<b>Pregás: ${pfmt('pre').replace('.',',')} s</b><span>Rec.: 1–1,5 s</span>${ok?'<span class="ok">✓ dentro</span>':'<span class="ko">fuera</span>'}${xb}`}
   if(SEQ.includes(k)){
@@ -847,15 +849,15 @@ const MT={
     {t:'Poros',p:null,w:'Limpieza otra vez, hilo seco y limpio, caudal de gas correcto, sin corrientes de aire y sin fugas.'}]}
 };
 const WN=w=>String(w).replace('.',',');
-function fixMt(){const M=MT[mt];if(!M.wires.includes(wire))wire=M.wires[1];if(!M.gases[gas])gas=Object.keys(M.gases)[0]}
+function fixMt(){const M=MT[mt];if(!M.wires.includes(wire))wire=M.wires[1];if(!M.gases[gas]&&gas!=='otro')gas=Object.keys(M.gases)[0]}
 function renderMig(){
   fixMt();const M=MT[mt];
   for(const id of ['mtSel','mtSel2'])for(const b of $(id).querySelectorAll('button'))b.setAttribute('aria-pressed',b.dataset.v===mt);
   $('wireSel').innerHTML='<span>Hilo '+M.wn+'</span>'+M.wires.map(w=>`<button data-v="${w}" aria-pressed="${w===wire}">${WN(w)} mm</button>`).join('');
-  $('gasSel').innerHTML='<span>Gas</span>'+Object.entries(M.gases).map(([k,v])=>`<button data-v="${k}" aria-pressed="${k===gas}">${v}</button>`).join('');
+  $('gasSel').innerHTML='<span>Gas</span>'+Object.entries(M.gases).map(([k,v])=>`<button data-v="${k}" aria-pressed="${k===gas}">${v}</button>`).join('')+`<button data-v="otro" aria-pressed="${gas==='otro'}">Otro…</button>`+(gas==='otro'?`<input id="gasTxt" placeholder="Escribe el gas de tu botella" value="${esc(gasTxt)}" maxlength="60" style="flex:1 1 220px;min-height:40px">`:'');
   $('migTitle').textContent='Aristo U82 · '+M.n;
-  $('tagMig').textContent=M.wn+' · '+WN(wire)+' mm · '+M.gases[gas];
-  $('outMig').innerHTML=M.cells(M.gases[gas]).join('');
+  $('tagMig').textContent=M.wn+' · '+WN(wire)+' mm · '+gasName(M,gas,gasTxt);
+  {const cs=M.cells(gasName(M,gas,gasTxt));if(gas==='otro')cs[cs.length-1]=cell('gas','Caudal de gas','—','l/min','Según el gas: mira la ficha de la botella');$('outMig').innerHTML=cs.join('')}
   $('migPrepT').textContent='Antes de soldar '+M.n.toLowerCase()+' con HILO';
   $('migPrep').innerHTML=M.prep.map(t=>`<li>${t}</li>`).join('');
 }
@@ -882,7 +884,8 @@ $('maqSel').addEventListener('click',e=>{const b=e.target.closest('button');if(!
 for(const id of ['mtSel','mtSel2'])$(id).addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;mt=b.dataset.v;selM=-1;renderMaqSel()});
 $('outMig').addEventListener('click',e=>{const c=e.target.closest('.cell');if(!c)return;openExpMig(c.dataset.l||'',c.dataset.e||'')});
 $('wireSel').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;wire=b.dataset.v;renderMaqSel()});
-$('gasSel').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;gas=b.dataset.v;renderMaqSel()});
+$('gasSel').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;gas=b.dataset.v;renderMaqSel();if(gas==='otro'&&$('gasTxt'))$('gasTxt').focus()});
+$('gasSel').addEventListener('change',e=>{if(e.target.id!=='gasTxt')return;gasTxt=e.target.value.slice(0,60);try{localStorage.setItem('wbGasTxt',gasTxt)}catch(x){}renderMig()});
 $('symMig').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;selM=+b.dataset.i===selM?-1:+b.dataset.i;renderFinoMig()});
 
 document.addEventListener('click',e=>{
@@ -1079,9 +1082,20 @@ function openExp(k){
   if(o.rec){const r=prec(k),ok=inRec(k);const un=UNIT[k]==='uP'?' %':UNIT[k]==='uH'?' Hz':UNIT[k]==='uS'?' s':'';
     extra=`<div class="exr"><span>Tu valor: <b>${pfmt(k).replace('.',',')}${un}</b></span><span>Recomendado: <b>${r}${/^[\d,–]+$/.test(String(r))?un:''}</b></span>${ok===true?'<span class="ok">✓ dentro</span>':ok===false?'<span class="ko">fuera</span>':''}</div>`;
     if(k==='bal')extra+=`<p class="mut">Recomendado para ${NAME[mat]}.</p>`}
+  if(k==='gas')return openGas();
   if(o.tw){const t=TW[tw];extra+=twChips()+`<p class="mut">${t.n} mm: ${t.t}. ${t.m?'Valor de la tabla del manual ESAB.':'Aproximado: el manual no trae este tungsteno; es el valor del lantanado WL10 del mismo grosor.'}</p>`}
   $('expBody').innerHTML=expHTML(o,extra);$('expDlg').dataset.k=k;if(!$('expDlg').open)$('expDlg').showModal();
 }
+function openGas(){
+  const chips=`<div class="twc">${Object.entries(TG).map(([k,o])=>`<button data-tg="${k}" aria-pressed="${k===tgas}"><i style="background:${o.c}"></i>${o.n}</button>`).join('')}</div>`;
+  const A={t:'Gas: '+TG[tgas].n,q:'Protege el tungsteno y el baño del aire. No está en el panel: se regula en el caudalímetro de la botella. Elige el que llevas:',
+   s:tgas==='ar'?[['Caudal recomendado','7–9,5 l/min (15–20 CFH) con tobera normal.'],['Por qué argón puro','En AC da buena estabilidad de arco, mejor limpieza del óxido y mejor cebado. Es el más usado y el más barato.'],['Si te quedas corto','Poros y cordón sucio u oscuro.'],['Si te pasas','El chorro hace remolinos y mete aire: también salen poros. Más no es mejor.'],['Truco','Con lente de gas y tobera grande puedes necesitar algo más. Evita las corrientes de aire.']]
+   :[['Qué cambia','El helio da un arco más caliente: más penetración y se avanza más rápido. Va bien en piezas gruesas, y en fundición ayuda a que salgan menos poros.'],['Lo malo','Ceba peor, el arco es menos dócil con poco amperaje y el gas es más caro.'],['Caudal','Más que con argón puro, porque el helio pesa muy poco. Como referencia, Hobart da unos 50 CFH (≈24 l/min) para una mezcla 50/50 en TIG. Depende de cuánto helio lleve tu botella: mira su ficha.'],['Mezclas','Lo normal es entre un 25 y un 75 % de helio.']],
+   src:tgas==='ar'?SRC_WEB+' · <a href="https://esab.com/us/nam_en/esab-university/blogs/how-to-choose-the-right-aluminum-welding-shielding-gas/">ESAB</a>':'<a href="https://esab.com/us/nam_en/esab-university/blogs/how-to-choose-the-right-aluminum-welding-shielding-gas/">ESAB</a> · <a href="https://www.hobartbrothers.com/resources/technical-articles/what-to-know-about-shielding-gases-for-aluminum/">Hobart</a> · <a href="https://millerwelds.com/resources/article-library/proper-shielding-gas-coverage-is-key-to-success-in-gtaw">Miller</a> · <a href="https://tiptig.com/knowledge/tig-welding-shielding-gas/">TIP TIG</a>'};
+  $('expBody').innerHTML=expHTML(A,chips);$('expDlg').dataset.k='gas';if(!$('expDlg').open)$('expDlg').showModal();
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-tg]');if(!b)return;pushHist();tgas=b.dataset.tg;try{localStorage.setItem('wbTgas',tgas)}catch(x){}pSel='gas';renderAll();openGas()});
+function gasName(M,g,t){return g==='otro'?((t||'').trim()||'Otro gas'):(M.gases[g]||g)}
 function openExpMig(l,e){
   const o=EXPM[l];
   $('expBody').innerHTML=o?expHTML({t:l,q:o.q,s:o.s,src:'<a href="https://ldgsesabwe.blob.core.windows.net/manuals/InstructionManuals/0460%20896%20287%20US.pdf">manual ESAB Aristo U82</a>'},e?`<div class="exr"><span>Para ${esc(MT[mt].n.toLowerCase())}: <b>${esc(e)}</b></span></div>`:''):`<h2>${esc(l)}</h2><p>${esc(e||'')}</p>`;
@@ -1089,9 +1103,9 @@ function openExpMig(l,e){
 }
 
 /* Deshacer / rehacer */
-function snapState(){return JSON.stringify({vals,pv,fixOn,tw,mat})}
+function snapState(){return JSON.stringify({vals,pv,fixOn,tw,mat,tgas})}
 function pushHist(){const now=Date.now();const s=snapState();if(now-H.t>700||!H.past.length){if(H.past[H.past.length-1]!==s){H.past.push(s);if(H.past.length>100)H.past.shift()}}H.t=now;H.fut=[]}
-function applyState(s){const o=JSON.parse(s);vals=o.vals;Object.assign(pv,o.pv);Object.assign(fixOn,o.fixOn);if(TW[o.tw])tw=o.tw;if(o.mat&&NAME[o.mat])mat=o.mat;
+function applyState(s){const o=JSON.parse(s);vals=o.vals;Object.assign(pv,o.pv);Object.assign(fixOn,o.fixOn);if(TW[o.tw])tw=o.tw;if(o.mat&&NAME[o.mat])mat=o.mat;if(TG[o.tgas]){tgas=o.tgas;try{localStorage.setItem('wbTgas',tgas)}catch(x){}}
   try{localStorage.setItem('wbPv',JSON.stringify(pv));localStorage.setItem('wbFix',JSON.stringify(fixOn));localStorage.setItem('wbTw',tw)}catch(x){}saveValsSoon();renderAll()}
 function undo(){if(!H.past.length)return;H.fut.push(snapState());applyState(H.past.pop());H.t=0;flash('Deshecho')}
 function redo(){if(!H.fut.length)return;H.past.push(snapState());applyState(H.fut.pop());H.t=0;flash('Rehecho')}
@@ -1102,19 +1116,19 @@ let planos=[],plOpen=null,plAdd=false,plMk=null,plZoom=1;
 const imgCache=new Map();
 function imgSrc(id){if(GHMODE)return GH.photo(id);return Promise.resolve('/_blob/'+encodeURIComponent(id))}
 function curParams(){
-  if(maq==='tig')return{maq:'tig',union:mat,bal:vals[mat].bal,hz:vals[mat].hz,up:pv.up,dn:pv.dn,post:pv.post,pre:pv.pre,ex:pv.ex,tw,fix:{...fixOn}};
-  return{maq:'mig',mt,wire,gas,vel:$('mkVel')?+$('mkVel').value||null:null,volt:$('mkVolt')?+$('mkVolt').value||0:0};
+  if(maq==='tig')return{maq:'tig',union:mat,bal:vals[mat].bal,hz:vals[mat].hz,up:pv.up,dn:pv.dn,post:pv.post,pre:pv.pre,ex:pv.ex,tw,tgas,fix:{...fixOn}};
+  return{maq:'mig',mt,wire,gas,gasTxt:gas==='otro'?gasTxt:'',vel:$('mkVel')?+$('mkVel').value||null:null,volt:$('mkVolt')?+$('mkVolt').value||0:0};
 }
 function paramRows(p){
   const f=v=>String(v).replace('.',',');
-  if(p.maq==='tig')return[['Máquina','TIG · Tig 4300i'],['Unión',NAME[p.union]||p.union],['Corriente',p.fix&&p.fix.ac===false?'—':'AC'],['Mando',p.fix&&p.fix.loc===false?'—':'Pedal'],['Balance',p.bal+' %'],['Frecuencia',p.hz+' Hz'],['Rampa subida',f(p.up)+' s'],['Rampa bajada',f(p.dn)+' s'],['Postgás',f(p.post)+' s'],['Pregás',f(p.pre)+' s'],['Tungsteno',TW[p.tw]?TW[p.tw].n:'—'],['Precalentamiento',String(p.ex)]];
-  const M=MT[p.mt]||MT.alu;return[['Máquina','HILO · Aristo U82'],['Material',M.n],['Hilo',M.wn+' · '+f(p.wire)+' mm'],['Gas',M.gases[p.gas]||p.gas],['Velocidad de hilo',p.vel!=null?f(p.vel)+' m/min':'—'],['Corrección de voltaje',(p.volt>0?'+':'')+f(p.volt||0)+' V']];
+  if(p.maq==='tig')return[['Máquina','TIG · Tig 4300i'],['Unión',NAME[p.union]||p.union],['Corriente',p.fix&&p.fix.ac===false?'—':'AC'],['Mando',p.fix&&p.fix.loc===false?'—':'Pedal'],['Balance',p.bal+' %'],['Frecuencia',p.hz+' Hz'],['Rampa subida',f(p.up)+' s'],['Rampa bajada',f(p.dn)+' s'],['Postgás',f(p.post)+' s'],['Pregás',f(p.pre)+' s'],['Tungsteno',TW[p.tw]?TW[p.tw].n:'—'],['Precalentamiento',String(p.ex)],['Gas',TG[p.tgas]?TG[p.tgas].n:'Argón puro']];
+  const M=MT[p.mt]||MT.alu;return[['Máquina','HILO · Aristo U82'],['Material',M.n],['Hilo',M.wn+' · '+f(p.wire)+' mm'],['Gas',gasName(M,p.gas,p.gasTxt)],['Velocidad de hilo',p.vel!=null?f(p.vel)+' m/min':'—'],['Corrección de voltaje',(p.volt>0?'+':'')+f(p.volt||0)+' V']];
 }
 function loadParams(p){
   pushHist();
-  if(p.maq==='tig'){maq='tig';if(NAME[p.union])mat=p.union;vals[mat]={bal:p.bal,hz:p.hz};for(const k of ['up','dn','post','pre','ex'])if(typeof p[k]==='number')pv[k]=p[k];if(p.fix)Object.assign(fixOn,p.fix);if(TW[p.tw])tw=p.tw;
+  if(p.maq==='tig'){maq='tig';if(NAME[p.union])mat=p.union;vals[mat]={bal:p.bal,hz:p.hz};for(const k of ['up','dn','post','pre','ex'])if(typeof p[k]==='number')pv[k]=p[k];if(p.fix)Object.assign(fixOn,p.fix);if(TW[p.tw])tw=p.tw;if(TG[p.tgas]){tgas=p.tgas;try{localStorage.setItem('wbTgas',tgas)}catch(x){}}
     try{localStorage.setItem('wbPv',JSON.stringify(pv));localStorage.setItem('wbFix',JSON.stringify(fixOn));localStorage.setItem('wbTw',tw)}catch(x){}saveValsSoon()}
-  else{maq='mig';if(MT[p.mt])mt=p.mt;wire=p.wire;gas=p.gas}
+  else{maq='mig';if(MT[p.mt])mt=p.mt;wire=p.wire;gas=p.gas;if(p.gas==='otro'){gasTxt=p.gasTxt||'';try{localStorage.setItem('wbGasTxt',gasTxt)}catch(x){}}}
   renderAll();renderMaqSel();goView('maq');
 }
 function renderPlanos(){
@@ -1212,17 +1226,17 @@ planosInit();
 let saved={};try{saved=JSON.parse(localStorage.getItem('wbSaved')||'{}')||{}}catch(x){}
 function renderSaved(){
   const g=saved[mat];if(!g){$('savedBox').innerHTML='<p class="mut" style="margin:8px 0 0">Todavía no has guardado parámetros para '+NAME[mat]+'.</p>';return}
-  const f=new Date(g.ts);const rows=[['Proceso',g.fix&&g.fix.tig===false?'—':'TIG'],['Corriente',g.fix&&g.fix.ac===false?'—':'AC'],['Mando',g.fix&&g.fix.loc===false?'—':'Pedal'],['Balance',g.bal+' %'],['Frecuencia',g.hz+' Hz'],['Rampa subida',String(g.up).replace('.',',')+' s'],['Rampa bajada',String(g.dn).replace('.',',')+' s'],['Postgás',String(g.post).replace('.',',')+' s'],['Pregás',String(g.pre).replace('.',',')+' s'],['Tungsteno',TW[g.tw]?TW[g.tw].n:'—'],['Precalentamiento',String(g.ex)]];
+  const f=new Date(g.ts);const rows=[['Proceso',g.fix&&g.fix.tig===false?'—':'TIG'],['Corriente',g.fix&&g.fix.ac===false?'—':'AC'],['Mando',g.fix&&g.fix.loc===false?'—':'Pedal'],['Balance',g.bal+' %'],['Frecuencia',g.hz+' Hz'],['Rampa subida',String(g.up).replace('.',',')+' s'],['Rampa bajada',String(g.dn).replace('.',',')+' s'],['Postgás',String(g.post).replace('.',',')+' s'],['Pregás',String(g.pre).replace('.',',')+' s'],['Tungsteno',TW[g.tw]?TW[g.tw].n:'—'],['Precalentamiento',String(g.ex)],['Gas',TG[g.tgas]?TG[g.tgas].n:'Argón puro']];
   $('savedBox').innerHTML=`<div class="saved"><b>✓ Guardado · ${esc(NAME[g.union]||g.union)}</b><span class="mut"> ${esc(f.toLocaleDateString('es-ES'))} ${esc(f.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}))}</span><table>${rows.map(([a,b])=>`<tr><td>${a}</td><td><b>${esc(b)}</b></td></tr>`).join('')}</table><button class="btn ghost" id="loadSet">Volver a estos valores</button></div>`;
 }
 $('saveSet').addEventListener('click',async()=>{
-  saved[mat]={ts:Date.now(),union:mat,bal:vals[mat].bal,hz:vals[mat].hz,up:pv.up,dn:pv.dn,post:pv.post,pre:pv.pre,ex:pv.ex,tw,fix:{...fixOn}};
+  saved[mat]={ts:Date.now(),union:mat,bal:vals[mat].bal,hz:vals[mat].hz,up:pv.up,dn:pv.dn,post:pv.post,pre:pv.pre,ex:pv.ex,tw,tgas,fix:{...fixOn}};
   try{localStorage.setItem('wbSaved',JSON.stringify(saved))}catch(x){}
   renderSaved();$('saveMsg').textContent='Guardado.';setTimeout(()=>{$('saveMsg').textContent=''},2500);
   if(db)try{await db.doc('ajustes/guardado').set(JSON.parse(JSON.stringify(saved)));await db.doc('ajustes/valores').set(JSON.parse(JSON.stringify(vals)))}catch(x){$('saveMsg').textContent='Guardado en este aparato (no se ha podido sincronizar).'}
   $('savedBox').scrollIntoView({behavior:'smooth',block:'nearest'});
 });
-$('savedBox').addEventListener('click',e=>{if(e.target.id!=='loadSet')return;const g=saved[mat];if(!g)return;pushHist();vals[mat]={bal:g.bal,hz:g.hz};for(const k of ['up','dn','post','pre','ex'])pv[k]=g[k];if(g.fix)Object.assign(fixOn,g.fix);if(TW[g.tw]){tw=g.tw;try{localStorage.setItem('wbTw',tw)}catch(x){}}try{localStorage.setItem('wbPv',JSON.stringify(pv));localStorage.setItem('wbFix',JSON.stringify(fixOn))}catch(x){}renderAll();});
+$('savedBox').addEventListener('click',e=>{if(e.target.id!=='loadSet')return;const g=saved[mat];if(!g)return;pushHist();vals[mat]={bal:g.bal,hz:g.hz};for(const k of ['up','dn','post','pre','ex'])pv[k]=g[k];if(g.fix)Object.assign(fixOn,g.fix);if(TG[g.tgas]){tgas=g.tgas;try{localStorage.setItem('wbTgas',tgas)}catch(x){}}if(TW[g.tw]){tw=g.tw;try{localStorage.setItem('wbTw',tw)}catch(x){}}try{localStorage.setItem('wbPv',JSON.stringify(pv));localStorage.setItem('wbFix',JSON.stringify(fixOn))}catch(x){}renderAll();});
 
 document.body.insertAdjacentHTML('beforeend',`<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><path id="ptr" d="${PTRACE}"/></defs></svg>`);
 renderAll();fillForm();renderMaqSel();renderMan();renderSaved();
