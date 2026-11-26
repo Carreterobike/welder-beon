@@ -1218,7 +1218,7 @@ function goView(v){for(const x of document.querySelectorAll('nav button'))x.setA
   for(const x of document.querySelectorAll('.view'))x.classList.toggle('on',x.id==='v-'+v);$('maqSel').hidden=v!=='maq';window.scrollTo(0,0);if(v==='pla')renderPlanos()}
 
 /* Auto-actualizar */
-const APPV='20261126203552';
+const APPV='20261126203649';
 (function(){
   if(!GHMODE||location.protocol!=='https:')return;
   try{if(sessionStorage.getItem('wbUpdDone')===APPV){sessionStorage.removeItem('wbUpdDone');toast('✓ App actualizada')}}catch(x){}
@@ -1234,10 +1234,10 @@ const APPV='20261126203552';
       location.replace(location.pathname+'?v='+m[1]);
     }catch(x){}finally{busy=false}
   }
-  setTimeout(check,1500);
+  setTimeout(check,300);
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')check()});
   window.addEventListener('focus',check);
-  setInterval(check,5*60*1000);
+  setInterval(check,30*1000);
 })();
 function toast(t){const d=document.createElement('div');d.textContent=t;d.style.cssText='position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top));transform:translateX(-50%);background:#1a7f37;color:#fff;padding:10px 16px;border-radius:12px;font:600 15px Barlow,sans-serif;z-index:99;box-shadow:0 8px 20px -6px #0008';document.body.appendChild(d);setTimeout(()=>d.remove(),3000)}
 $('expX').addEventListener('click',()=>$('expDlg').close());
