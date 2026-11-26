@@ -154,6 +154,7 @@ main{padding:10px max(3vw,10px)}
 .rbox{background:var(--bg);border-radius:12px;padding:10px;margin:8px 0}.lbx{font-size:12px;color:var(--mut);margin:6px 0 2px}.esp{margin:4px 0 6px}.esp button{min-height:34px;padding:2px 10px}
 .rtab{width:100%;border-collapse:collapse;font-size:14px}.rtab th{font-size:12px;color:var(--mut);font-weight:500;text-align:left;padding:3px}.rtab td{padding:5px 3px;border-top:1px solid var(--line);vertical-align:top}.twd{display:inline-block;width:10px;height:10px;border-radius:50%;border:1.5px solid #111;margin-right:4px;vertical-align:-1px}
 .rtab .ok{color:#1a7f37;font-weight:700}.rtab .ko{color:#b45309;font-weight:700;white-space:nowrap}
+.whyb{display:block;margin-top:2px;padding:0;border:0;background:none;color:#2b6cb0;font:500 12px Barlow,sans-serif;cursor:pointer}.whyr td{background:var(--card);border-radius:8px;font-size:13.5px;line-height:1.45;padding:8px!important;color:var(--ink)}
 </style>
 </head>
 <body>
@@ -1135,23 +1136,44 @@ const MATX={
 let esp=3;try{const q=+localStorage.getItem('wbEsp');if(q>=2&&q<=6)esp=q}catch(x){}
 function recFor(k,e){const M=MREC[k];const rg=t=>t.split('–').map(Number);const tk=e<=4?'do':'az';
   return{bal:rg(M.bal),hz:rg(M.hz),up:[0,0.5],dn:[0,1],post:[Math.max(5,Math.round(40*e/10)),25],pre:[1,1.5],tw:tk,ex:rg(TW[tk].r)}}
+
+const WHYC={
+ cur:'El calor lo controlas tú con el pie según cómo va el baño. En la máquina deja el máximo con margen (tú, 260 A) y pisa solo lo que pida la pieza.',
+ af:'En punta da un arco estrecho y dirigido. Con la punta un poco truncada (plana en la puntita) aguanta mejor en alterna y no se funde como una aguja.',
+ up:'Con pedal la subida la haces tú. Si la pones larga, la máquina mete calor aunque tú no quieras.',
+ dn:'Con pedal la bajada la haces tú, levantando el pie despacio mientras llenas el cráter. Una rampa larga mete calor de más al final.',
+ post:'1 s por cada 10 A que uses (unos 40 A por mm de espesor), con un mínimo de 5 s. Protege el tungsteno y el final del cordón mientras se enfrían. Si te quedas corto, el tungsteno sale de color.',
+ pre:'Echa el aire de la manguera y de la zona antes de cebar, para que el arranque no salga con poro.',
+ ex:'Es lo que pide el tungsteno recomendado según la tabla de ESAB, para que el arco cebe bien en alterna. Si cambias de tungsteno, cambia este valor.',
+ gas:'Con ese caudal el baño queda bien cubierto. Más gas no protege más: hace remolinos, mete aire y salen poros.'};
+const WHYM={
+ '7020':{bal:'El 7020 es chapa o perfil limpio, con poco óxido: no necesita tanta limpieza. Así va más calor a la pieza y menos al tungsteno, se penetra antes y estás menos tiempo calentando. Eso es lo que conviene, porque el calor ablanda el 7020 alrededor del cordón.',
+   hz:'Más frecuencia da un arco más estrecho: el calor va solo a la junta y la zona ablandada alrededor queda más pequeña.',
+   tw:'Tu máquina es inversora: con ellas se recomienda lantanado afilado en lugar de puro, porque mantiene la punta y el arco va más concentrado. El diámetro va según el amperaje que pide el espesor. Tú usas el verde 3,2 solo en dos cordones concretos de 7020: el puro hace bola en la punta y da un arco más ancho y blando. Si en esos cordones te funciona, mantenlo; para el resto, lantanado.'},
+ '6082':{bal:'El 6082 suele venir limpio, en perfil o mecanizado. Va con un reparto equilibrado: limpia el óxido de la superficie sin quitar demasiado calor a la pieza.',
+   hz:'Frecuencia media: arco algo concentrado para controlar el calor (el 6082-T6 pierde mucha resistencia con el calor), sin un baño tan estrecho que cueste mojar los bordes.',
+   tw:'Tu máquina es inversora: con ellas se recomienda lantanado afilado en lugar de puro, porque mantiene la punta y el arco va más concentrado. El diámetro va según el amperaje que pide el espesor.'},
+ fund:{bal:'La fundición trae más óxido y suciedad por dentro y por fuera. Con el balance más bajo se limpia más: el baño sale más limpio y salen menos puntitos negros.',
+   hz:'Frecuencia más baja: baño algo más ancho, que ayuda a mojar bien la fundición y a soltar la suciedad hacia fuera.',
+   tw:'Tu máquina es inversora: con ellas se recomienda lantanado afilado en lugar de puro, porque mantiene la punta y el arco va más concentrado. El diámetro va según el amperaje que pide el espesor.'}};
+function whyOf(k,key){return (WHYM[k]&&WHYM[k][key])||WHYC[key]||''}
 function recBox(k){const r=recFor(k,esp);const V=vals[k]||DEF[k];const f=x=>String(x).replace('.',',');
   const d=(v,[a,b])=>v<a?'up':v>b?'dn':'ok';const rng=([a,b],u)=>a===b?f(a)+u:f(a)+'–'+f(b)+u;
   const dot=t=>`<i class="twd" style="background:${TW[t].c}"></i>`;
-  const rows=[['Corriente','Pedal',fixOn.loc?'Pedal':'Panel',fixOn.loc?'ok':null],
-   ['Tungsteno',dot(r.tw)+TW[r.tw].n,dot(tw)+TW[tw].n,tw===r.tw?'ok':'cam'],
-   ['Afilado','En punta, algo truncada','—',null],
-   ['Rampa subida',rng(r.up,' s'),f(pv.up)+' s',d(pv.up,r.up)],
-   ['Rampa bajada',rng(r.dn,' s'),f(pv.dn)+' s',d(pv.dn,r.dn)],
-   ['Postgás',f(r.post[0])+' s o más',f(pv.post)+' s',d(pv.post,r.post)],
-   ['Pregás',rng(r.pre,' s'),f(pv.pre)+' s',d(pv.pre,r.pre)],
-   ['Balance',rng(r.bal,' %'),V.bal+' %',d(V.bal,r.bal)],
-   ['Frecuencia',rng(r.hz,' Hz'),V.hz+' Hz',d(V.hz,r.hz)],
-   ['Precalent.',rng(r.ex,''),String(pv.ex),d(pv.ex,r.ex)],
-   ['Gas',tgas==='ar'?'Argón 7–9,5 l/min':'Ar + He ≈24 l/min','—',null]];
+  const rows=[['Corriente','Pedal',fixOn.loc?'Pedal':'Panel',fixOn.loc?'ok':null,'cur'],
+   ['Tungsteno',dot(r.tw)+TW[r.tw].n,dot(tw)+TW[tw].n,tw===r.tw?'ok':'cam','tw'],
+   ['Afilado','En punta, algo truncada','—',null,'af'],
+   ['Rampa subida',rng(r.up,' s'),f(pv.up)+' s',d(pv.up,r.up),'up'],
+   ['Rampa bajada',rng(r.dn,' s'),f(pv.dn)+' s',d(pv.dn,r.dn),'dn'],
+   ['Postgás',f(r.post[0])+' s o más',f(pv.post)+' s',d(pv.post,r.post),'post'],
+   ['Pregás',rng(r.pre,' s'),f(pv.pre)+' s',d(pv.pre,r.pre),'pre'],
+   ['Balance',rng(r.bal,' %'),V.bal+' %',d(V.bal,r.bal),'bal'],
+   ['Frecuencia',rng(r.hz,' Hz'),V.hz+' Hz',d(V.hz,r.hz),'hz'],
+   ['Precalent.',rng(r.ex,''),String(pv.ex),d(pv.ex,r.ex),'ex'],
+   ['Gas',tgas==='ar'?'Argón 7–9,5 l/min':'Ar + He ≈24 l/min','—',null,'gas']];
   const H={ok:'<span class="ok">✓</span>',up:'<span class="ko">↑ súbelo</span>',dn:'<span class="ko">↓ bájalo</span>',cam:'<span class="ko">cámbialo</span>'};
   return `<div class="rbox"><b>Recomendación para ${esc(NAME[k])}</b><div class="lbx">Espesor de la pieza</div><div class="twc esp">${[2,3,4,5,6].map(e=>`<button data-esp="${e}" data-mk="${k}" aria-pressed="${e===esp}">${e} mm</button>`).join('')}</div>
-  <table class="rtab"><tr><th>Parámetro</th><th>Recomendado</th><th>Tuyo</th><th></th></tr>${rows.map(([n,a,b,c])=>`<tr><td>${n}</td><td><b>${a}</b></td><td>${b}</td><td>${c?H[c]:''}</td></tr>`).join('')}</table>
+  <table class="rtab"><tr><th>Parámetro</th><th>Recomendado</th><th>Tuyo</th><th></th></tr>${rows.map(([n,a,b,c,w])=>`<tr><td>${n}<button class="whyb" data-why="${w}">¿Por qué? ▾</button></td><td><b>${a}</b></td><td>${b}</td><td>${c?H[c]:''}</td></tr><tr class="whyr" data-whyr="${w}" hidden><td colspan="4">${whyOf(k,w)}</td></tr>`).join('')}</table>
   <button class="btn y" style="width:100%;margin-top:8px" data-loadrec="${k}">Cargar recomendación en el panel</button>
   <p class="mut" style="margin:6px 0 0">Tu máquina es inversora: con ella se recomienda tungsteno lantanado afilado, no puro (verde). ${esp<=4?'2,4 mm vale para unos 110–200 A en aluminio':'3,2 mm para piezas de 5–6 mm y más amperaje'}. Postgás: 1 s por cada 10 A que uses (unos 40 A por mm de espesor), mínimo 5 s. Ajuste fino de Claude, orientativo: compruébalo con una probeta.</p></div>`}
 function loadRec(k){const r=recFor(k,esp);pushHist();const mid=([a,b])=>Math.round((a+b)/2);
@@ -1163,6 +1185,7 @@ function loadRec(k){const r=recFor(k,esp);pushHist();const mid=([a,b])=>Math.rou
   saveValsSoon();renderAll();$('expDlg').close();flash('Recomendación cargada');
   if(openM!=='tig'){openM='tig';maq='tig';renderMaqSel()}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-esp]');if(b){esp=+b.dataset.esp;try{localStorage.setItem('wbEsp',esp)}catch(x){}openMat(b.dataset.mk);return}
+  const wb=e.target.closest('[data-why]');if(wb){const tr=wb.closest('table').querySelector(`[data-whyr="${wb.dataset.why}"]`);if(tr){tr.hidden=!tr.hidden;wb.textContent=tr.hidden?'¿Por qué? ▾':'¿Por qué? ▴'}return}
   const l=e.target.closest('[data-loadrec]');if(l)loadRec(l.dataset.loadrec)});
 function openMat(k){const o=MATX[k];if(!o)return;
   let rec='';if(MREC[k])rec=recBox(k);
@@ -1301,7 +1324,7 @@ function goView(v){for(const x of document.querySelectorAll('nav button'))x.setA
   for(const x of document.querySelectorAll('.view'))x.classList.toggle('on',x.id==='v-'+v);window.scrollTo(0,0);if(v==='pla')renderPlanos()}
 
 /* Auto-actualizar */
-const APPV='20261126222526';
+const APPV='20261126223215';
 (function(){
   if(!GHMODE||location.protocol!=='https:')return;
   try{if(sessionStorage.getItem('wbUpdDone')===APPV){sessionStorage.removeItem('wbUpdDone');toast('✓ App actualizada')}}catch(x){}
