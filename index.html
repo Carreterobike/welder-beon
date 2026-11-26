@@ -538,7 +538,7 @@ function panelSVG(){
   g+=`<rect x="128.0" y="272.5" width="208.4" height="89.5" rx="10" fill="#0f2a17" stroke="#6a6a6a" stroke-width="3"/><text x="322.4" y="346.0" text-anchor="end" fill="${ON}" font-size="70" font-family="Share Tech Mono,monospace">${disp}</text>`;
   g+=`<rect data-a="L" x="32.9" y="428.4" width="64.6" height="50.9" rx="8" fill="transparent" style="cursor:pointer"/><rect data-a="R" x="116.7" y="428.4" width="63.6" height="50.9" rx="8" fill="transparent" style="cursor:pointer"/>`;
   g+=`<g data-a="knob" style="cursor:grab"><circle cx="690" cy="466" r="92" fill="#111" stroke="#454545" stroke-width="4"/><circle cx="690" cy="466" r="74" fill="#1a1a1a"/><path d="M690 466 L690 407.6" stroke="#555" stroke-width="6" stroke-linecap="round" transform="rotate(${knobA} 690 466)"/></g>`;
-  g+=`<g data-a="undo" style="cursor:pointer" opacity="${H.past.length?1:.45}"><rect x="436" y="544" width="156" height="52" rx="26" fill="#0d0d0e" stroke="#8a8a8a" stroke-width="2"/><text x="514" y="579" text-anchor="middle" fill="#eee" font-size="25" font-family="Barlow,sans-serif" font-weight="600">↶ Deshacer</text></g>`;
+  g+=`<g data-a="undo" style="cursor:pointer" opacity="${H.past.length?1:.45}"><rect x="470" y="556" width="96" height="34" rx="17" fill="#0d0d0e" stroke="#8a8a8a" stroke-width="2"/><text x="518" y="579" text-anchor="middle" fill="#eee" font-size="17" font-family="Barlow,sans-serif" font-weight="600">↶ Deshacer</text></g>`;
   for(const n in PL){const [x,y]=PL[n];const on=litSet.has(n);g+=`<circle cx="${x}" cy="${y}" r="7" fill="${on?ON:OFF}"/>`+(on?`<circle cx="${x}" cy="${y}" r="13" fill="${ON}" opacity=".25"/>`:'')}
   return `<svg viewBox="0 0 820 610" role="img" aria-label="Panel Origo TA24 interactivo" style="touch-action:none">${g}</svg>`;
 }
@@ -1218,7 +1218,7 @@ function goView(v){for(const x of document.querySelectorAll('nav button'))x.setA
   for(const x of document.querySelectorAll('.view'))x.classList.toggle('on',x.id==='v-'+v);$('maqSel').hidden=v!=='maq';window.scrollTo(0,0);if(v==='pla')renderPlanos()}
 
 /* Auto-actualizar */
-const APPV='20261126213725';
+const APPV='20261126213907';
 (function(){
   if(!GHMODE||location.protocol!=='https:')return;
   try{if(sessionStorage.getItem('wbUpdDone')===APPV){sessionStorage.removeItem('wbUpdDone');toast('✓ App actualizada')}}catch(x){}
