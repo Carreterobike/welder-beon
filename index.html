@@ -503,6 +503,7 @@ const GH=(()=>{
       for(const c of ['pruebas','planos']){s[c]=Object.assign({},old[c]||{},s[c]||{})}
       for(const c of ['guardado','valores']){if(s[c]==null&&old[c]!=null)s[c]=old[c]}
       if(old.ajustes){s.ajustes=s.ajustes||{};for(const[k,v]of Object.entries(old.ajustes))if(s.ajustes[k]==null)s.ajustes[k]=v}
+      const om=old.ajustes&&old.ajustes.materiales,sm=s.ajustes&&s.ajustes.materiales;if(om&&Array.isArray(om.all)&&sm&&Array.isArray(sm.all)&&sm!==om){for(const m of om.all)if(m&&m.id&&!sm.all.some(x=>x.id===m.id))sm.all.push(m)}
       s.migradoGH=Date.now()});
   }
   function start(){
@@ -1507,7 +1508,7 @@ function goView(v){for(const x of document.querySelectorAll('nav button'))x.setA
   for(const x of document.querySelectorAll('.view'))x.classList.toggle('on',x.id==='v-'+v);window.scrollTo(0,0);if(v==='pla')renderPlanos()}
 
 /* Auto-actualizar */
-const APPV='20261127152206';
+const APPV='20261127153058';
 (function(){
   if(!GHMODE||location.protocol!=='https:')return;
   try{if(sessionStorage.getItem('wbUpdDone')===APPV){sessionStorage.removeItem('wbUpdDone');toast('✓ App actualizada')}}catch(x){}
@@ -1596,6 +1597,10 @@ function drawIconOld(){const c=document.createElement('canvas');c.width=c.height
   if(!db&&GHMODE){$('syncCard').hidden=false;GH.ui();if(!GH.cfg){$('listMsg').textContent='Conecta la sincronización para guardar.';renderPlanos();return}db=GH.db;assets=GH.assets;GH.start()}
   if(!db){$('listMsg').textContent='El guardado no está disponible en esta vista.';renderPlanos();return}
   db.doc('ajustes/materiales').onSnapshot(s=>{if(s.exists){const d=s.data();let nl;if(d&&Array.isArray(d.all)&&d.all.length){nl=d.all}else if(d&&Array.isArray(d.list)){nl=BASEM.map(m=>({...m})).concat(d.list)}else return;if(JSON.stringify(nl)===JSON.stringify(mlist))return;mlist=nl;histSinMats();try{localStorage.setItem('wbMats2',JSON.stringify(mlist))}catch(x){}fixMat();renderAll()}},()=>{});
+  // Material que David pidió añadir: se pone una sola vez en su cuenta (si luego lo borra, no vuelve)
+  let sem5083=false;db.doc('ajustes/semilla5083').onSnapshot(s=>{if(sem5083)return;sem5083=true;if(s.exists)return;
+    if(!mlist.some(m=>/5083/.test(m.n))){mlist.push({id:'m5083',n:'Chapa depósito 5083',fam:'5xxx'});saveMats();renderAll()}
+    db.doc('ajustes/semilla5083').set({ts:Date.now()}).catch(()=>{})},()=>{});
   db.doc('ajustes/guardado').onSnapshot(s=>{if(s.exists){const d=s.data();if(d&&typeof d==='object'){saved=migSaved(JSON.parse(JSON.stringify(d)));try{renderSaved()}catch(x){}}}},()=>{});
   db.doc('ajustes/valores').onSnapshot(s=>{
     if(s.exists){const v=s.data();for(const k of Object.keys(v||{}))if(v[k]&&+v[k].bal&&+v[k].hz){const nk=normU(k);if(k===nk||!v[nk])vals[nk]={bal:+v[k].bal,hz:+v[k].hz}}renderAll();try{fillForm()}catch(x){}}
