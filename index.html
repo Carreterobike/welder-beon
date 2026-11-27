@@ -974,7 +974,9 @@ const HDEF={fe:{prog:'JMR 37',arco:'Pulsado',hilo:'Fe ER70S',gas:'Ar + 8% CO₂'
  inox:{prog:'',arco:null,hilo:null,gas:null,diam:null,volt:null,corr:null,vel:null,sin:null,gat:null,crater:null,hot:null,caudal:null,stick:null}};
 let HV={};try{HV=JSON.parse(localStorage.getItem('wbHilo')||'{}')||{}}catch(x){}
 const hv=()=>{const m=mt==='inox'?'inox':'fe';if(!HV[m])HV[m]=JSON.parse(JSON.stringify(HDEF[m]));return HV[m]};
-let u82Tab='soldar',hEdit=null;
+let u82Tab='soldar',hEdit=null,u82View='mios',r3Arm=0;
+// Chapa de 3 mm, hierro, hilo 1,0: valores de las fuentes (ver tabla «Chapa de 3 mm»)
+const R3={prog:null,arco:'Corto',hilo:'Fe ER70S',gas:'Ar + 8% CO₂',diam:1.0,volt:18.0,corr:0,vel:4.3,amp:120,sin:'ON',gat:'4T',crater:'ON',hot:'OFF'};
 const HOPT={arco:['Corto','Pulsado','Spray'],sin:['ON','OFF'],gat:['2T','4T'],crater:['ON','OFF'],hot:['ON','OFF'],diam:[0.8,1.0,1.2],
  hilo:{fe:['Fe ER70S','G3Si1 (ER70S-6)'],inox:['308LSi','316LSi','309LSi']},
  gas:{fe:['Ar + 8% CO₂','Ar + 10% CO₂','Ar + 18% CO₂','CO₂ 100%'],inox:['Ar + 2% CO₂','Ar + 2% O₂','Ar + 3% CO₂']}};
@@ -1016,32 +1018,35 @@ const HEXP={
  caudal:{q:'Se regula en el caudalímetro de la botella, no en el panel.',s:[['Si te quedas corto','Poros.'],['Si te pasas','El chorro hace remolinos y mete aire: también poros (ESAB).']]},
  stick:{q:'Distancia del tubo de contacto a la pieza. No está en el panel: depende de cómo sujetes la antorcha.',s:[['Si es larga','Baja la corriente y el arco se vuelve inestable; en inox mucho más (Kemppi).'],['Si es corta','Se calienta el tubo de contacto y se llena de proyecciones.']]},
  prog:{q:'El nombre de la memoria de la máquina donde tienes guardado este ajuste. En tu foto: JMR 37.',s:[]}};
-function u82Line(k,label,val,arrow){const ed=k&&k!=='prog'&&(HOPT[k]||HNUM[k]);const v=hv();
+function u82Line(k,label,val,arrow){const ed=!(mt!=='inox'&&u82View==='c3')&&k&&k!=='prog'&&(HOPT[k]||HNUM[k]);const v=hv();
   let right=`<span class="u8v">${val}</span>`;
   if(ed&&hEdit===k){if(HNUM[k])right=`<span class="u8ed"><button data-hstep="${k}" data-d="-1" aria-label="Bajar">−</button><b>${hf(v[k])} ${HNUM[k][3]}</b><button data-hstep="${k}" data-d="1" aria-label="Subir">+</button></span>`;
    else{const o=Array.isArray(HOPT[k])?HOPT[k]:HOPT[k][mt==='inox'?'inox':'fe'];right=`<span class="u8ed">${o.map(x=>`<button class="u8o${String(v[k])===String(x)?' on':''}" data-hset="${k}" data-v="${x}">${hf(x)}</button>`).join('')}</span>`}
    right+=`<button class="u8pen ok2" data-hedit="">✓</button>`}
   else if(ed)right+=`<button class="u8pen" data-hedit="${k}" aria-label="Editar ${label}">✎</button>`;
   return `<div class="u8l" ${k?`data-hexp="${k}"`:''}><span class="u8k">${label}${arrow?'▸':''}</span>${right}</div>`}
-function renderU82(){const v=hv(),M=mt==='inox'?'inox':'fe';
+function renderU82(){const v=hv(),M=mt==='inox'?'inox':'fe';const c3=M==='fe'&&u82View==='c3';const s=c3?R3:v;const pen=k=>c3?'':`<button class="u8pen" data-hedit="${k}" aria-label="Editar">✎</button>`;
   const sk=a=>`<div class="u8soft">${a.map(x=>`<span>${x}</span>`).join('')}</div>`;
   let scr='';
-  if(u82Tab==='soldar')scr=`<div class="u8top"><span>${esc(v.prog||'—')}</span><span>1</span></div>
-   <div class="u8big"><div><i>#</i><b>${hf(v.volt)}</b> Volt${v.corr!=null?` <small>(${v.corr>0?'+':''}${hf(v.corr)})</small>`:''}<button class="u8pen" data-hedit="volt" aria-label="Editar tensión">✎</button></div><div><b>0</b> Amp <small>al soldar</small></div><div><i>✱</i><b>${hf(v.vel)}</b>m/min<button class="u8pen" data-hedit="vel" aria-label="Editar velocidad">✎</button></div></div>
-   ${hEdit==='volt'||hEdit==='vel'||hEdit==='corr'?u82Line(hEdit,HL[hEdit],''):''}${hEdit==='volt'?u82Line('corr',HL.corr,hf(v.corr)+' V'):''}
-   ${sk(['PURGA<br>GAS','ALIM.<br>HILO',(v.gat||'4T').replace('T','-<br>TIEMPO'),'REMOTO','1 2'])}`;
-  else if(u82Tab==='menu')scr=`<div class="u8h">MIG/MAG (HILO) ${String(v.arco||'').toUpperCase()}</div>
-   ${u82Line(null,'Procedimiento','MIG/MAG (HILO)')}${u82Line('arco','Tipo de arco',hf(v.arco))}${u82Line('hilo','Tipo de hilo',hf(v.hilo))}${u82Line('gas','Gas de protección',hf(v.gas))}${u82Line('diam','Diámetro de hilo',v.diam?hf(v.diam)+' mm':'—')}
+  if(u82Tab==='soldar')scr=`<div class="u8top"><span>${c3?'línea Fe 1,0':esc(s.prog||'—')}</span><span>1</span></div>
+   <div class="u8big"><div><i>#</i><b>${hf(s.volt)}</b> Volt${s.corr!=null?` <small>(${s.corr>0?'+':''}${hf(s.corr)})</small>`:''}${pen("volt")}</div><div><b>${s.amp!=null?s.amp:0}</b> Amp <small>${s.amp!=null?'≈ al soldar':'al soldar'}</small></div><div><i>✱</i><b>${hf(s.vel)}</b>m/min${pen("vel")}</div></div>
+   ${hEdit==='volt'||hEdit==='vel'||hEdit==='corr'?u82Line(hEdit,HL[hEdit],''):''}${hEdit==='volt'?u82Line('corr',HL.corr,hf(s.corr)+' V'):''}
+   ${sk(['PURGA<br>GAS','ALIM.<br>HILO',(s.gat||'4T').replace('T','-<br>TIEMPO'),'REMOTO','1 2'])}`;
+  else if(u82Tab==='menu')scr=`<div class="u8h">MIG/MAG (HILO) ${String(s.arco||'').toUpperCase()}</div>
+   ${u82Line(null,'Procedimiento','MIG/MAG (HILO)')}${u82Line('arco','Tipo de arco',hf(s.arco))}${u82Line('hilo','Tipo de hilo',hf(s.hilo))}${u82Line('gas','Gas de protección',hf(s.gas))}${u82Line('diam','Diámetro de hilo',s.diam?hf(s.diam)+' mm':'—')}
    ${sk(['AJUSTE','MEDIDA','MEMORIA','MODO<br>RÁPIDO',''])}`;
   else scr=`<div class="u8h">AJUSTE DATOS SOLDADURA</div>
-   ${u82Line('volt','Tensión',v.volt!=null?`${hf(v.volt)}${v.corr!=null?` (${v.corr>0?'+':''}${hf(v.corr)})`:''} V`:'—')}${hEdit==='volt'?u82Line('corr',HL.corr,hf(v.corr)+' V'):''}${u82Line('vel','Velocidad hilo',v.vel!=null?hf(v.vel)+' m/min':'—')}${u82Line('sin','Modo sinérgico',hf(v.sin))}
-   ${u82Line('crater','Relleno de cráter',hf(v.crater))}${u82Line('hot','Arranque en caliente',hf(v.hot))}${u82Line('gat','Gatillo',hf(v.gat))}
-   ${sk(['RELLEN<br>CRÁTER','ARRAN<br>CALIEN',(v.gat||'4T').replace('T','-<br>TIEMPO'),'','SALIR'])}`;
+   ${u82Line('volt','Tensión',s.volt!=null?`${hf(s.volt)}${s.corr!=null?` (${s.corr>0?'+':''}${hf(s.corr)})`:''} V`:'—')}${hEdit==='volt'?u82Line('corr',HL.corr,hf(s.corr)+' V'):''}${u82Line('vel','Velocidad hilo',s.vel!=null?hf(s.vel)+' m/min':'—')}${u82Line('sin','Modo sinérgico',hf(s.sin))}
+   ${u82Line('crater','Relleno de cráter',hf(s.crater))}${u82Line('hot','Arranque en caliente',hf(s.hot))}${u82Line('gat','Gatillo',hf(s.gat))}
+   ${sk(['RELLEN<br>CRÁTER','ARRAN<br>CALIEN',(s.gat||'4T').replace('T','-<br>TIEMPO'),'','SALIR'])}`;
   const R=hRec(M);const rows=['gas','caudal','hilo','arco','stick','crater','hot'];
   const st=k=>{const x=R[k],val=v[k];if(val==null||val==='')return '<span class="mut">sin dato</span>';if(x.rng){const n=+val;return n<x.rng[0]?'<span class="ko">↑ súbelo</span>':n>x.rng[1]?'<span class="ko">↓ bájalo</span>':'<span class="ok">✓</span>'}return x.ok(val)?'<span class="ok">✓</span>':'<span class="ko">revísalo</span>'};
-  $('u82').innerHTML=`<div class="u8tabs">${[['soldar','Pantalla'],['menu','Menú principal'],['ajuste','Ajuste datos']].map(([k,l])=>`<button data-u8tab="${k}" aria-pressed="${u82Tab===k}">${l}</button>`).join('')}</div>
-   <div class="u8body"><div class="u8brand">Aristo™ <b>U8<sub>2</sub></b></div><div class="u8scr">${scr}</div></div>
-   <p class="note">Toca una línea para ver qué es. Con el lápiz ✎ cambias tus valores: se guardan solos y se sincronizan entre Mac y móvil. Lo que pone «—» todavía no me lo has pasado.</p>
+  const vsel=M==='fe'?`<div class="chips" style="margin-bottom:8px"><span>Ver en la pantalla</span><button data-u8view="mios" aria-pressed="${!c3}">Mis valores</button><button data-u8view="c3" aria-pressed="${c3}">Chapa 3 mm</button></div>`:'';
+  const c3note=c3?`<p class="note"><b>Chapa de 3 mm · hilo 1,0 mm · arco corto.</b> 120 A, 4,3 m/min (mitad de 4–4,6) y 18 V (mitad de 17–19 V), con corrección 0. El programa (número de línea sinérgica) no lo pongo: lo elige la máquina al poner hierro, 1,0 mm, Ar + 8 % CO₂ y arco corto. Relleno de cráter ON para cordones largos, arranque en caliente OFF. Gatillo 4T: en puntos o cordones cortos, 2T. Toca una línea para ver de dónde sale cada cosa, o «¿Por qué?» en la tabla de abajo.</p>
+   <button class="btn" data-r3load="1" style="margin:4px 0 8px">${r3Arm&&Date.now()-r3Arm<3000?'Toca otra vez: cambia tus valores de hierro':'Pasar estos valores a «Mis valores»'}</button>`:'';
+  $('u82').innerHTML=vsel+`<div class="u8tabs">${[['soldar','Pantalla'],['menu','Menú principal'],['ajuste','Ajuste datos']].map(([k,l])=>`<button data-u8tab="${k}" aria-pressed="${u82Tab===k}">${l}</button>`).join('')}</div>
+   <div class="u8body"><div class="u8brand">Aristo™ <b>U8<sub>2</sub></b></div><div class="u8scr">${scr}</div></div>${c3note}
+   <p class="note"${c3?' hidden':''}>Toca una línea para ver qué es. Con el lápiz ✎ cambias tus valores: se guardan solos y se sincronizan entre Mac y móvil. Lo que pone «—» todavía no me lo has pasado.</p>
    <div class="rbox"><div class="rhead"><b>Recomendación · ${M==='inox'?'Inox':'Hierro'}</b><span>Hilo ${v.diam?hf(v.diam):'1,0'} mm</span></div>
    <table class="rtab"><tr><th>Parámetro</th><th>Recomendado</th><th>Mis valores</th><th></th></tr>${rows.map(k=>{const x=R[k];const val=k==='caudal'?(v.caudal!=null?hf(v.caudal)+' l/min':'—'):k==='stick'?(v.stick!=null?hf(v.stick)+' mm':'—'):hf(v[k]);
     const ed=hEdit===k?`<span class="u8ed">${HNUM[k]?`<button data-hstep="${k}" data-d="-1">−</button><b>${hf(v[k])}</b><button data-hstep="${k}" data-d="1">+</button>`:(Array.isArray(HOPT[k])?HOPT[k]:HOPT[k][M]).map(o=>`<button class="u8o${String(v[k])===String(o)?' on':''}" data-hset="${k}" data-v="${o}">${hf(o)}</button>`).join('')}</span><button class="pen ok2" data-hedit="">✓</button>`:`${val}<button class="pen" data-hedit="${k}" aria-label="Editar">✎</button>`;
@@ -1056,6 +1061,8 @@ function renderU82(){const v=hv(),M=mt==='inox'?'inox':'fe';
    <p class="src" style="margin:8px 0 0">Fuentes: <a href="https://esab.com/al/eur_en/esab-university/blogs/fine-tuning-performance-mastering-mig-welding-machine-settings/">ESAB (ajustes MIG)</a> · <a href="https://esab.com/al/eur_en/esab-university/articles/mig-welding-guide-process-parameters-and-best-practices/">ESAB (guía MIG)</a> · <a href="https://esab.com/gb/eur_en/esab-university/blogs/what-is-pulsed-mig-welding/">ESAB (pulsado)</a> · <a href="https://millerwelds.com/resources/article-library/want-to-improve-results-when-mig-welding-stainless-steel">Miller (inox)</a> · <a href="https://www.lincolnelectric.com/en/Welding-and-Cutting-Resource-Center/Weld-Solutions/Stainless-Steel-MIG-Welding-with-Compact-Welders">Lincoln (inox)</a> · <a href="https://thefabricator.com/thewelder/blog/consumables/selecting-shielding-gas-for-gmaw-and-fcaw">The Fabricator (gas)</a> · <a href="https://www.thefabricator.com/thefabricator/article/consumables/selecting-a-shielding-gas-for-joining-stainless-steel">The Fabricator (gas inox)</a> · <a href="https://bakersgas.com/pages/guide-to-mig-shielding-gas">Bakers</a> · <a href="https://www.ewm-group.com/en/specialised-knowledge/shielding-gases.html">EWM</a> · <a href="https://kemppi.com/en-GB/blogs/choosing-the-right-gas-nozzle-length-for-mig-gmaw-welding">Kemppi (stickout)</a> · <a href="https://www.manualslib.com/manual/1500604/Kemppi-A3-Mig.html?page=14">Kemppi (arranque y cráter)</a> · <a href="https://www.fronius.com/en-us/usa/welding-technology/info-centre/news/personal-touch">Fronius</a> · <a href="https://www.twi-global.com/technical-knowledge/job-knowledge/equipment-for-mig-welding-015">TWI</a> · <a href="https://au.airliquide.com/arcaltm-welding-gas">Air Liquide</a> · <a href="https://millerwelds.com/resources/article-library/mig-welding-101">Miller (amperios y velocidad)</a> · <a href="https://www.airgas.com/MIG-Welding-Product-Collection/MIG-Welding-Machine-Buying-Guide">Airgas</a> · <a href="https://wholesale.yeswelder.com/?p=5933">Yeswelder</a> · <a href="https://www.themetalstore.co.uk/content-hub/blog/mig-welding-tips">The Metal Store</a> · <a href="https://m.media-amazon.com/images/I/51TkE7mKDPL.pdf">Tabla de fabricante</a></p></div>`;
 }
 $('u82').addEventListener('click',e=>{const v=hv();
+  const vw=e.target.closest('[data-u8view]');if(vw){u82View=vw.dataset.u8view;hEdit=null;r3Arm=0;renderU82();return}
+  const rl=e.target.closest('[data-r3load]');if(rl){if(r3Arm&&Date.now()-r3Arm<3000){for(const k of ['arco','hilo','gas','diam','volt','corr','vel','sin','crater','hot'])v[k]=R3[k];hSave();r3Arm=0;u82View='mios';renderU82();toastMsg('Valores de chapa 3 mm pasados a «Mis valores»')}else{r3Arm=Date.now();renderU82();setTimeout(()=>{if(r3Arm&&Date.now()-r3Arm>=3000){r3Arm=0;try{renderU82()}catch(x){}}},3100)}return}
   const tb=e.target.closest('[data-u8tab]');if(tb){u82Tab=tb.dataset.u8tab;hEdit=null;renderU82();return}
   const he=e.target.closest('[data-hedit]');if(he){e.stopPropagation();hEdit=he.dataset.hedit||null;renderU82();return}
   const hs=e.target.closest('[data-hstep]');if(hs){e.stopPropagation();const k=hs.dataset.hstep,[mn,mx,st]=HNUM[k];const cur=v[k]!=null?v[k]:(k==='caudal'?11:k==='stick'?12:k==='corr'?0:mn);v[k]=Math.round(Math.min(mx,Math.max(mn,cur+(+hs.dataset.d)*st))*100)/100;hSave();renderU82();return}
@@ -1648,7 +1655,7 @@ function goView(v){for(const x of document.querySelectorAll('nav button'))x.setA
   for(const x of document.querySelectorAll('.view'))x.classList.toggle('on',x.id==='v-'+v);window.scrollTo(0,0);if(v==='pla')renderPlanos()}
 
 /* Auto-actualizar */
-const APPV='20261127193635';
+const APPV='20261127222028';
 (function(){
   if(!GHMODE||location.protocol!=='https:')return;
   try{if(sessionStorage.getItem('wbUpdDone')===APPV){sessionStorage.removeItem('wbUpdDone');toast('✓ App actualizada')}}catch(x){}
