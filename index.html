@@ -463,6 +463,7 @@ const GH=(()=>{
       set:v=>mutate(()=>put(k,JSON.parse(JSON.stringify(v)))),
       update:o=>mutate(()=>{const c=get(k);if(c)put(k,Object.assign(c,o))}),
       delete:()=>mutate(()=>put(k,undefined)),
+      apply:fn=>mutate(()=>put(k,fn(JSON.parse(JSON.stringify(get(k)??null))))),
       onSnapshot:(cb)=>{const f=()=>{if(state)cb(snap(get(k)))};subs.add(f);f();return()=>subs.delete(f)}}},
     collection:(cn)=>{const q={
       add:v=>{const id=Date.now().toString(36)+Math.random().toString(36).slice(2,7);return mutate(()=>{state[cn]=state[cn]||{};state[cn][id]=JSON.parse(JSON.stringify(v))}).then(()=>({id}))},
@@ -1336,7 +1337,16 @@ function openMat(id){const mm=matOf(id),bm=BASEM.find(x=>x.id===id);const o=(mm&
    :`<p class="mut" style="margin-top:0">${esc(FAM[m.fam].n)}</p>${FAMX[m.fam].s.map(([a,b])=>`<h3>${a}</h3><p>${b}</p>`).join('')}`;
   $('expBody').innerHTML=`<h2>${esc(mm?mm.n:(o?o.t:m.n))}</h2>${body}<p class="src">Fuentes: <a href="https://twi-global.com/technical-knowledge/job-knowledge/weldability-of-materials-aluminium-alloys-021">TWI</a> · estudios técnicos · fichas EN 1706</p>`;
   $('expDlg').dataset.k='';if(!$('expDlg').open)$('expDlg').showModal()}
-function saveMats(){try{localStorage.setItem('wbMats2',JSON.stringify(mlist))}catch(x){}if(db)try{db.doc('ajustes/materiales').set({all:JSON.parse(JSON.stringify(mlist))})}catch(x){}}
+let matsBase=null;// última lista que vino del servidor: sirve para guardar solo lo que cambia aquí y no pisar lo del otro aparato
+function saveMats(){try{localStorage.setItem('wbMats2',JSON.stringify(mlist))}catch(x){}if(!db)return Promise.resolve();
+  const loc=JSON.parse(JSON.stringify(mlist)),base=matsBase?JSON.parse(JSON.stringify(matsBase)):null;
+  const p=db.doc('ajustes/materiales');if(!p.apply)return p.set({all:loc}).catch(()=>{});
+  return p.apply(d=>{let cur=d&&Array.isArray(d.all)&&d.all.length?d.all:(d&&Array.isArray(d.list)?BASEM.map(m=>({...m})).concat(d.list):null);
+    if(!cur||!base)return{all:loc};
+    const bi=new Map(base.map(m=>[m.id,m])),li=new Map(loc.map(m=>[m.id,m]));
+    cur=cur.filter(m=>!(bi.has(m.id)&&!li.has(m.id)));
+    for(const m of loc){const b=bi.get(m.id),i=cur.findIndex(x=>x.id===m.id);if(i<0){if(!b)cur.push(m)}else if(!b||JSON.stringify(b)!==JSON.stringify(m))cur[i]=m}
+    return{all:cur}}).catch(()=>{})}
 let editMat=null;
 function openMats(){
   const famOpts=sel=>Object.entries(FAM).map(([k,o])=>`<option value="${k}"${k===sel?' selected':''}>${o.n}</option>`).join('');
@@ -1508,7 +1518,7 @@ function goView(v){for(const x of document.querySelectorAll('nav button'))x.setA
   for(const x of document.querySelectorAll('.view'))x.classList.toggle('on',x.id==='v-'+v);window.scrollTo(0,0);if(v==='pla')renderPlanos()}
 
 /* Auto-actualizar */
-const APPV='20261127153058';
+const APPV='20261127154225';
 (function(){
   if(!GHMODE||location.protocol!=='https:')return;
   try{if(sessionStorage.getItem('wbUpdDone')===APPV){sessionStorage.removeItem('wbUpdDone');toast('✓ App actualizada')}}catch(x){}
@@ -1596,11 +1606,12 @@ function drawIconOld(){const c=document.createElement('canvas');c.width=c.height
   try{db=await claude.use('db')}catch(x){}
   if(!db&&GHMODE){$('syncCard').hidden=false;GH.ui();if(!GH.cfg){$('listMsg').textContent='Conecta la sincronización para guardar.';renderPlanos();return}db=GH.db;assets=GH.assets;GH.start()}
   if(!db){$('listMsg').textContent='El guardado no está disponible en esta vista.';renderPlanos();return}
-  db.doc('ajustes/materiales').onSnapshot(s=>{if(s.exists){const d=s.data();let nl;if(d&&Array.isArray(d.all)&&d.all.length){nl=d.all}else if(d&&Array.isArray(d.list)){nl=BASEM.map(m=>({...m})).concat(d.list)}else return;if(JSON.stringify(nl)===JSON.stringify(mlist))return;mlist=nl;histSinMats();try{localStorage.setItem('wbMats2',JSON.stringify(mlist))}catch(x){}fixMat();renderAll()}},()=>{});
-  // Material que David pidió añadir: se pone una sola vez en su cuenta (si luego lo borra, no vuelve)
-  let sem5083=false;db.doc('ajustes/semilla5083').onSnapshot(s=>{if(sem5083)return;sem5083=true;if(s.exists)return;
-    if(!mlist.some(m=>/5083/.test(m.n))){mlist.push({id:'m5083',n:'Chapa depósito 5083',fam:'5xxx'});saveMats();renderAll()}
-    db.doc('ajustes/semilla5083').set({ts:Date.now()}).catch(()=>{})},()=>{});
+  db.doc('ajustes/materiales').onSnapshot(s=>{if(s.exists){const d=s.data();let nl;if(d&&Array.isArray(d.all)&&d.all.length){nl=d.all}else if(d&&Array.isArray(d.list)){nl=BASEM.map(m=>({...m})).concat(d.list)}else return;matsBase=JSON.parse(JSON.stringify(nl));if(JSON.stringify(nl)===JSON.stringify(mlist))return;mlist=nl;histSinMats();try{localStorage.setItem('wbMats2',JSON.stringify(mlist))}catch(x){}fixMat();renderAll()}},()=>{});
+  // Material que David pidió añadir: se pone una vez en su cuenta (si luego lo borra, no vuelve).
+  // Se mira en cada sincronización hasta que quede guardado de verdad en el servidor.
+  let sem5083=false;db.doc('ajustes/semilla5083b').onSnapshot(s=>{if(sem5083||s.exists){sem5083=true;return}sem5083=true;
+    if(!mlist.some(m=>/5083/.test(m.n))){mlist.push({id:'m5083',n:'Chapa depósito 5083',fam:'5xxx'});histSinMats();renderAll()}
+    saveMats().then(()=>db.doc('ajustes/semilla5083b').set({ts:Date.now()})).catch(()=>{sem5083=false})},()=>{});
   db.doc('ajustes/guardado').onSnapshot(s=>{if(s.exists){const d=s.data();if(d&&typeof d==='object'){saved=migSaved(JSON.parse(JSON.stringify(d)));try{renderSaved()}catch(x){}}}},()=>{});
   db.doc('ajustes/valores').onSnapshot(s=>{
     if(s.exists){const v=s.data();for(const k of Object.keys(v||{}))if(v[k]&&+v[k].bal&&+v[k].hz){const nk=normU(k);if(k===nk||!v[nk])vals[nk]={bal:+v[k].bal,hz:+v[k].hz}}renderAll();try{fillForm()}catch(x){}}
