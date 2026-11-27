@@ -532,7 +532,7 @@ let fixOn={tig:true,ac:true,loc:true};try{const f=JSON.parse(localStorage.getIte
 const FIXK=['tig','ac','loc'];const isFix=k=>FIXK.includes(k)&&fixOn[k];
 const cell=(ic,l,v,u,e,k,pi)=>`<div class="cell${k?' key':''}${pi&&isFix(ic)?' fix':''}" data-ic="${ic}" data-l="${esc(l)}" data-e="${esc(String(e||'').replace(/<[^>]*>/g,''))}"><div class="ic">${pi&&IB[ic]?pico(ic):ico(ic)}</div><small>${l}</small><div class="v">${esc(v)}${u?`<u>${u}</u>`:''}</div>${e?`<em>${e}</em>`:''}${pi&&typeof EDIT!=='undefined'&&EDIT.has(ic)?'<div class="pm"><button data-d="-1" aria-label="Bajar">−</button><button data-d="1" aria-label="Subir">+</button></div>':''}</div>`;
 
-function segs(){ensureV();if($('mat2'))$('mat2').innerHTML='';if($('uA'))renderUnion()}
+function segs(){fixMat();ensureV();if($('mat2'))$('mat2').innerHTML='';if($('uA'))renderUnion()}
 const TW={az:{n:'Azul 3,2',c:'#1e5fd6',t:'lantanado 2 % (WL20)',r:'60–70',m:0},ve:{n:'Verde 3,2',c:'#1f9d3a',t:'puro (WP)',r:'55–65',m:1},do:{n:'Dorado 2,4',c:'#d9a400',t:'lantanado 1,5 % (WL15)',r:'40–50',m:0}};
 let tw='ve';try{const t=localStorage.getItem('wbTw');if(TW[t])tw=t}catch(x){}
 function renderTw(){const e=document.getElementById('twSel');if(e)e.innerHTML=Object.entries(TW).map(([k,o])=>`<button data-tw="${k}" aria-pressed="${k===tw}"><i style="background:${o.c}"></i>${o.n}</button>`).join('')}
@@ -1212,8 +1212,10 @@ const FAM={
  castMg:{n:'Fundición aluminio-magnesio',bal:[62,68],hz:[90,110],cast:1},
  castSi:{n:'Fundición aluminio-silicio',bal:[62,68],hz:[90,110],cast:1,si:1}};
 const BASEM=[{id:'7020',n:'7020',fam:'7xxx'},{id:'6082',n:'6082',fam:'6xxx'},{id:'fund',n:'Fundición',fam:'castMg'}];
-let cmats=[];try{cmats=JSON.parse(localStorage.getItem('wbMats')||'[]')||[]}catch(x){}
-function allMats(){return BASEM.concat(cmats.filter(m=>m&&m.id&&FAM[m.fam]))}
+let mlist=null;try{mlist=JSON.parse(localStorage.getItem('wbMats2')||'null')}catch(x){}
+if(!Array.isArray(mlist)){let old=[];try{old=JSON.parse(localStorage.getItem('wbMats')||'[]')||[]}catch(x){}mlist=BASEM.map(m=>({...m})).concat(old.filter(m=>m&&m.id&&FAM[m.fam]))}
+function allMats(){return mlist.filter(m=>m&&m.id&&FAM[m.fam])}
+function fixMat(){const ids=allMats().map(m=>m.id);if(!ids.length){mlist=BASEM.map(m=>({...m}));return fixMat()}const[a,b]=normU(mat).split('+');if(!ids.includes(a)||!ids.includes(b)){const x=ids.includes(a)?a:ids.includes(b)?b:ids[0];mat=normU(x+'+'+x);uiAB=null}}
 function matOf(id){return allMats().find(m=>m.id===id)}
 function matName(id){const m=matOf(id);return m?m.n:id}
 function famOf(id){const m=matOf(id);return m?m.fam:'6xxx'}
@@ -1299,26 +1301,33 @@ const FAMX={
  '7xxx':{s:[['Qué es','Aluminio con zinc y magnesio. Los de resistencia media, como el 7020, se pueden soldar con TIG y MIG (TWI).'],['Qué le pasa con el calor','Alrededor del cordón queda una zona más blanda: poco calor.']]},
  castMg:{s:[['Qué es','Aluminio fundido con magnesio como aleante principal.'],['¿Se suelda bien?','Regular: peor que una chapa o un perfil.'],['Con ER5356','Va bien: misma familia aluminio-magnesio.']]},
  castSi:{s:[['Qué es','Aluminio fundido con silicio como aleante principal: la mayoría de piezas de fundición de motor.'],['Aporte','Con mucho silicio el aporte habitual es el 4043 o el 4047, no el ER5356. Confírmalo con la ficha de la pieza.']]}};
-function openMat(id){const o=MATX[id];const m=matOf(id)||(o?{n:o.t,fam:null}:null);if(!m)return;
+function openMat(id){const mm=matOf(id),bm=BASEM.find(x=>x.id===id);const o=(mm&&bm&&mm.fam!==bm.fam)?null:MATX[id];const m=mm||(o?{n:o.t,fam:null}:null);if(!m)return;
   const body=o?`<p class="mut" style="margin-top:0">${esc(o.c)}</p>${o.s.map(([a,b])=>`<h3>${a}</h3><p>${b}</p>`).join('')}${o.w?`<p class="wn">${o.w}</p>`:''}`
    :`<p class="mut" style="margin-top:0">${esc(FAM[m.fam].n)}</p>${FAMX[m.fam].s.map(([a,b])=>`<h3>${a}</h3><p>${b}</p>`).join('')}`;
-  $('expBody').innerHTML=`<h2>${esc(o?o.t:m.n)}</h2>${body}<p class="src">Fuentes: <a href="https://twi-global.com/technical-knowledge/job-knowledge/weldability-of-materials-aluminium-alloys-021">TWI</a> · estudios técnicos · fichas EN 1706</p>`;
+  $('expBody').innerHTML=`<h2>${esc(mm?mm.n:(o?o.t:m.n))}</h2>${body}<p class="src">Fuentes: <a href="https://twi-global.com/technical-knowledge/job-knowledge/weldability-of-materials-aluminium-alloys-021">TWI</a> · estudios técnicos · fichas EN 1706</p>`;
   $('expDlg').dataset.k='';if(!$('expDlg').open)$('expDlg').showModal()}
-function saveMats(){try{localStorage.setItem('wbMats',JSON.stringify(cmats))}catch(x){}if(db)try{db.doc('ajustes/materiales').set({list:JSON.parse(JSON.stringify(cmats))})}catch(x){}}
+function saveMats(){try{localStorage.setItem('wbMats2',JSON.stringify(mlist))}catch(x){}if(db)try{db.doc('ajustes/materiales').set({all:JSON.parse(JSON.stringify(mlist))})}catch(x){}}
+let editMat=null;
 function openMats(){
-  const famOpts=Object.entries(FAM).map(([k,o])=>`<option value="${k}">${o.n}</option>`).join('');
-  $('expBody').innerHTML=`<h2>Materiales</h2><p class="mut">Los tuyos se sincronizan entre Mac y móvil.</p>
-  <div class="mlist">${allMats().map(m=>`<div class="mrow"><div><b>${esc(m.n)}</b><small>${esc(FAM[m.fam].n)}</small></div>${BASEM.some(x=>x.id===m.id)?'<span class="mut" style="font-size:12px">fijo</span>':`<button class="btn ghost" data-delmat="${m.id}">Borrar</button>`}</div>`).join('')}</div>
+  const famOpts=sel=>Object.entries(FAM).map(([k,o])=>`<option value="${k}"${k===sel?' selected':''}>${o.n}</option>`).join('');
+  $('expBody').innerHTML=`<h2>Materiales</h2><p class="mut">Puedes editarlos y borrarlos todos. Se sincronizan entre Mac y móvil.</p>
+  <div class="mlist">${allMats().map(m=>editMat===m.id?`<div class="mrow ed"><div style="flex:1"><input id="edN" maxlength="40" value="${esc(m.n)}"><select id="edF" style="margin-top:6px">${famOpts(m.fam)}</select><p class="err" id="edE"></p><div class="acts" style="margin-top:6px"><button class="btn y" data-savemat="${m.id}">Guardar</button><button class="btn ghost" data-cancelmat="1">Cancelar</button></div></div></div>`
+   :`<div class="mrow"><div><b>${esc(m.n)}</b><small>${esc(FAM[m.fam].n)}</small></div><div class="acts" style="margin:0;gap:6px"><button class="btn ghost" data-editmat="${m.id}">Editar</button><button class="btn ghost" data-delmat="${m.id}" style="color:var(--bad)">Borrar</button></div></div>`).join('')}</div>
   <h3>+ Añadir material</h3><label for="nmN">Nombre</label><input id="nmN" maxlength="40" placeholder="Chapa depósito 5754">
-  <label for="nmF">Familia</label><select id="nmF">${famOpts}</select>
+  <label for="nmF">Familia</label><select id="nmF">${famOpts('5xxx')}</select>
   <p class="err" id="nmE"></p><button class="btn y" id="nmOk" style="width:100%">Añadir</button>`;
   $('expDlg').dataset.k='mats';if(!$('expDlg').open)$('expDlg').showModal()}
 document.addEventListener('click',e=>{
   if(e.target.id==='nmOk'){const n=$('nmN').value.trim(),f=$('nmF').value;if(!n){$('nmE').textContent='Ponle un nombre.';return}
     if(allMats().some(m=>m.n.toLowerCase()===n.toLowerCase())){$('nmE').textContent='Ya hay un material con ese nombre.';return}
-    cmats.push({id:'m'+Date.now().toString(36),n:n.slice(0,40),fam:f});saveMats();renderUnion();openMats();return}
-  const d=e.target.closest('[data-delmat]');if(d){if(d.dataset.s!=='1'){d.dataset.s='1';d.textContent='Pulsa otra vez';return}
-    const id=d.dataset.delmat;cmats=cmats.filter(m=>m.id!==id);saveMats();if(mat.split('+').includes(id))mat='6082+fund';renderAll();openMats()}});
+    mlist.push({id:'m'+Date.now().toString(36),n:n.slice(0,40),fam:f});saveMats();renderUnion();openMats();return}
+  const ed=e.target.closest('[data-editmat]');if(ed){editMat=ed.dataset.editmat;openMats();setTimeout(()=>$('edN')&&$('edN').focus(),30);return}
+  if(e.target.closest('[data-cancelmat]')){editMat=null;openMats();return}
+  const sv=e.target.closest('[data-savemat]');if(sv){const id=sv.dataset.savemat,n=$('edN').value.trim(),f=$('edF').value;if(!n){$('edE').textContent='Ponle un nombre.';return}
+    if(allMats().some(m=>m.id!==id&&m.n.toLowerCase()===n.toLowerCase())){$('edE').textContent='Ya hay otro material con ese nombre.';return}
+    const m=mlist.find(x=>x.id===id);if(m){pushHist();m.n=n.slice(0,40);m.fam=f}editMat=null;saveMats();renderAll();openMats();return}
+  const d=e.target.closest('[data-delmat]');if(d){if(allMats().length<=1){d.textContent='Deja al menos uno';return}if(d.dataset.s!=='1'){d.dataset.s='1';d.textContent='Pulsa otra vez';return}
+    const id=d.dataset.delmat;pushHist();mlist=mlist.filter(m=>m.id!==id);saveMats();fixMat();renderAll();openMats()}});
 let uiAB=null;
 function renderUnion(){
   const k=normU(mat);let[a,b]=k.split('+');if(uiAB&&normU(uiAB.join('+'))===k)[a,b]=uiAB;const ms=allMats();
@@ -1347,9 +1356,9 @@ function openExpMig(l,e){
 }
 
 /* Deshacer / rehacer */
-function snapState(){return JSON.stringify({vals,pv,fixOn,tw,mat,tgas})}
+function snapState(){return JSON.stringify({vals,pv,fixOn,tw,mat,tgas,mlist})}
 function pushHist(){const now=Date.now();const s=snapState();if(now-H.t>700||!H.past.length){if(H.past[H.past.length-1]!==s){H.past.push(s);if(H.past.length>100)H.past.shift()}}H.t=now;H.fut=[]}
-function applyState(s){const o=JSON.parse(s);vals=o.vals;Object.assign(pv,o.pv);Object.assign(fixOn,o.fixOn);if(TW[o.tw])tw=o.tw;if(o.mat)mat=normU(o.mat);if(TG[o.tgas]){tgas=o.tgas;try{localStorage.setItem('wbTgas',tgas)}catch(x){}}
+function applyState(s){const o=JSON.parse(s);vals=o.vals;Object.assign(pv,o.pv);Object.assign(fixOn,o.fixOn);if(TW[o.tw])tw=o.tw;if(Array.isArray(o.mlist)&&JSON.stringify(o.mlist)!==JSON.stringify(mlist)){mlist=o.mlist;saveMats()}if(o.mat)mat=normU(o.mat);if(TG[o.tgas]){tgas=o.tgas;try{localStorage.setItem('wbTgas',tgas)}catch(x){}}
   try{localStorage.setItem('wbPv',JSON.stringify(pv));localStorage.setItem('wbFix',JSON.stringify(fixOn));localStorage.setItem('wbTw',tw)}catch(x){}saveValsSoon();renderAll()}
 function undo(){if(!H.past.length)return;H.fut.push(snapState());applyState(H.past.pop());H.t=0;flash('Deshecho')}
 function redo(){if(!H.fut.length)return;H.past.push(snapState());applyState(H.fut.pop());H.t=0;flash('Rehecho')}
@@ -1462,7 +1471,7 @@ function goView(v){for(const x of document.querySelectorAll('nav button'))x.setA
   for(const x of document.querySelectorAll('.view'))x.classList.toggle('on',x.id==='v-'+v);window.scrollTo(0,0);if(v==='pla')renderPlanos()}
 
 /* Auto-actualizar */
-const APPV='20261127071228';
+const APPV='20261127105814';
 (function(){
   if(!GHMODE||location.protocol!=='https:')return;
   try{if(sessionStorage.getItem('wbUpdDone')===APPV){sessionStorage.removeItem('wbUpdDone');toast('✓ App actualizada')}}catch(x){}
@@ -1544,7 +1553,7 @@ function drawIconOld(){const c=document.createElement('canvas');c.width=c.height
   try{db=await claude.use('db')}catch(x){}
   if(!db&&GHMODE){$('syncCard').hidden=false;GH.ui();if(!GH.cfg){$('listMsg').textContent='Conecta la sincronización para guardar.';renderPlanos();return}db=GH.db;assets=GH.assets;GH.start()}
   if(!db){$('listMsg').textContent='El guardado no está disponible en esta vista.';renderPlanos();return}
-  db.doc('ajustes/materiales').onSnapshot(s=>{if(s.exists){const d=s.data();if(d&&Array.isArray(d.list)){cmats=d.list;try{localStorage.setItem('wbMats',JSON.stringify(cmats))}catch(x){}renderAll()}}},()=>{});
+  db.doc('ajustes/materiales').onSnapshot(s=>{if(s.exists){const d=s.data();if(d&&Array.isArray(d.all)&&d.all.length){mlist=d.all}else if(d&&Array.isArray(d.list)){mlist=BASEM.map(m=>({...m})).concat(d.list)}else return;try{localStorage.setItem('wbMats2',JSON.stringify(mlist))}catch(x){}fixMat();renderAll()}},()=>{});
   db.doc('ajustes/guardado').onSnapshot(s=>{if(s.exists){const d=s.data();if(d&&typeof d==='object'){saved=migSaved(JSON.parse(JSON.stringify(d)));try{renderSaved()}catch(x){}}}},()=>{});
   db.doc('ajustes/valores').onSnapshot(s=>{
     if(s.exists){const v=s.data();for(const k of Object.keys(v||{}))if(v[k]&&+v[k].bal&&+v[k].hz){const nk=normU(k);if(k===nk||!v[nk])vals[nk]={bal:+v[k].bal,hz:+v[k].hz}}renderAll();try{fillForm()}catch(x){}}
