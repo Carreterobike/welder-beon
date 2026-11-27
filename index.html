@@ -218,7 +218,7 @@ input,textarea,select{background:var(--card2);color:var(--ink);border-color:var(
 @keyframes fadeup{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.view.on{animation:none}}
 #outMig .ic{height:22px;overflow:hidden;margin-bottom:4px}#outMig .ic svg{height:22px!important;width:auto!important}#outMig .cell small{display:block;margin-top:0}
-.mchip{display:inline-flex;align-items:stretch;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--card2)}.mchip.on{border-color:var(--y);background:rgba(255,209,0,.12)}.mpick,.minf{background:none;border:0;color:var(--ink);font:600 15px Barlow,sans-serif;cursor:pointer;min-height:36px}.mpick{padding:2px 4px 2px 14px}.minf{padding:2px 12px 2px 8px;color:var(--mut)}.mchip.on .mpick{color:var(--y)}
+.mchip{display:inline-flex;align-items:stretch;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--card2)}.mchip.on{border-color:var(--y);background:rgba(255,209,0,.12)}.mpick,.minf{background:none;border:0;color:var(--ink);font:600 15px Barlow,sans-serif;cursor:pointer;min-height:36px}.mpick{padding:2px 4px 2px 14px}.minf{padding:2px 12px 2px 8px;color:var(--mut)}.mchip.on .mpick{color:var(--y)}.minf{padding-right:6px}.mico{background:none;border:0;border-left:1px solid var(--line);color:var(--mut);cursor:pointer;min-height:36px;padding:2px 9px;display:inline-flex;align-items:center;gap:4px;font:600 13px Barlow,sans-serif}.mico:hover{color:var(--ink)}.mico.arm{background:var(--bad);color:#fff}
 </style>
 </head>
 <body>
@@ -1310,10 +1310,8 @@ function saveMats(){try{localStorage.setItem('wbMats2',JSON.stringify(mlist))}ca
 let editMat=null;
 function openMats(){
   const famOpts=sel=>Object.entries(FAM).map(([k,o])=>`<option value="${k}"${k===sel?' selected':''}>${o.n}</option>`).join('');
-  $('expBody').innerHTML=`<h2>Materiales</h2><p class="mut">Puedes editarlos y borrarlos todos. Se sincronizan entre Mac y móvil.</p>
-  <div class="mlist">${allMats().map(m=>editMat===m.id?`<div class="mrow ed"><div style="flex:1"><input id="edN" maxlength="40" value="${esc(m.n)}"><select id="edF" style="margin-top:6px">${famOpts(m.fam)}</select><p class="err" id="edE"></p><div class="acts" style="margin-top:6px"><button class="btn y" data-savemat="${m.id}">Guardar</button><button class="btn ghost" data-cancelmat="1">Cancelar</button></div></div></div>`
-   :`<div class="mrow"><div><b>${esc(m.n)}</b><small>${esc(FAM[m.fam].n)}</small></div><div class="acts" style="margin:0;gap:6px"><button class="btn ghost" data-editmat="${m.id}">Editar</button><button class="btn ghost" data-delmat="${m.id}" style="color:var(--bad)">Borrar</button></div></div>`).join('')}</div>
-  <h3>+ Añadir material</h3><label for="nmN">Nombre</label><input id="nmN" maxlength="40" placeholder="Chapa depósito 5754">
+  $('expBody').innerHTML=`<h2>Añadir material</h2><p class="mut">Para editar o borrar uno, usa el lápiz o la papelera que tiene al lado. Se sincronizan entre Mac y móvil.</p>
+  <label for="nmN">Nombre</label><input id="nmN" maxlength="40" placeholder="Chapa depósito 5754">
   <label for="nmF">Familia</label><select id="nmF">${famOpts('5xxx')}</select>
   <p class="err" id="nmE"></p><button class="btn y" id="nmOk" style="width:100%">Añadir</button>`;
   $('expDlg').dataset.k='mats';if(!$('expDlg').open)$('expDlg').showModal()}
@@ -1322,12 +1320,18 @@ document.addEventListener('click',e=>{
     if(allMats().some(m=>m.n.toLowerCase()===n.toLowerCase())){$('nmE').textContent='Ya hay un material con ese nombre.';return}
     mlist.push({id:'m'+Date.now().toString(36),n:n.slice(0,40),fam:f});saveMats();renderUnion();openMats();return}
   const ed=e.target.closest('[data-editmat]');if(ed){editMat=ed.dataset.editmat;openMats();setTimeout(()=>$('edN')&&$('edN').focus(),30);return}
-  if(e.target.closest('[data-cancelmat]')){editMat=null;openMats();return}
+  if(e.target.closest('[data-cancelmat]')){editMat=null;$('expDlg').close();return}
   const sv=e.target.closest('[data-savemat]');if(sv){const id=sv.dataset.savemat,n=$('edN').value.trim(),f=$('edF').value;if(!n){$('edE').textContent='Ponle un nombre.';return}
     if(allMats().some(m=>m.id!==id&&m.n.toLowerCase()===n.toLowerCase())){$('edE').textContent='Ya hay otro material con ese nombre.';return}
-    const m=mlist.find(x=>x.id===id);if(m){pushHist();m.n=n.slice(0,40);m.fam=f}editMat=null;saveMats();renderAll();openMats();return}
+    const m=mlist.find(x=>x.id===id);if(m){pushHist();m.n=n.slice(0,40);m.fam=f}editMat=null;saveMats();renderAll();$('expDlg').close();return}
   const d=e.target.closest('[data-delmat]');if(d){if(allMats().length<=1){d.textContent='Deja al menos uno';return}if(d.dataset.s!=='1'){d.dataset.s='1';d.textContent='Pulsa otra vez';return}
     const id=d.dataset.delmat;pushHist();mlist=mlist.filter(m=>m.id!==id);saveMats();fixMat();renderAll();openMats()}});
+function openMatEdit(id){const m=mlist.find(x=>x.id===id);if(!m)return;
+  const famOpts=sel=>Object.entries(FAM).map(([k,o])=>`<option value="${k}"${k===sel?' selected':''}>${o.n}</option>`).join('');
+  $('expBody').innerHTML=`<h2>Editar material</h2><label for="edN">Nombre</label><input id="edN" maxlength="40" value="${esc(m.n)}">
+  <label for="edF">Familia</label><select id="edF">${famOpts(m.fam)}</select><p class="err" id="edE"></p>
+  <div class="acts"><button class="btn y" data-savemat="${m.id}">Guardar</button><button class="btn ghost" data-cancelmat="1">Cancelar</button></div>`;
+  $('expDlg').dataset.k='medit';if(!$('expDlg').open)$('expDlg').showModal();setTimeout(()=>$('edN')&&$('edN').focus(),30)}
 let uiAB=null;
 function renderUnion(){
   const k=normU(mat);let[a,b]=k.split('+');if(uiAB&&normU(uiAB.join('+'))===k)[a,b]=uiAB;const ms=allMats();
@@ -1336,7 +1340,7 @@ function renderUnion(){
   const both=bothCast(k),one=!both&&(FAM[famOf(a)].cast||FAM[famOf(b)].cast);
   $('espWrap').hidden=both;$('espLab').textContent=one?'Espesor de la otra pieza':'Espesor';
   $('espSel').innerHTML=ESPS.map(e=>`<button data-esp2="${e}" aria-pressed="${e===esp}">${String(e).replace('.',',')}</button>`).join('')+'<span class="mut">mm</span>';
-  $('uInfo').innerHTML=ms.map(m=>`<span class="mchip${a===b&&a===m.id?' on':''}"><button class="mpick" data-pick="${m.id}">${esc(m.n)}</button><button class="minf" data-mi2="${m.id}" aria-label="Información de ${esc(m.n)}">ⓘ</button></span>`).join('');
+  $('uInfo').innerHTML=ms.map(m=>`<span class="mchip${a===b&&a===m.id?' on':''}"><button class="mpick" data-pick="${m.id}">${esc(m.n)}</button><button class="minf" data-mi2="${m.id}" aria-label="Información de ${esc(m.n)}">ⓘ</button><button class="mico" data-medit="${m.id}" aria-label="Editar ${esc(m.n)}"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg></button><button class="mico mdel" data-mdel="${m.id}" aria-label="Borrar ${esc(m.n)}"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 7V4h4v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg></button></span>`).join('');
 }
 
 function openGas(){
@@ -1471,7 +1475,7 @@ function goView(v){for(const x of document.querySelectorAll('nav button'))x.setA
   for(const x of document.querySelectorAll('.view'))x.classList.toggle('on',x.id==='v-'+v);window.scrollTo(0,0);if(v==='pla')renderPlanos()}
 
 /* Auto-actualizar */
-const APPV='20261127105814';
+const APPV='20261127143151';
 (function(){
   if(!GHMODE||location.protocol!=='https:')return;
   try{if(sessionStorage.getItem('wbUpdDone')===APPV){sessionStorage.removeItem('wbUpdDone');toast('✓ App actualizada')}}catch(x){}
@@ -1492,11 +1496,16 @@ const APPV='20261127105814';
   window.addEventListener('focus',check);
   setInterval(check,30*1000);
 })();
+function toastMsg(t){const d=document.createElement('div');d.textContent=t;d.style.cssText='position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top));transform:translateX(-50%);background:#333;color:#fff;padding:10px 16px;border-radius:12px;font:600 15px Barlow,sans-serif;z-index:99';document.body.appendChild(d);setTimeout(()=>d.remove(),2500)}
 function toast(t){const d=document.createElement('div');d.textContent=t;d.style.cssText='position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top));transform:translateX(-50%);background:#1a7f37;color:#fff;padding:10px 16px;border-radius:12px;font:600 15px Barlow,sans-serif;z-index:99;box-shadow:0 8px 20px -6px #0008';document.body.appendChild(d);setTimeout(()=>d.remove(),3000)}
 $('expX').addEventListener('click',()=>$('expDlg').close());
 for(const id of ['uA','uB'])$(id).addEventListener('change',()=>{pushHist();uiAB=[$('uA').value,$('uB').value];mat=normU(uiAB.join('+'));sel=-1;renderAll()});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-esp2]');if(b){esp=+b.dataset.esp2;try{localStorage.setItem('wbEsp',esp)}catch(x){}renderAll();return}
   const i=e.target.closest('[data-mi2]');if(i){openMat(i.dataset.mi2);return}
+  const me=e.target.closest('[data-medit]');if(me){openMatEdit(me.dataset.medit);return}
+  const md=e.target.closest('[data-mdel]');if(md){if(allMats().length<=1){toastMsg('Tiene que quedar al menos un material');return}
+    if(!md.classList.contains('arm')){document.querySelectorAll('.mico.arm').forEach(x=>{x.classList.remove('arm');x.innerHTML=x.dataset.ico});md.dataset.ico=md.innerHTML;md.classList.add('arm');md.innerHTML+='Borrar';clearTimeout(md._t);md._t=setTimeout(()=>{if(md.isConnected){md.classList.remove('arm');md.innerHTML=md.dataset.ico}},3000);return}
+    const id=md.dataset.mdel;pushHist();mlist=mlist.filter(m=>m.id!==id);saveMats();fixMat();renderAll();return}
   const pk=e.target.closest('[data-pick]');if(pk){pushHist();const id=pk.dataset.pick;uiAB=[id,id];mat=normU(id+'+'+id);sel=-1;renderAll();return}
   const eb=e.target.closest('[data-esp]');if(eb){esp=+eb.dataset.esp;try{localStorage.setItem('wbEsp',esp)}catch(x){}renderAll();openRec();return}});
 $('recBtn').addEventListener('click',openRec);$('matsBtn').addEventListener('click',openMats);
