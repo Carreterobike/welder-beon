@@ -240,7 +240,7 @@ input,textarea,select{background:var(--card2);color:var(--ink);border-color:var(
   <div class="ucard">
     <div class="ulab" style="margin-top:0">Mezclar dos materiales</div><div class="urow"><select id="uA" aria-label="Material A"></select><b class="uplus">+</b><select id="uB" aria-label="Material B"></select></div>
     <div id="espWrap"><div class="ulab" id="espLab">Espesor</div><div class="espsel" id="espSel"></div></div>
-    <div class="ulab">Materiales · toca uno para soldarlo consigo mismo</div><div class="uact"><div id="uInfo" class="uinfo"></div><button class="chipi" id="matsBtn">+ Añadir material</button></div>
+    <div class="ulab">Materiales · toca uno para elegirlo</div><div class="uact"><div id="uInfo" class="uinfo"></div><button class="chipi" id="matsBtn">+ Añadir material</button></div>
     <button class="btn y recbtn" id="recBtn">Recomendación para esta unión ›</button>
   </div>
   <div class="machine" aria-live="polite">
@@ -1398,7 +1398,7 @@ function renderUnion(){
   const both=bothCast(k),one=!both&&(FAM[famOf(a)].cast||FAM[famOf(b)].cast);
   $('espWrap').hidden=both;$('espLab').textContent=one?'Espesor de la otra pieza':'Espesor';
   $('espSel').innerHTML=ESPS.map(e=>`<button data-esp2="${e}" aria-pressed="${e===esp}">${String(e).replace('.',',')}</button>`).join('')+'<span class="mut">mm</span>';
-  $('uInfo').innerHTML=ms.map(m=>`<span class="mchip${a===b&&a===m.id?' on':''}"><button class="mpick" data-pick="${m.id}">${esc(m.n)}</button><button class="minf" data-mi2="${m.id}" aria-label="Información de ${esc(m.n)}">ⓘ</button><button class="mico" data-medit="${m.id}" aria-label="Editar ${esc(m.n)}"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg></button><button class="mico mdel" data-mdel="${m.id}" aria-label="Borrar ${esc(m.n)}"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 7V4h4v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg></button></span>`).join('');
+  $('uInfo').innerHTML=ms.map(m=>`<span class="mchip${a===b&&a===m.id?' on':''}"><button class="mpick" data-pick="${m.id}">${esc(m.n)}</button><button class="mico" data-medit="${m.id}" aria-label="Editar ${esc(m.n)}"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg></button><button class="mico mdel" data-mdel="${m.id}" aria-label="Borrar ${esc(m.n)}"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 7V4h4v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg></button></span>`).join('');
 }
 
 function openGas(){
@@ -1536,7 +1536,7 @@ function goView(v){for(const x of document.querySelectorAll('nav button'))x.setA
   for(const x of document.querySelectorAll('.view'))x.classList.toggle('on',x.id==='v-'+v);window.scrollTo(0,0);if(v==='pla')renderPlanos()}
 
 /* Auto-actualizar */
-const APPV='20261127161358';
+const APPV='20261127161844';
 (function(){
   if(!GHMODE||location.protocol!=='https:')return;
   try{if(sessionStorage.getItem('wbUpdDone')===APPV){sessionStorage.removeItem('wbUpdDone');toast('✓ App actualizada')}}catch(x){}
