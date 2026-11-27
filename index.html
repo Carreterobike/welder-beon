@@ -219,6 +219,7 @@ input,textarea,select{background:var(--card2);color:var(--ink);border-color:var(
 @media (prefers-reduced-motion:reduce){.view.on{animation:none}}
 #outMig .ic{height:22px;overflow:hidden;margin-bottom:4px}#outMig .ic svg{height:22px!important;width:auto!important}#outMig .cell small{display:block;margin-top:0}
 .mchip{display:inline-flex;align-items:stretch;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--card2)}.mchip.on{border-color:var(--y);background:rgba(255,209,0,.12)}.mpick,.minf{background:none;border:0;color:var(--ink);font:600 15px Barlow,sans-serif;cursor:pointer;min-height:36px}.mpick{padding:2px 4px 2px 14px}.minf{padding:2px 12px 2px 8px;color:var(--mut)}.mchip.on .mpick{color:var(--y)}.minf{padding-right:6px}.mico{background:none;border:0;border-left:1px solid var(--line);color:var(--mut);cursor:pointer;min-height:36px;padding:2px 9px;display:inline-flex;align-items:center;gap:4px;font:600 13px Barlow,sans-serif}.mico:hover{color:var(--ink)}.mico.arm{background:var(--bad);color:#fff}
+#top .hd{position:relative}#syncDot{position:absolute;right:max(12px,env(safe-area-inset-right));top:50%;transform:translateY(-50%);display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#15171b;color:var(--mut);font:600 12px Barlow,sans-serif;border-radius:14px;padding:5px 10px;cursor:pointer}#syncDot i{width:9px;height:9px;border-radius:50%;background:#f85149;box-shadow:0 0 6px #f85149}#syncDot.ok i{background:#3fb950;box-shadow:0 0 6px #3fb950}
 </style>
 </head>
 <body>
@@ -345,16 +346,16 @@ input,textarea,select{background:var(--card2);color:var(--ink);border-color:var(
   <h2>Ajustes</h2>
   <div class="card" id="syncCard" hidden>
     <h2 style="font-size:20px">Sincronizar Mac y móvil</h2>
-    <p class="mut" id="syncSt">Sin conectar: los planos y lo guardado solo se quedan en este aparato.</p>
+    <p class="mut" id="syncSt">Sin conectar: lo que guardes solo se queda en este aparato.</p>
     <div id="syncForm">
+      <p class="mut">Igual que en Ichnos: entra con tu usuario y tu código en el Mac y en el móvil, y verás lo mismo en los dos. La primera vez, pulsa «Crear cuenta».</p>
       <div class="row">
-        <div><label for="gU">Usuario de GitHub</label><input id="gU" autocomplete="off" autocapitalize="off" value="Carreterobike"></div>
-        <div><label for="gR">Repositorio de datos</label><input id="gR" autocomplete="off" autocapitalize="off" value="welder-beon-datos"></div>
+        <div><label for="gU">Usuario</label><input id="gU" name="username" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="david"></div>
+        <div><label for="gC">Código</label><input id="gC" name="password" type="password" autocomplete="current-password" placeholder="tu código"></div>
       </div>
-      <label for="gT">Llave (token)</label><input id="gT" type="password" autocomplete="off" autocapitalize="off" placeholder="github_pat_…">
-      <div class="acts"><button class="btn y" id="gGo">Conectar</button></div>
+      <div class="acts"><button class="btn y" id="gGo">Entrar</button><button class="btn ghost" id="gNew">Crear cuenta</button></div>
     </div>
-    <div class="acts" id="syncOn" hidden><button class="btn ghost" id="gNow">Sincronizar ahora</button><button class="btn ghost" id="gOff">Desconectar</button></div>
+    <div id="syncOn" hidden><p id="syncWho" style="margin:6px 0"></p><div class="acts"><button class="btn ghost" id="gNow">Sincronizar ahora</button><button class="btn ghost" id="gOff">Salir</button></div></div>
     <p class="err" id="syncErr"></p>
   </div>
   <div class="card">
@@ -424,30 +425,32 @@ const GHMODE=typeof claude==='undefined';
 const H={past:[],fut:[],t:0};
 const TG={ar:{n:'Argón puro',v:'7–9,5',c:'#2b7bd6'},arhe:{n:'Argón + helio',v:'≈24 (50/50)',c:'#9b59b6'}};
 let tgas='ar',gasTxt='';try{const t=localStorage.getItem('wbTgas');if(TG[t])tgas=t;gasTxt=localStorage.getItem('wbGasTxt')||''}catch(x){}
+const SRV='https://welder-beon.dcarreterov86.workers.dev';
 const GH=(()=>{
-  let cfg=null;try{cfg=JSON.parse(localStorage.getItem('wbGh')||'null')}catch(x){}
-  let state=null,sha=null,timer=null;const subs=new Set(),phc=new Map();
-  const enc=s=>{const b=new TextEncoder().encode(s);let o='';for(let i=0;i<b.length;i+=8192)o+=String.fromCharCode.apply(null,b.subarray(i,i+8192));return btoa(o)};
-  const dec=s=>{const bin=atob(s.replace(/\s/g,''));const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new TextDecoder().decode(u)};
-  const url=p=>`https://api.github.com/repos/${encodeURIComponent(cfg.user)}/${encodeURIComponent(cfg.repo)}/contents/${p}`;
-  const H=(x)=>Object.assign({Authorization:'Bearer '+cfg.token,'X-GitHub-Api-Version':'2022-11-28',Accept:'application/vnd.github+json'},x||{});
+  let cfg=null;try{cfg=JSON.parse(localStorage.getItem('wbCuenta')||'null')}catch(x){}
+  if(cfg&&!(cfg.t&&cfg.user))cfg=null;
+  let state=null,ver=0,timer=null,lastOk=0;const subs=new Set(),phc=new Map();
+  try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist().catch(()=>{})}catch(x){}
+  const AH=x=>Object.assign({Authorization:'Bearer '+cfg.t},x||{});
   const blank=()=>({guardado:null,valores:null,pruebas:{},planos:{}});
-  function st(t,ok){const e=$('syncSt');if(e){e.textContent=t;e.style.color=ok?'#1a7f37':''}}
+  function dot(ok,t){let d=$('syncDot');if(!d){d=document.createElement('button');d.id='syncDot';d.type='button';d.onclick=()=>goView('aju');(document.querySelector('#top .hd')||document.body).appendChild(d)}
+    d.className=ok?'ok':'ko';d.title=t;d.setAttribute('aria-label',t);d.innerHTML='<i></i>'+(ok?'Sincronizado':'Sin sincronizar')}
+  function st(t,ok){const e=$('syncSt');if(e){e.textContent=t;e.style.color=ok?'#3fb950':''}dot(!!ok,t)}
+  async function call(p,o){let r;try{r=await fetch(SRV+p,Object.assign({cache:'no-store'},o||{}))}catch(x){const e=new Error('Sin conexión');e.status=0;throw e}
+    if(!r.ok){let m='';try{m=(await r.json()).error||''}catch(x){}const e=new Error(m||('Error '+r.status));e.status=r.status;throw e}return r}
+  function caer(e){if(e&&e.status===401){cfg=null;try{localStorage.removeItem('wbCuenta')}catch(x){}st('Tienes que volver a entrar con tu usuario y código.');ui()}else st(e&&e.status===0?'Sin conexión: se reintentará solo.':'No se ha podido sincronizar: '+(e&&e.message||e))}
   async function pull(){
-    const r=await fetch(url('datos.json')+'?t='+Date.now(),{headers:H(),cache:'no-store'});
-    if(r.status===404){state=blank();sha=null}
-    else if(!r.ok){let m='';try{m=(await r.json()).message||''}catch(x){}const e=new Error('GitHub '+r.status+(m?' · '+m:''));e.status=r.status;throw e}
-    else{const j=await r.json();sha=j.sha;try{state=Object.assign(blank(),JSON.parse(dec(j.content)))}catch(x){state=blank()}}
+    const j=await (await call('/datos',{headers:AH()})).json();
+    ver=j.v|0;state=Object.assign(blank(),j.d||{});lastOk=Date.now();
     st('✓ Sincronizado · '+new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}),1);
     for(const f of subs)try{f()}catch(x){}
   }
-  async function mutate(fn,msg){
-    for(let i=0;i<5;i++){
+  async function mutate(fn){
+    for(let i=0;i<6;i++){
       await pull();fn(state);
-      const r=await fetch(url('datos.json'),{method:'PUT',headers:H({'Content-Type':'application/json'}),body:JSON.stringify({message:msg||'Welder BeOn',content:enc(JSON.stringify(state)),...(sha?{sha}:{})})});
-      if(r.ok){sha=(await r.json()).content.sha;for(const f of subs)try{f()}catch(x){}return}
-      if(r.status!==409&&r.status!==422){const e=new Error('GitHub '+r.status);e.status=r.status;throw e}
-      await new Promise(z=>setTimeout(z,400+i*500));
+      try{const j=await (await call('/datos',{method:'PUT',headers:AH({'Content-Type':'application/json'}),body:JSON.stringify({base:ver,d:state})})).json();ver=j.v;for(const f of subs)try{f()}catch(x){}st('✓ Sincronizado · '+new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}),1);return}
+      catch(e){if(e.status!==409){caer(e);throw e}}
+      await new Promise(z=>setTimeout(z,300+i*400));
     }
     throw new Error('No se ha podido sincronizar');
   }
@@ -457,44 +460,70 @@ const GH=(()=>{
   const snap=v=>({exists:v!=null,data:()=>JSON.parse(JSON.stringify(v))});
   const db={
     doc:p=>{const k=key(p);return{
-      set:v=>mutate(()=>put(k,JSON.parse(JSON.stringify(v))),'Guardar '+p),
-      update:o=>mutate(()=>{const c=get(k);if(c)put(k,Object.assign(c,o))},'Actualizar '+p),
-      delete:()=>mutate(()=>put(k,undefined),'Borrar '+p),
+      set:v=>mutate(()=>put(k,JSON.parse(JSON.stringify(v)))),
+      update:o=>mutate(()=>{const c=get(k);if(c)put(k,Object.assign(c,o))}),
+      delete:()=>mutate(()=>put(k,undefined)),
       onSnapshot:(cb)=>{const f=()=>{if(state)cb(snap(get(k)))};subs.add(f);f();return()=>subs.delete(f)}}},
     collection:(cn)=>{const q={
-      add:v=>{const id=Date.now().toString(36)+Math.random().toString(36).slice(2,7);return mutate(()=>{state[cn]=state[cn]||{};state[cn][id]=JSON.parse(JSON.stringify(v))},'Nuevo '+cn).then(()=>({id}))},
+      add:v=>{const id=Date.now().toString(36)+Math.random().toString(36).slice(2,7);return mutate(()=>{state[cn]=state[cn]||{};state[cn][id]=JSON.parse(JSON.stringify(v))}).then(()=>({id}))},
       orderBy:()=>q,limit:()=>q,
       onSnapshot:(cb)=>{const f=()=>{if(!state)return;const docs=Object.entries(state[cn]||{}).map(([id,v])=>({id,data:()=>v})).sort((a,b)=>(b.data().ts||0)-(a.data().ts||0));cb({docs,metadata:{fromCache:false}})};subs.add(f);f();return()=>subs.delete(f)}};return q}
   };
   async function shrink(f,m){
     try{const bm=await createImageBitmap(f);const sc=Math.min(1,m/Math.max(bm.width,bm.height));const c=document.createElement('canvas');c.width=Math.round(bm.width*sc);c.height=Math.round(bm.height*sc);c.getContext('2d').drawImage(bm,0,0,c.width,c.height);return await new Promise(z=>c.toBlob(z,'image/jpeg',.85))}catch(x){return f}
   }
-  const b64blob=b=>new Promise((ok,ko)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(',')[1]);r.onerror=ko;r.readAsDataURL(b)});
   const assets={
     upload:async (f,o)=>{const id=Date.now().toString(36)+Math.random().toString(36).slice(2,7);const b=await shrink(f,(o&&o.max)||1600);
-      const r=await fetch(url('fotos/'+id+'.jpg'),{method:'PUT',headers:H({'Content-Type':'application/json'}),body:JSON.stringify({message:'Foto',content:await b64blob(b)})});
-      if(!r.ok)throw new Error('No se ha podido subir la foto ('+r.status+')');return{id}},
-    delete:async id=>{const r=await fetch(url('fotos/'+id+'.jpg'),{headers:H()});if(!r.ok)return;const j=await r.json();await fetch(url('fotos/'+id+'.jpg'),{method:'DELETE',headers:H({'Content-Type':'application/json'}),body:JSON.stringify({message:'Borrar foto',sha:j.sha})})}
+      await call('/foto/'+id,{method:'PUT',headers:AH({'Content-Type':'image/jpeg'}),body:b});return{id}},
+    delete:async id=>{await call('/foto/'+encodeURIComponent(id),{method:'DELETE',headers:AH()})}
   };
   async function photo(id){
     if(phc.has(id))return phc.get(id);
-    const p=fetch(url('fotos/'+encodeURIComponent(id)+'.jpg'),{headers:H({Accept:'application/vnd.github.raw'})}).then(r=>r.ok?r.blob():null).then(b=>b?URL.createObjectURL(b):null);
+    const p=fetch(SRV+'/foto/'+encodeURIComponent(id),{headers:AH()}).then(r=>r.ok?r.blob():null).then(b=>b?URL.createObjectURL(b):null).catch(()=>null);
     phc.set(id,p);return p;
   }
+  // Pasar lo que había en GitHub (la forma antigua de sincronizar) al servidor nuevo, una sola vez
+  async function migrar(){
+    let g=null;try{g=JSON.parse(localStorage.getItem('wbGh')||'null')}catch(x){}
+    if(!g||!g.token)return;
+    if(state&&state.migradoGH)return;
+    st('Pasando tus datos de GitHub al servidor nuevo…');
+    const gu=p=>`https://api.github.com/repos/${encodeURIComponent(g.user)}/${encodeURIComponent(g.repo)}/contents/${p}`;
+    const gh={Authorization:'Bearer '+g.token,'X-GitHub-Api-Version':'2022-11-28',Accept:'application/vnd.github+json'};
+    const r=await fetch(gu('datos.json')+'?t='+Date.now(),{headers:gh,cache:'no-store'});
+    if(r.status===404){await mutate(s=>{s.migradoGH=Date.now()});return}
+    if(!r.ok)throw new Error('GitHub '+r.status);
+    const j=await r.json();const bin=atob(j.content.replace(/\s/g,''));const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);
+    const old=JSON.parse(new TextDecoder().decode(u));
+    const ids=new Set();for(const e of Object.values(old.pruebas||{}))for(const f of (e&&e.fotos)||[])ids.add(f);for(const p of Object.values(old.planos||{}))if(p&&p.img)ids.add(p.img);
+    let n=0;for(const id of ids){n++;st(`Pasando fotos y planos… ${n} de ${ids.size}`);
+      const fr=await fetch(gu('fotos/'+encodeURIComponent(id)+'.jpg'),{headers:Object.assign({},gh,{Accept:'application/vnd.github.raw'})});
+      if(fr.ok)await call('/foto/'+encodeURIComponent(id),{method:'PUT',headers:AH({'Content-Type':'image/jpeg'}),body:await fr.blob()})}
+    await mutate(s=>{
+      for(const c of ['pruebas','planos']){s[c]=Object.assign({},old[c]||{},s[c]||{})}
+      for(const c of ['guardado','valores']){if(s[c]==null&&old[c]!=null)s[c]=old[c]}
+      if(old.ajustes){s.ajustes=s.ajustes||{};for(const[k,v]of Object.entries(old.ajustes))if(s.ajustes[k]==null)s.ajustes[k]=v}
+      s.migradoGH=Date.now()});
+  }
   function start(){
-    pull().catch(e=>st(e.status===401||e.status===403?'La llave no vale o no tiene permiso. Revísala.':e.status===404?'No encuentro el repositorio. Revisa usuario y nombre.':'Sin conexión: se reintentará.'));
-    clearInterval(timer);timer=setInterval(()=>{if(document.visibilityState==='visible')pull().catch(()=>{})},20000);
-    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')pull().catch(()=>{})});
+    pull().then(()=>migrar().catch(e=>st('No se han podido pasar los datos de GitHub: '+(e.message||e)))).catch(caer);
+    clearInterval(timer);timer=setInterval(()=>{if(document.visibilityState==='visible')pull().catch(caer)},20000);
+    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')pull().catch(caer)});
+    window.addEventListener('online',()=>pull().catch(caer));
   }
   function ui(){
     $('syncForm').hidden=!!cfg;$('syncOn').hidden=!cfg;
-    $('gGo').onclick=async()=>{
-      const c={user:$('gU').value.trim(),repo:$('gR').value.trim(),token:$('gT').value.trim()};$('syncErr').textContent='';
-      if(!c.user||!c.repo||!c.token){$('syncErr').textContent='Rellena los tres campos.';return}
-      cfg=c;try{await pull()}catch(e){cfg=null;$('syncErr').textContent=(e.status===401||e.status===403?'La llave no vale o no tiene permiso en ese repositorio.':e.status===404?'No encuentro el repositorio. Revisa usuario y nombre.':'No se ha podido conectar.')+' ['+(e.message||e)+']';return}
-      try{localStorage.setItem('wbGh',JSON.stringify(cfg))}catch(x){}location.reload()};
-    $('gNow').onclick=()=>pull().catch(()=>st('Sin conexión.'));
-    $('gOff').onclick=()=>{if($('gOff').dataset.s!=='1'){$('gOff').dataset.s='1';$('gOff').textContent='Pulsa otra vez';return}try{localStorage.removeItem('wbGh')}catch(x){}location.reload()};
+    if(cfg)$('syncWho').textContent='Conectado como '+cfg.user;else dot(false,'Sin conectar');
+    const go=async crear=>{
+      const c={user:$('gU').value.trim().toLowerCase(),code:$('gC').value};$('syncErr').textContent='';
+      if(!c.user||!c.code){$('syncErr').textContent='Pon tu usuario y tu código.';return}
+      try{const j=await (await call('/entrar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...c,crear})})).json();
+        cfg={user:j.user,t:j.t};try{localStorage.setItem('wbCuenta',JSON.stringify(cfg))}catch(x){}location.reload()}
+      catch(e){$('syncErr').textContent=e.status===404&&!crear?'Ese usuario no existe todavía. Si es la primera vez, pulsa «Crear cuenta».':e.status===0?'Sin conexión con el servidor.':e.message}};
+    $('gGo').onclick=()=>go(false);$('gNew').onclick=()=>go(true);
+    $('gNow').onclick=()=>pull().catch(caer);
+    $('gOff').onclick=()=>{if($('gOff').dataset.s!=='1'){$('gOff').dataset.s='1';$('gOff').textContent='Pulsa otra vez';return}
+      const t=cfg&&cfg.t;try{localStorage.removeItem('wbCuenta')}catch(x){}if(t)fetch(SRV+'/salir',{method:'POST',headers:{Authorization:'Bearer '+t}}).catch(()=>{}).finally(()=>location.reload());else location.reload()};
     if(cfg)st('Conectando…');
   }
   return{get cfg(){return cfg},db,assets,photo,start,ui};
@@ -1362,6 +1391,9 @@ function openExpMig(l,e){
 /* Deshacer / rehacer */
 function snapState(){return JSON.stringify({vals,pv,fixOn,tw,mat,tgas,mlist})}
 function pushHist(){const now=Date.now();const s=snapState();if(now-H.t>700||!H.past.length){if(H.past[H.past.length-1]!==s){H.past.push(s);if(H.past.length>100)H.past.shift()}}H.t=now;H.fut=[]}
+// Si los materiales cambian desde el otro aparato, Deshacer ya no los toca (así no puede borrar lo que añadiste allí)
+window.__wb={mats:()=>mlist.map(m=>m.n),undo:()=>undo(),push:()=>pushHist(),planos:()=>planos.length};
+function histSinMats(){for(const L of [H.past,H.fut])for(let i=0;i<L.length;i++){try{const o=JSON.parse(L[i]);if(o&&o.mlist){delete o.mlist;L[i]=JSON.stringify(o)}}catch(x){}}}
 function applyState(s){const o=JSON.parse(s);vals=o.vals;Object.assign(pv,o.pv);Object.assign(fixOn,o.fixOn);if(TW[o.tw])tw=o.tw;if(Array.isArray(o.mlist)&&JSON.stringify(o.mlist)!==JSON.stringify(mlist)){mlist=o.mlist;saveMats()}if(o.mat)mat=normU(o.mat);if(TG[o.tgas]){tgas=o.tgas;try{localStorage.setItem('wbTgas',tgas)}catch(x){}}
   try{localStorage.setItem('wbPv',JSON.stringify(pv));localStorage.setItem('wbFix',JSON.stringify(fixOn));localStorage.setItem('wbTw',tw)}catch(x){}saveValsSoon();renderAll()}
 function undo(){if(!H.past.length)return;H.fut.push(snapState());applyState(H.past.pop());H.t=0;flash('Deshecho')}
@@ -1475,7 +1507,7 @@ function goView(v){for(const x of document.querySelectorAll('nav button'))x.setA
   for(const x of document.querySelectorAll('.view'))x.classList.toggle('on',x.id==='v-'+v);window.scrollTo(0,0);if(v==='pla')renderPlanos()}
 
 /* Auto-actualizar */
-const APPV='20261127143151';
+const APPV='20261127152206';
 (function(){
   if(!GHMODE||location.protocol!=='https:')return;
   try{if(sessionStorage.getItem('wbUpdDone')===APPV){sessionStorage.removeItem('wbUpdDone');toast('✓ App actualizada')}}catch(x){}
@@ -1496,6 +1528,7 @@ const APPV='20261127143151';
   window.addEventListener('focus',check);
   setInterval(check,30*1000);
 })();
+if('serviceWorker' in navigator&&!navigator.webdriver&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{});
 function toastMsg(t){const d=document.createElement('div');d.textContent=t;d.style.cssText='position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top));transform:translateX(-50%);background:#333;color:#fff;padding:10px 16px;border-radius:12px;font:600 15px Barlow,sans-serif;z-index:99';document.body.appendChild(d);setTimeout(()=>d.remove(),2500)}
 function toast(t){const d=document.createElement('div');d.textContent=t;d.style.cssText='position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top));transform:translateX(-50%);background:#1a7f37;color:#fff;padding:10px 16px;border-radius:12px;font:600 15px Barlow,sans-serif;z-index:99;box-shadow:0 8px 20px -6px #0008';document.body.appendChild(d);setTimeout(()=>d.remove(),3000)}
 $('expX').addEventListener('click',()=>$('expDlg').close());
@@ -1562,7 +1595,7 @@ function drawIconOld(){const c=document.createElement('canvas');c.width=c.height
   try{db=await claude.use('db')}catch(x){}
   if(!db&&GHMODE){$('syncCard').hidden=false;GH.ui();if(!GH.cfg){$('listMsg').textContent='Conecta la sincronización para guardar.';renderPlanos();return}db=GH.db;assets=GH.assets;GH.start()}
   if(!db){$('listMsg').textContent='El guardado no está disponible en esta vista.';renderPlanos();return}
-  db.doc('ajustes/materiales').onSnapshot(s=>{if(s.exists){const d=s.data();if(d&&Array.isArray(d.all)&&d.all.length){mlist=d.all}else if(d&&Array.isArray(d.list)){mlist=BASEM.map(m=>({...m})).concat(d.list)}else return;try{localStorage.setItem('wbMats2',JSON.stringify(mlist))}catch(x){}fixMat();renderAll()}},()=>{});
+  db.doc('ajustes/materiales').onSnapshot(s=>{if(s.exists){const d=s.data();let nl;if(d&&Array.isArray(d.all)&&d.all.length){nl=d.all}else if(d&&Array.isArray(d.list)){nl=BASEM.map(m=>({...m})).concat(d.list)}else return;if(JSON.stringify(nl)===JSON.stringify(mlist))return;mlist=nl;histSinMats();try{localStorage.setItem('wbMats2',JSON.stringify(mlist))}catch(x){}fixMat();renderAll()}},()=>{});
   db.doc('ajustes/guardado').onSnapshot(s=>{if(s.exists){const d=s.data();if(d&&typeof d==='object'){saved=migSaved(JSON.parse(JSON.stringify(d)));try{renderSaved()}catch(x){}}}},()=>{});
   db.doc('ajustes/valores').onSnapshot(s=>{
     if(s.exists){const v=s.data();for(const k of Object.keys(v||{}))if(v[k]&&+v[k].bal&&+v[k].hz){const nk=normU(k);if(k===nk||!v[nk])vals[nk]={bal:+v[k].bal,hz:+v[k].hz}}renderAll();try{fillForm()}catch(x){}}
