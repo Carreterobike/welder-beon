@@ -218,6 +218,7 @@ input,textarea,select{background:var(--card2);color:var(--ink);border-color:var(
 @keyframes fadeup{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.view.on{animation:none}}
 #outMig .ic{height:22px;overflow:hidden;margin-bottom:4px}#outMig .ic svg{height:22px!important;width:auto!important}#outMig .cell small{display:block;margin-top:0}
+.mchip{display:inline-flex;align-items:stretch;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--card2)}.mchip.on{border-color:var(--y);background:rgba(255,209,0,.12)}.mpick,.minf{background:none;border:0;color:var(--ink);font:600 15px Barlow,sans-serif;cursor:pointer;min-height:36px}.mpick{padding:2px 4px 2px 14px}.minf{padding:2px 12px 2px 8px;color:var(--mut)}.mchip.on .mpick{color:var(--y)}
 </style>
 </head>
 <body>
@@ -235,9 +236,9 @@ input,textarea,select{background:var(--card2);color:var(--ink);border-color:var(
 <button class="acch" data-m="tig" aria-expanded="false"><span class="acci">TIG</span><span class="acct"><b>Tig 4300i</b><small>ESAB · panel Origo TA24 AC/DC</small></span><i class="chev">▾</i></button>
 <div id="tigMaq" hidden>
   <div class="ucard">
-    <div class="urow"><select id="uA" aria-label="Material A"></select><b class="uplus">+</b><select id="uB" aria-label="Material B"></select></div>
+    <div class="ulab" style="margin-top:0">Mezclar dos materiales</div><div class="urow"><select id="uA" aria-label="Material A"></select><b class="uplus">+</b><select id="uB" aria-label="Material B"></select></div>
     <div id="espWrap"><div class="ulab" id="espLab">Espesor</div><div class="espsel" id="espSel"></div></div>
-    <div class="uact"><div id="uInfo" class="uinfo"></div><button class="chipi" id="matsBtn">+ Añadir material</button></div>
+    <div class="ulab">Materiales · toca uno para soldarlo consigo mismo</div><div class="uact"><div id="uInfo" class="uinfo"></div><button class="chipi" id="matsBtn">+ Añadir material</button></div>
     <button class="btn y recbtn" id="recBtn">Recomendación para esta unión ›</button>
   </div>
   <div class="machine" aria-live="polite">
@@ -1326,7 +1327,7 @@ function renderUnion(){
   const both=bothCast(k),one=!both&&(FAM[famOf(a)].cast||FAM[famOf(b)].cast);
   $('espWrap').hidden=both;$('espLab').textContent=one?'Espesor de la otra pieza':'Espesor';
   $('espSel').innerHTML=ESPS.map(e=>`<button data-esp2="${e}" aria-pressed="${e===esp}">${String(e).replace('.',',')}</button>`).join('')+'<span class="mut">mm</span>';
-  $('uInfo').innerHTML=[a,b].filter((x,i,s)=>s.indexOf(x)===i).map(x=>`<button class="chipi" data-mi2="${x}">ⓘ ${esc(matName(x))}</button>`).join('');
+  $('uInfo').innerHTML=ms.map(m=>`<span class="mchip${a===b&&a===m.id?' on':''}"><button class="mpick" data-pick="${m.id}">${esc(m.n)}</button><button class="minf" data-mi2="${m.id}" aria-label="Información de ${esc(m.n)}">ⓘ</button></span>`).join('');
 }
 
 function openGas(){
@@ -1461,7 +1462,7 @@ function goView(v){for(const x of document.querySelectorAll('nav button'))x.setA
   for(const x of document.querySelectorAll('.view'))x.classList.toggle('on',x.id==='v-'+v);window.scrollTo(0,0);if(v==='pla')renderPlanos()}
 
 /* Auto-actualizar */
-const APPV='20261127064920';
+const APPV='20261127070519';
 (function(){
   if(!GHMODE||location.protocol!=='https:')return;
   try{if(sessionStorage.getItem('wbUpdDone')===APPV){sessionStorage.removeItem('wbUpdDone');toast('✓ App actualizada')}}catch(x){}
@@ -1487,6 +1488,7 @@ $('expX').addEventListener('click',()=>$('expDlg').close());
 for(const id of ['uA','uB'])$(id).addEventListener('change',()=>{pushHist();uiAB=[$('uA').value,$('uB').value];mat=normU(uiAB.join('+'));sel=-1;renderAll()});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-esp2]');if(b){esp=+b.dataset.esp2;try{localStorage.setItem('wbEsp',esp)}catch(x){}renderAll();return}
   const i=e.target.closest('[data-mi2]');if(i){openMat(i.dataset.mi2);return}
+  const pk=e.target.closest('[data-pick]');if(pk){pushHist();const id=pk.dataset.pick;uiAB=[id,id];mat=normU(id+'+'+id);sel=-1;renderAll();return}
   const eb=e.target.closest('[data-esp]');if(eb){esp=+eb.dataset.esp;try{localStorage.setItem('wbEsp',esp)}catch(x){}renderAll();openRec();return}});
 $('recBtn').addEventListener('click',openRec);$('matsBtn').addEventListener('click',openMats);
 $('manSel').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;manMaq=b.dataset.v;renderMan();window.scrollTo(0,0)});
