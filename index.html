@@ -221,6 +221,7 @@ input,textarea,select{background:var(--card2);color:var(--ink);border-color:var(
 .mchip{display:inline-flex;align-items:stretch;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--card2)}.mchip.on{border-color:var(--y);background:rgba(255,209,0,.12)}.mpick,.minf{background:none;border:0;color:var(--ink);font:600 15px Barlow,sans-serif;cursor:pointer;min-height:36px}.mpick{padding:2px 4px 2px 14px}.minf{padding:2px 12px 2px 8px;color:var(--mut)}.mchip.on .mpick{color:var(--y)}.minf{padding-right:6px}.mico{background:none;border:0;border-left:1px solid var(--line);color:var(--mut);cursor:pointer;min-height:36px;padding:2px 9px;display:inline-flex;align-items:center;gap:4px;font:600 13px Barlow,sans-serif}.mico:hover{color:var(--ink)}.mico.arm{background:var(--bad);color:#fff}
 #top .hd{position:relative}#syncDot{position:absolute;right:max(12px,env(safe-area-inset-right));top:50%;transform:translateY(-50%);display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#15171b;color:var(--mut);font:600 12px Barlow,sans-serif;border-radius:14px;padding:5px 10px;cursor:pointer}#syncDot i{width:9px;height:9px;border-radius:50%;background:#f85149;box-shadow:0 0 6px #f85149}#syncDot.ok i{background:#3fb950;box-shadow:0 0 6px #3fb950}
 .rsel{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 8px}.rsel .espb{min-height:32px;padding:4px 12px;border-radius:16px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font:600 14px Barlow,sans-serif;cursor:pointer}.rsel .espb.on{background:var(--y);color:#111;border-color:var(--y)}.minfo{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}.rsel>span{font:600 12px Barlow,sans-serif;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;min-width:52px}
+.sline .srow{display:flex;flex-wrap:wrap;align-items:center;gap:6px}.sline .sbtns{display:inline-flex;flex-wrap:wrap;gap:6px;margin-left:auto}.sline table{margin-top:8px}
 </style>
 </head>
 <body>
@@ -869,7 +870,7 @@ function step(dir){
   if(k==='bal'){vals[mat].bal=clamp(vals[mat].bal+dir,mn,mx);saveValsSoon()}
   else if(k==='hz'){vals[mat].hz=clamp(vals[mat].hz+dir,mn,mx);saveValsSoon()}
   else{pv[k]=Math.round(clamp(pv[k]+dir*st,mn,mx)*10)/10;try{localStorage.setItem('wbPv',JSON.stringify(pv))}catch(x){}}
-  knobA=(knobA+dir*15)%360;renderMaq();renderFino();renderPanel();
+  knobA=(knobA+dir*15)%360;renderMaq();renderFino();renderPanel();try{renderSaved()}catch(x){}
 }
 let svT=null;function saveValsSoon(){clearTimeout(svT);svT=setTimeout(async()=>{if(db)try{await db.doc('ajustes/valores').set(JSON.parse(JSON.stringify(vals)))}catch(x){}},800)}
 $('panelBox').addEventListener('click',e=>{
@@ -1253,7 +1254,7 @@ function matOf(id){return allMats().find(m=>m.id===id)}
 function matName(id){const m=matOf(id);return m?m.n:id}
 function famOf(id){const m=matOf(id);return m?m.fam:'6xxx'}
 function bothCast(k){const[a,b]=k.split('+');return FAM[famOf(a)].cast&&FAM[famOf(b)].cast}
-function unionName(k){k=normU(k);const[a,b]=k.split('+');return matName(a)+' + '+matName(b)}
+function unionName(k){k=normU(k);const[a,b]=k.split('+');return a===b?matName(a):matName(a)+' + '+matName(b)}
 function espTxt(e){return String(e).replace('.',',')+' mm'}
 function recFor(k,e){k=normU(k);const[a,b]=k.split('+');const A=FAM[famOf(a)],B=FAM[famOf(b)];
   const anyCast=A.cast||B.cast,both=A.cast&&B.cast,ef=both?null:e;
@@ -1537,7 +1538,7 @@ function goView(v){for(const x of document.querySelectorAll('nav button'))x.setA
   for(const x of document.querySelectorAll('.view'))x.classList.toggle('on',x.id==='v-'+v);window.scrollTo(0,0);if(v==='pla')renderPlanos()}
 
 /* Auto-actualizar */
-const APPV='20261127164405';
+const APPV='20261127165608';
 (function(){
   if(!GHMODE||location.protocol!=='https:')return;
   try{if(sessionStorage.getItem('wbUpdDone')===APPV){sessionStorage.removeItem('wbUpdDone');toast('✓ App actualizada')}}catch(x){}
@@ -1562,14 +1563,14 @@ if('serviceWorker' in navigator&&!navigator.webdriver&&/github\.io$/.test(locati
 function toastMsg(t){const d=document.createElement('div');d.textContent=t;d.style.cssText='position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top));transform:translateX(-50%);background:#333;color:#fff;padding:10px 16px;border-radius:12px;font:600 15px Barlow,sans-serif;z-index:99';document.body.appendChild(d);setTimeout(()=>d.remove(),2500)}
 function toast(t){const d=document.createElement('div');d.textContent=t;d.style.cssText='position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top));transform:translateX(-50%);background:#1a7f37;color:#fff;padding:10px 16px;border-radius:12px;font:600 15px Barlow,sans-serif;z-index:99;box-shadow:0 8px 20px -6px #0008';document.body.appendChild(d);setTimeout(()=>d.remove(),3000)}
 $('expX').addEventListener('click',()=>$('expDlg').close());
-for(const id of ['uA','uB'])$(id).addEventListener('change',()=>{pushHist();uiAB=[$('uA').value,$('uB').value];mat=normU(uiAB.join('+'));sel=-1;renderAll()});
+for(const id of ['uA','uB'])$(id).addEventListener('change',()=>{pushHist();uiAB=[$('uA').value,$('uB').value];mat=normU(uiAB.join('+'));sel=-1;if(applySaved(mat))flash('Tus parámetros guardados');renderAll()});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-esp2]');if(b){esp=+b.dataset.esp2;try{localStorage.setItem('wbEsp',esp)}catch(x){}renderAll();return}
   const i=e.target.closest('[data-mi2]');if(i){const id=i.dataset.mi2;if(normU(mat)!==normU(id+'+'+id)){pushHist();uiAB=[id,id];mat=normU(id+'+'+id);sel=-1;renderAll()}openRec();return}
   const me=e.target.closest('[data-medit]');if(me){openMatEdit(me.dataset.medit);return}
   const md=e.target.closest('[data-mdel]');if(md){if(allMats().length<=1){toastMsg('Tiene que quedar al menos un material');return}
     if(!md.classList.contains('arm')){document.querySelectorAll('.mico.arm').forEach(x=>{x.classList.remove('arm');x.innerHTML=x.dataset.ico});md.dataset.ico=md.innerHTML;md.classList.add('arm');md.innerHTML+='Borrar';clearTimeout(md._t);md._t=setTimeout(()=>{if(md.isConnected){md.classList.remove('arm');md.innerHTML=md.dataset.ico}},3000);return}
     const id=md.dataset.mdel;pushHist();mlist=mlist.filter(m=>m.id!==id);saveMats();fixMat();renderAll();return}
-  const pk=e.target.closest('[data-pick]');if(pk){pushHist();const id=pk.dataset.pick;uiAB=[id,id];mat=normU(id+'+'+id);sel=-1;renderAll();return}
+  const pk=e.target.closest('[data-pick]');if(pk){pushHist();const id=pk.dataset.pick;uiAB=[id,id];mat=normU(id+'+'+id);sel=-1;if(applySaved(mat))flash('Tus parámetros guardados');renderAll();return}
   const eb=e.target.closest('[data-esp]');if(eb){esp=+eb.dataset.esp;try{localStorage.setItem('wbEsp',esp)}catch(x){}renderAll();openRec();return}});
 $('recBtn').addEventListener('click',openRec);$('matsBtn').addEventListener('click',openMats);
 $('manSel').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;manMaq=b.dataset.v;renderMan();window.scrollTo(0,0)});
@@ -1580,22 +1581,33 @@ planosInit();
 /*save*/
 function migSaved(o){const r={};for(const k of Object.keys(o||{})){const nk=normU(k);if(k===nk||!o[nk])r[nk]={...o[k],union:nk}}return r}
 let saved={};try{saved=migSaved(JSON.parse(localStorage.getItem('wbSaved')||'{}')||{})}catch(x){}
+let savedOpen=false;
+function savedDiff(g){const V=vals[mat]||{};const f=k=>Number(pv[k])!==Number(g[k]);
+  return V.bal!==g.bal||V.hz!==g.hz||['up','dn','post','pre','ex'].some(f)||(g.tw&&tw!==g.tw)||(g.tgas&&tgas!==g.tgas)}
+function applySaved(k){const g=saved[normU(k)];if(!g)return false;vals[mat]={bal:g.bal,hz:g.hz};for(const x of ['up','dn','post','pre','ex'])if(typeof g[x]==='number')pv[x]=g[x];if(g.fix)Object.assign(fixOn,g.fix);
+  if(TG[g.tgas]){tgas=g.tgas;try{localStorage.setItem('wbTgas',tgas)}catch(x){}}if(TW[g.tw]){tw=g.tw;try{localStorage.setItem('wbTw',tw)}catch(x){}}
+  try{localStorage.setItem('wbPv',JSON.stringify(pv));localStorage.setItem('wbFix',JSON.stringify(fixOn))}catch(x){}return true}
 function renderSaved(){
-  const g=saved[mat];if(!g){$('savedBox').innerHTML='<p class="mut" style="margin:8px 0 0">Todavía no has guardado parámetros para '+NAME[mat]+'.</p>';return}
+  const g=saved[mat];if(!g){$('savedBox').innerHTML='<p class="mut" style="margin:8px 0 0">Todavía no has guardado parámetros para '+esc(NAME[mat])+'. Cuando los tengas bien, pulsa «Guardar parámetros» y se pondrán solos cada vez que elijas esta unión.</p>';return}
   const f=new Date(g.ts);const rows=[['Proceso',g.fix&&g.fix.tig===false?'—':'TIG'],['Corriente',g.fix&&g.fix.ac===false?'—':'AC'],['Mando',g.fix&&g.fix.loc===false?'—':'Pedal'],['Balance',g.bal+' %'],['Frecuencia',g.hz+' Hz'],['Rampa subida',String(g.up).replace('.',',')+' s'],['Rampa bajada',String(g.dn).replace('.',',')+' s'],['Postgás',String(g.post).replace('.',',')+' s'],['Pregás',String(g.pre).replace('.',',')+' s'],['Tungsteno',TW[g.tw]?TW[g.tw].n:'—'],['Precalentamiento',String(g.ex)],['Gas',TG[g.tgas]?TG[g.tgas].n:'Argón puro']];
-  $('savedBox').innerHTML=`<div class="saved"><b>✓ Guardado · ${esc(NAME[g.union]||g.union)}</b><span class="mut"> ${esc(f.toLocaleDateString('es-ES'))} ${esc(f.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}))}</span><table>${rows.map(([a,b])=>`<tr><td>${a}</td><td><b>${esc(b)}</b></td></tr>`).join('')}</table><div class="acts" style="margin-top:6px"><button class="btn ghost" id="loadSet">Volver a estos valores</button><button class="btn ghost" id="delSet" style="color:var(--bad)">Borrar</button></div></div>`;
+  const diff=savedDiff(g);
+  $('savedBox').innerHTML=`<div class="saved sline"><div class="srow"><b>${diff?'<span style="color:var(--y)">●</span> Has cambiado valores':'✓ Tus parámetros'}</b><span class="mut"> guardados el ${esc(f.toLocaleDateString('es-ES'))}</span>
+   <span class="sbtns">${diff?'<button class="chipi" id="loadSet">Volver a los guardados</button><button class="chipi" id="saveNew">Guardar los nuevos</button>':''}<button class="chipi" id="togSet">${savedOpen?'Ocultar ▴':'Ver ▾'}</button><button class="chipi" id="delSet" style="color:var(--bad)">Borrar</button></span></div>
+   ${savedOpen?`<table>${rows.map(([a,b])=>`<tr><td>${a}</td><td><b>${esc(b)}</b></td></tr>`).join('')}</table>`:''}</div>`;
 }
 $('saveSet').addEventListener('click',async()=>{
   saved[mat]={ts:Date.now(),union:mat,bal:vals[mat].bal,hz:vals[mat].hz,up:pv.up,dn:pv.dn,post:pv.post,pre:pv.pre,ex:pv.ex,tw,tgas,fix:{...fixOn}};
   try{localStorage.setItem('wbSaved',JSON.stringify(saved))}catch(x){}
   renderSaved();$('saveMsg').textContent='Guardado.';setTimeout(()=>{$('saveMsg').textContent=''},2500);
   if(db)try{await db.doc('ajustes/guardado').set(JSON.parse(JSON.stringify(saved)));await db.doc('ajustes/valores').set(JSON.parse(JSON.stringify(vals)))}catch(x){$('saveMsg').textContent='Guardado en este aparato (no se ha podido sincronizar).'}
-  $('savedBox').scrollIntoView({behavior:'smooth',block:'nearest'});
 });
 $('savedBox').addEventListener('click',async e=>{if(e.target.id!=='delSet')return;const b=e.target;if(b.dataset.s!=='1'){b.dataset.s='1';b.textContent='Pulsa otra vez para borrar';return}
   delete saved[mat];try{localStorage.setItem('wbSaved',JSON.stringify(saved))}catch(x){}renderSaved();
   if(db)try{await db.doc('ajustes/guardado').set(JSON.parse(JSON.stringify(saved)))}catch(x){}});
-$('savedBox').addEventListener('click',e=>{if(e.target.id!=='loadSet')return;const g=saved[mat];if(!g)return;pushHist();vals[mat]={bal:g.bal,hz:g.hz};for(const k of ['up','dn','post','pre','ex'])pv[k]=g[k];if(g.fix)Object.assign(fixOn,g.fix);if(TG[g.tgas]){tgas=g.tgas;try{localStorage.setItem('wbTgas',tgas)}catch(x){}}if(TW[g.tw]){tw=g.tw;try{localStorage.setItem('wbTw',tw)}catch(x){}}try{localStorage.setItem('wbPv',JSON.stringify(pv));localStorage.setItem('wbFix',JSON.stringify(fixOn))}catch(x){}renderAll();});
+$('savedBox').addEventListener('click',e=>{const id=e.target.id;
+  if(id==='togSet'){savedOpen=!savedOpen;renderSaved();return}
+  if(id==='saveNew'){$('saveSet').click();return}
+  if(id==='loadSet'){if(!saved[mat])return;pushHist();applySaved(mat);renderAll();flash('Vuelves a tus parámetros guardados')}});
 
 document.body.insertAdjacentHTML('beforeend',`<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><path id="ptr" d="${PTRACE}"/></defs></svg>`);
 renderAll();fillForm();renderMaqSel();renderMan();renderSaved();
