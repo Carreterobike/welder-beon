@@ -220,7 +220,7 @@ input,textarea,select{background:var(--card2);color:var(--ink);border-color:var(
 #outMig .ic{height:22px;overflow:hidden;margin-bottom:4px}#outMig .ic svg{height:22px!important;width:auto!important}#outMig .cell small{display:block;margin-top:0}
 .mchip{display:inline-flex;align-items:stretch;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--card2)}.mchip.on{border-color:var(--y);background:rgba(255,209,0,.12)}.mpick,.minf{background:none;border:0;color:var(--ink);font:600 15px Barlow,sans-serif;cursor:pointer;min-height:36px}.mpick{padding:2px 4px 2px 14px}.minf{padding:2px 12px 2px 8px;color:var(--mut)}.mchip.on .mpick{color:var(--y)}.minf{padding-right:6px}.mico{background:none;border:0;border-left:1px solid var(--line);color:var(--mut);cursor:pointer;min-height:36px;padding:2px 9px;display:inline-flex;align-items:center;gap:4px;font:600 13px Barlow,sans-serif}.mico:hover{color:var(--ink)}.mico.arm{background:var(--bad);color:#fff}
 #top .hd{position:relative}#syncDot{position:absolute;right:max(12px,env(safe-area-inset-right));top:50%;transform:translateY(-50%);display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#15171b;color:var(--mut);font:600 12px Barlow,sans-serif;border-radius:14px;padding:5px 10px;cursor:pointer}#syncDot i{width:9px;height:9px;border-radius:50%;background:#f85149;box-shadow:0 0 6px #f85149}#syncDot.ok i{background:#3fb950;box-shadow:0 0 6px #3fb950}
-.rsel{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 8px}.rsel .espb{min-height:32px;padding:4px 12px;border-radius:16px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font:600 14px Barlow,sans-serif;cursor:pointer}.rsel .espb.on{background:var(--y);color:#111;border-color:var(--y)}.rsel>span{font:600 12px Barlow,sans-serif;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;min-width:52px}
+.rsel{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 8px}.rsel .espb{min-height:32px;padding:4px 12px;border-radius:16px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font:600 14px Barlow,sans-serif;cursor:pointer}.rsel .espb.on{background:var(--y);color:#111;border-color:var(--y)}.minfo{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}.rsel>span{font:600 12px Barlow,sans-serif;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;min-width:52px}
 </style>
 </head>
 <body>
@@ -1266,7 +1266,7 @@ function recFor(k,e){k=normU(k);const[a,b]=k.split('+');const A=FAM[famOf(a)],B=
   const bal=estado==='sucia'?[65,70]:[70,80];
   const tk=both||(ef!=null&&ef>=5)?'az':'do';
   const post=anyCast?[15,25]:[Math.max(5,Math.round(4*ef)),25];
-  return{bal,hz,up:[0,0.5],dn:[0,1],post,pre:[1,1.5],tw:tk,ex:TW[tk].r.split('–').map(Number),fb,fh,thin,anyCast,both,si:A.si||B.si}}
+  return{bal:anyCast?[65,70]:bal,hz,up:[0,0.5],dn:[0,1],post,pre:[1,1.5],tw:tk,ex:TW[tk].r.split('–').map(Number),fb,fh,thin,anyCast,both,si:A.si||B.si}}
 function famKey(f){return f==='7xxx'?'7020':f==='6xxx'||f==='5xxx'?'6082':'fund'}
 const WHYC={
  cur:'El calor lo controlas tú con el pie según cómo va el baño. En la máquina deja el máximo con margen y pisa solo lo que pida la pieza.',
@@ -1280,13 +1280,14 @@ const WHYC={
  gas:'Miller da 15–20 CFH (unos 7–9,5 l/min) para la mayoría de trabajos; con tobera grande o lente de gas, algo más. Más gas no protege más: hace remolinos, mete aire y salen poros.'};
 const WHYBAL={
  limpia:'La balanza no depende de la aleación, sino de lo limpia que esté la pieza. Miller: en aluminio muy limpio se puede subir hasta cerca del 80 %; The Fabricator: un buen punto de partida en aluminio limpio está entre 60 y 75 %. Más tiempo en negativo da más penetración y alarga la vida del tungsteno; más en positivo, más limpieza del óxido.',
- sucia:'Pieza sucia, vieja o de fundición: Miller dice que el aluminio más sucio o viejo puede pedir una balanza tan baja como el 65 %, para que el positivo limpie más óxido. The Fabricator: ponla lo más baja que necesites para que limpie bien, y no más.'};
+ sucia:'Pieza sucia o vieja: Miller dice que el aluminio más sucio o viejo puede pedir una balanza tan baja como el 65 %, para que el positivo limpie más óxido. The Fabricator: ponla lo más baja que necesites para que limpie bien, y no más.'};
+WHYBAL.fund='Hay fundición en la unión: la fundición trae más óxido y suciedad incrustada que una chapa o un perfil, así que se trata como pieza sucia. Miller dice que el aluminio más sucio o viejo puede pedir una balanza tan baja como el 65 %, para que el positivo limpie más óxido.';
 const WHYHZ={
  tope:'La frecuencia no depende de la aleación, sino del grosor y de la unión. Miller: en general, de 120 a 200 Hz es lo ideal para la mayoría del aluminio. Tu Origo llega como máximo a 152 Hz (ficha de ESAB), así que el rango útil es 120–152 Hz.',
  t:'En rincón (unión en T) interesa un arco estrecho que meta el calor en la raíz: Miller da 120–200 Hz para la mayoría del aluminio y, en un rincón, sube hacia los 200 Hz. Tu Origo llega a 152 Hz como máximo (ficha de ESAB).',
  esq:'Esquina exterior: The Fabricator recomienda bajar a 80–90 Hz para tener un cono de arco más ancho, que cubre los dos bordes.',
  thin:'Chapa fina: The Fabricator recomienda de 150 a 250 Hz en material fino que necesita precisión, para no calentar una zona grande ni agujerear. Tu Origo llega a 152 Hz como máximo (ficha de ESAB), así que lo recomendado es ponerla arriba del todo.'};
-function whyOf(r,key){if(key==='bal')return WHYBAL[estado];if(key==='hz'){if(junta==='esq')return WHYHZ.esq;if(r.thin)return WHYHZ.thin;return WHYHZ[junta]}
+function whyOf(r,key){if(key==='bal')return r.anyCast?WHYBAL.fund:WHYBAL[estado];if(key==='hz'){if(junta==='esq')return WHYHZ.esq;if(r.thin)return WHYHZ.thin;return WHYHZ[junta]}
   if(key==='post'&&r.anyCast)return 'Con fundición maciza se pisa bastante más, porque se lleva mucho el calor. Con 1 s por cada 10 A (Welders Supply), salen 15 s o más. Protege el tungsteno y el final del cordón.';return WHYC[key]||''}
 function tipsOf(r){const t=[];
   if(r.anyCast&&!r.both)t.push('La fundición maciza se lleva mucho calor: dirige el arco más hacia la fundición y deja que la otra pieza se funda con el baño. Según Hobart, el precalentamiento se puede usar para compensar piezas de espesores muy distintos; valóralo si la fundición no moja.');
@@ -1316,7 +1317,7 @@ function recBox(k){k=normU(k);const r=recFor(k,esp);const V=vals[k]||defV(k);con
   const tips=tipsOf(r);
   const ch=(g,v,l,cur)=>`<button class="espb${cur===v?' on':''}" data-${g}="${v}">${l}</button>`;
   return `<div class="rsel"><span>Unión</span>${ch('junta','tope','A tope',junta)}${ch('junta','t','En T',junta)}${ch('junta','esq','Esquina exterior',junta)}</div>
-  <div class="rsel"><span>Pieza</span>${ch('estado','limpia','Limpia',estado)}${ch('estado','sucia','Sucia, vieja o fundición',estado)}</div>
+  ${r.anyCast?'<div class="rsel"><span>Pieza</span><button class="espb on" disabled>Fundición</button></div>':`<div class="rsel"><span>Pieza</span>${ch('estado','limpia','Limpia',estado)}${ch('estado','sucia','Sucia o vieja',estado)}</div>`}
   <div class="rbox"><div class="rhead"><b>Recomendación</b><span>${r.both?'Fundición maciza':(r.anyCast?'Otra pieza · ':'Espesor · ')+espTxt(esp)}</span></div>
   <table class="rtab"><tr><th>Parámetro</th><th>Recomendado</th><th>Tuyo</th><th></th></tr>${rows.map(([n,a,b,c,w])=>`<tr><td>${n}<button class="whyb" data-why="${w}">¿Por qué? ▾</button></td><td><b>${a}</b></td><td>${b}</td><td>${c?HH[c]:''}</td></tr><tr class="whyr" data-whyr="${w}" hidden><td colspan="4">${whyOf(r,w)}</td></tr>`).join('')}</table>
   ${tips.length?`<div class="tips">${tips.map(t=>`<p>${t}</p>`).join('')}</div>`:''}
@@ -1330,7 +1331,9 @@ function loadRec(k){k=normU(k);const r=recFor(k,esp);pushHist();const mid=([a,b]
   try{localStorage.setItem('wbPv',JSON.stringify(pv));localStorage.setItem('wbTw',tw);localStorage.setItem('wbFix',JSON.stringify(fixOn))}catch(x){}
   saveValsSoon();renderAll();$('expDlg').close();flash('Recomendación cargada');
   if(openM!=='tig'){openM='tig';maq='tig';renderMaqSel()}}
-function openRec(){const k=normU(mat);$('expBody').innerHTML=`<h2>${esc(unionName(k))}</h2>`+recBox(k);$('expDlg').dataset.k='rec';if(!$('expDlg').open)$('expDlg').showModal()}
+function openRec(){const k=normU(mat);const ids=[...new Set(k.split('+'))];
+  const info=ids.map(id=>{const i=matInfo(id);return i?`<div class="minfo"><h2 style="font-size:20px">Información · ${i.t}</h2>${i.body}</div>`:''}).join('');
+  $('expBody').innerHTML=`<h2>${esc(ids.length===1?matName(ids[0]):unionName(k))}</h2>`+recBox(k)+info+'<p class="src">Información: <a href="https://twi-global.com/technical-knowledge/job-knowledge/weldability-of-materials-aluminium-alloys-021">TWI</a> · estudios técnicos · fichas EN 1706</p>';$('expDlg').dataset.k='rec';if(!$('expDlg').open)$('expDlg').showModal()}
 document.addEventListener('click',e=>{
   const wb=e.target.closest('[data-why]');if(wb){const tr=wb.closest('table').querySelector(`[data-whyr="${wb.dataset.why}"]`);if(tr){tr.hidden=!tr.hidden;wb.textContent=tr.hidden?'¿Por qué? ▾':'¿Por qué? ▴'}return}
   const jb=e.target.closest('[data-junta]');if(jb){junta=jb.dataset.junta;try{localStorage.setItem('wbJunta',junta)}catch(x){}renderAll();openRec();return}
@@ -1342,6 +1345,11 @@ const FAMX={
  '7xxx':{s:[['Qué es','Aluminio con zinc y magnesio. Los de resistencia media, como el 7020, se pueden soldar con TIG y MIG (TWI).'],['Qué le pasa con el calor','Alrededor del cordón queda una zona más blanda: poco calor.']]},
  castMg:{s:[['Qué es','Aluminio fundido con magnesio como aleante principal.'],['¿Se suelda bien?','Regular: peor que una chapa o un perfil.'],['Con ER5356','Va bien: misma familia aluminio-magnesio.']]},
  castSi:{s:[['Qué es','Aluminio fundido con silicio como aleante principal: la mayoría de piezas de fundición de motor.'],['Aporte','Con mucho silicio el aporte habitual es el 4043 o el 4047, no el ER5356. Confírmalo con la ficha de la pieza.']]}};
+function matInfo(id){const mm=matOf(id),bm=BASEM.find(x=>x.id===id);const o=(mm&&bm&&mm.fam!==bm.fam)?null:MATX[id];const m=mm||(o?{n:o.t,fam:null}:null);if(!m)return null;
+  let body=o?`<p class="mut" style="margin-top:0">${esc(o.c)}</p>${o.s.map(([a,b])=>`<h3>${a}</h3><p>${b}</p>`).join('')}${o.w?`<p class="wn">${o.w}</p>`:''}`
+   :`<p class="mut" style="margin-top:0">${esc(FAM[m.fam].n)}</p>${FAMX[m.fam].s.map(([a,b])=>`<h3>${a}</h3><p>${b}</p>`).join('')}`;
+  if(/5083/.test(m.n||''))body=`<p class="mut" style="margin-top:0">EN AW-5083 · AlMg4,5Mn0,7 · serie 5000</p><h3>Qué es</h3><p>Aluminio forjado (chapa) con un 4,5 % de magnesio. No se endurece con tratamiento térmico (TWI). «EN AW» quiere decir aluminio forjado; las fundiciones llevan «EN AC», así que no hay ninguna fundición con este código.</p><h3>¿Se suelda bien?</h3><p>Sí: la serie 5000 tiene una soldabilidad excelente (TWI).</p><h3>Varilla</h3><p>TWI indica la R-5556A. Con 5356 cuesta llegar a los 40 ksi que piden muchas normas para el 5083 (The Fabricator); si no se exige esa resistencia, la 5356 va bien (Lincoln).</p><h3>Qué vigilar</h3><p>En chapa fina, que no deforme ni se agujeree: punteado, cordones cortos y respaldo.</p>`;
+  return{t:esc(mm?mm.n:(o?o.t:m.n)),body}}
 function openMat(id){const mm=matOf(id),bm=BASEM.find(x=>x.id===id);const o=(mm&&bm&&mm.fam!==bm.fam)?null:MATX[id];const m=mm||(o?{n:o.t,fam:null}:null);if(!m)return;
   const body=o?`<p class="mut" style="margin-top:0">${esc(o.c)}</p>${o.s.map(([a,b])=>`<h3>${a}</h3><p>${b}</p>`).join('')}${o.w?`<p class="wn">${o.w}</p>`:''}`
    :`<p class="mut" style="margin-top:0">${esc(FAM[m.fam].n)}</p>${FAMX[m.fam].s.map(([a,b])=>`<h3>${a}</h3><p>${b}</p>`).join('')}`;
@@ -1528,7 +1536,7 @@ function goView(v){for(const x of document.querySelectorAll('nav button'))x.setA
   for(const x of document.querySelectorAll('.view'))x.classList.toggle('on',x.id==='v-'+v);window.scrollTo(0,0);if(v==='pla')renderPlanos()}
 
 /* Auto-actualizar */
-const APPV='20261127160726';
+const APPV='20261127161358';
 (function(){
   if(!GHMODE||location.protocol!=='https:')return;
   try{if(sessionStorage.getItem('wbUpdDone')===APPV){sessionStorage.removeItem('wbUpdDone');toast('✓ App actualizada')}}catch(x){}
@@ -1547,7 +1555,7 @@ const APPV='20261127160726';
   setTimeout(check,300);
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')check()});
   window.addEventListener('focus',check);
-  setInterval(check,30*1000);
+  setInterval(check,10*1000);
 })();
 if('serviceWorker' in navigator&&!navigator.webdriver&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{});
 function toastMsg(t){const d=document.createElement('div');d.textContent=t;d.style.cssText='position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top));transform:translateX(-50%);background:#333;color:#fff;padding:10px 16px;border-radius:12px;font:600 15px Barlow,sans-serif;z-index:99';document.body.appendChild(d);setTimeout(()=>d.remove(),2500)}
@@ -1555,7 +1563,7 @@ function toast(t){const d=document.createElement('div');d.textContent=t;d.style.
 $('expX').addEventListener('click',()=>$('expDlg').close());
 for(const id of ['uA','uB'])$(id).addEventListener('change',()=>{pushHist();uiAB=[$('uA').value,$('uB').value];mat=normU(uiAB.join('+'));sel=-1;renderAll()});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-esp2]');if(b){esp=+b.dataset.esp2;try{localStorage.setItem('wbEsp',esp)}catch(x){}renderAll();return}
-  const i=e.target.closest('[data-mi2]');if(i){openMat(i.dataset.mi2);return}
+  const i=e.target.closest('[data-mi2]');if(i){const id=i.dataset.mi2;if(normU(mat)!==normU(id+'+'+id)){pushHist();uiAB=[id,id];mat=normU(id+'+'+id);sel=-1;renderAll()}openRec();return}
   const me=e.target.closest('[data-medit]');if(me){openMatEdit(me.dataset.medit);return}
   const md=e.target.closest('[data-mdel]');if(md){if(allMats().length<=1){toastMsg('Tiene que quedar al menos un material');return}
     if(!md.classList.contains('arm')){document.querySelectorAll('.mico.arm').forEach(x=>{x.classList.remove('arm');x.innerHTML=x.dataset.ico});md.dataset.ico=md.innerHTML;md.classList.add('arm');md.innerHTML+='Borrar';clearTimeout(md._t);md._t=setTimeout(()=>{if(md.isConnected){md.classList.remove('arm');md.innerHTML=md.dataset.ico}},3000);return}
