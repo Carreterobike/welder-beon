@@ -220,6 +220,7 @@ input,textarea,select{background:var(--card2);color:var(--ink);border-color:var(
 #outMig .ic{height:22px;overflow:hidden;margin-bottom:4px}#outMig .ic svg{height:22px!important;width:auto!important}#outMig .cell small{display:block;margin-top:0}
 .mchip{display:inline-flex;align-items:stretch;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--card2)}.mchip.on{border-color:var(--y);background:rgba(255,209,0,.12)}.mpick,.minf{background:none;border:0;color:var(--ink);font:600 15px Barlow,sans-serif;cursor:pointer;min-height:36px}.mpick{padding:2px 4px 2px 14px}.minf{padding:2px 12px 2px 8px;color:var(--mut)}.mchip.on .mpick{color:var(--y)}.minf{padding-right:6px}.mico{background:none;border:0;border-left:1px solid var(--line);color:var(--mut);cursor:pointer;min-height:36px;padding:2px 9px;display:inline-flex;align-items:center;gap:4px;font:600 13px Barlow,sans-serif}.mico:hover{color:var(--ink)}.mico.arm{background:var(--bad);color:#fff}
 #top .hd{position:relative}#syncDot{position:absolute;right:max(12px,env(safe-area-inset-right));top:50%;transform:translateY(-50%);display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#15171b;color:var(--mut);font:600 12px Barlow,sans-serif;border-radius:14px;padding:5px 10px;cursor:pointer}#syncDot i{width:9px;height:9px;border-radius:50%;background:#f85149;box-shadow:0 0 6px #f85149}#syncDot.ok i{background:#3fb950;box-shadow:0 0 6px #3fb950}
+.rsel{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 8px}.rsel .espb{min-height:32px;padding:4px 12px;border-radius:16px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font:600 14px Barlow,sans-serif;cursor:pointer}.rsel .espb.on{background:var(--y);color:#111;border-color:var(--y)}.rsel>span{font:600 12px Barlow,sans-serif;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;min-width:52px}
 </style>
 </head>
 <body>
@@ -1234,6 +1235,7 @@ const MATX={
   ['Cómo se suelda','Con pulso, empujando la antorcha 10–15°. Hot start para que el inicio funda y Crater filling al final.'],
   ['Qué vigilar','Rodillos en U con poca presión, sirga de teflón, tubo de contacto de aluminio y manguera recta. Hilo seco y limpio. El hollín negro a los lados es normal con 5356.']]}
 };
+let junta='tope',estado='limpia';try{const j=localStorage.getItem('wbJunta');if(['tope','t','esq'].includes(j))junta=j;const z=localStorage.getItem('wbEstado');if(['limpia','sucia'].includes(z))estado=z}catch(x){}
 let esp=3;try{const q=+localStorage.getItem('wbEsp');if([1,1.5,2,3,4,5,6].includes(q))esp=q}catch(x){}
 const ESPS=[1,1.5,2,3,4,5,6];
 const FAM={
@@ -1258,10 +1260,13 @@ function recFor(k,e){k=normU(k);const[a,b]=k.split('+');const A=FAM[famOf(a)],B=
   const fb=anyCast?(A.cast?famOf(a):famOf(b)):(A.bal[0]<=B.bal[0]?famOf(a):famOf(b));
   const fh=anyCast?fb:(A.hz[1]>=B.hz[1]?famOf(a):famOf(b));
   const thin=!anyCast&&ef!=null&&ef<=1.5;
-  const hz=anyCast?FAM[fb].hz:thin?[120,150]:FAM[fh].hz;
+  // Frecuencia según la unión y el espesor (Miller, The Fabricator), con el tope de tu Origo: 152 Hz (ficha ESAB)
+  const hz=junta==='esq'?[80,90]:thin?[150,152]:[120,152];
+  // Balance según lo limpia que esté la pieza (Miller, The Fabricator)
+  const bal=estado==='sucia'?[65,70]:[70,80];
   const tk=both||(ef!=null&&ef>=5)?'az':'do';
   const post=anyCast?[15,25]:[Math.max(5,Math.round(4*ef)),25];
-  return{bal:FAM[fb].bal,hz,up:[0,0.5],dn:[0,1],post,pre:[1,1.5],tw:tk,ex:TW[tk].r.split('–').map(Number),fb,fh,thin,anyCast,both,si:A.si||B.si}}
+  return{bal,hz,up:[0,0.5],dn:[0,1],post,pre:[1,1.5],tw:tk,ex:TW[tk].r.split('–').map(Number),fb,fh,thin,anyCast,both,si:A.si||B.si}}
 function famKey(f){return f==='7xxx'?'7020':f==='6xxx'||f==='5xxx'?'6082':'fund'}
 const WHYC={
  cur:'El calor lo controlas tú con el pie según cómo va el baño. En la máquina deja el máximo con margen y pisa solo lo que pida la pieza.',
@@ -1273,24 +1278,24 @@ const WHYC={
  pre:'Echa el aire de la manguera y de la zona antes de cebar, para que el arranque no salga con poro.',
  ex:'Es lo que pide el tungsteno recomendado según la tabla de ESAB, para que el arco cebe bien en alterna. Si cambias de tungsteno, cambia este valor.',
  gas:'Miller da 15–20 CFH (unos 7–9,5 l/min) para la mayoría de trabajos; con tobera grande o lente de gas, algo más. Más gas no protege más: hace remolinos, mete aire y salen poros.'};
-const WHYF={
- '7xxx':{bal:'Más tiempo en negativo da un cordón más profundo y estrecho y más penetración (Miller). El 7020 viene limpio y no necesita tanta limpieza. Así se penetra antes y estás menos tiempo calentando, y eso importa porque cuanto más calor total metes, más baja la resistencia alrededor del cordón (ESAB).',
-   hz:'Subir la frecuencia da un cono de arco estrecho: el calor va a una zona más pequeña, con mejor penetración y cordón más estrecho (Miller). En el 7020, eso deja más pequeña la zona ablandada.'},
- '6xxx':{bal:'Material limpio: reparto equilibrado entre limpiar el óxido y meter calor (Welders Supply: 65–70 % en material limpio).',
-   hz:'Entre 80 y 120 Hz el arco es cómodo, se controla mejor y se avanza más rápido (The Fabricator). El 6082-T6 pierde mucha resistencia con el calor, así que conviene un arco algo concentrado.'},
- '5xxx':{bal:'Chapa limpia: reparto equilibrado entre limpiar el óxido y meter calor (Welders Supply: 65–70 % en material limpio).',
-   hz:'Arco algo concentrado para controlar el calor sin hacer un baño tan estrecho que cueste mojar los bordes.'},
- castMg:{bal:'Más tiempo en positivo quita más óxido (Miller). Con fundición o aluminio sucio, deja que la limpieza del arco trabaje antes de hacer baño (Welding Tips and Tricks). Si ves escamas como pimienta negra en el baño, baja el balance (Miller).',
-   hz:'Bajar la frecuencia da un cono de arco más ancho: ensancha el cordón y quita mejor las impurezas de la superficie (Miller).'},
- castSi:{bal:'Más tiempo en positivo quita más óxido (Miller). Con fundición o aluminio sucio, deja que la limpieza del arco trabaje antes de hacer baño (Welding Tips and Tricks).',
-   hz:'Bajar la frecuencia da un cono de arco más ancho: ensancha el cordón y quita mejor las impurezas de la superficie (Miller).'}};
-function whyOf(r,key){if(key==='bal')return WHYF[r.fb].bal;if(key==='hz'){if(r.thin)return 'Chapa fina: una frecuencia más alta da un arco más concentrado, con el calor en una zona más pequeña (Miller). Así se deforma y se agujerea menos. Miller da 120–200 Hz como ideal para la mayoría del aluminio.';return WHYF[r.fh].hz}
+const WHYBAL={
+ limpia:'La balanza no depende de la aleación, sino de lo limpia que esté la pieza. Miller: en aluminio muy limpio se puede subir hasta cerca del 80 %; The Fabricator: un buen punto de partida en aluminio limpio está entre 60 y 75 %. Más tiempo en negativo da más penetración y alarga la vida del tungsteno; más en positivo, más limpieza del óxido.',
+ sucia:'Pieza sucia, vieja o de fundición: Miller dice que el aluminio más sucio o viejo puede pedir una balanza tan baja como el 65 %, para que el positivo limpie más óxido. The Fabricator: ponla lo más baja que necesites para que limpie bien, y no más.'};
+const WHYHZ={
+ tope:'La frecuencia no depende de la aleación, sino del grosor y de la unión. Miller: en general, de 120 a 200 Hz es lo ideal para la mayoría del aluminio. Tu Origo llega como máximo a 152 Hz (ficha de ESAB), así que el rango útil es 120–152 Hz.',
+ t:'En rincón (unión en T) interesa un arco estrecho que meta el calor en la raíz: Miller da 120–200 Hz para la mayoría del aluminio y, en un rincón, sube hacia los 200 Hz. Tu Origo llega a 152 Hz como máximo (ficha de ESAB).',
+ esq:'Esquina exterior: The Fabricator recomienda bajar a 80–90 Hz para tener un cono de arco más ancho, que cubre los dos bordes.',
+ thin:'Chapa fina: The Fabricator recomienda de 150 a 250 Hz en material fino que necesita precisión, para no calentar una zona grande ni agujerear. Tu Origo llega a 152 Hz como máximo (ficha de ESAB), así que lo recomendado es ponerla arriba del todo.'};
+function whyOf(r,key){if(key==='bal')return WHYBAL[estado];if(key==='hz'){if(junta==='esq')return WHYHZ.esq;if(r.thin)return WHYHZ.thin;return WHYHZ[junta]}
   if(key==='post'&&r.anyCast)return 'Con fundición maciza se pisa bastante más, porque se lleva mucho el calor. Con 1 s por cada 10 A (Welders Supply), salen 15 s o más. Protege el tungsteno y el final del cordón.';return WHYC[key]||''}
 function tipsOf(r){const t=[];
   if(r.anyCast&&!r.both)t.push('La fundición maciza se lleva mucho calor: dirige el arco más hacia la fundición y deja que la otra pieza se funda con el baño. Según Hobart, el precalentamiento se puede usar para compensar piezas de espesores muy distintos; valóralo si la fundición no moja.');
   if(r.both)t.push('Fundición con fundición: limpieza mecánica a fondo antes de soldar, porque el disolvente solo no quita los óxidos incrustados ni los restos de la fundición, que dan poros.');
   else if(r.anyCast)t.push('Limpia la fundición mecánicamente: el disolvente solo no quita los óxidos incrustados ni los restos de la fundición, que dan poros y falta de fusión.');
   if(r.thin)t.push('Chapa fina: puntea mucho, haz cordones cortos alternando zonas y, si puedes, pon un respaldo de cobre o aluminio detrás de la junta para que se lleve el calor.');
+  {const [a,b]=normU(mat).split('+'),fams=[famOf(a),famOf(b)],nm=matName(a)+' '+matName(b);
+   if(fams.includes('7xxx')||/5083/.test(nm))t.push('Varilla de aportación: TWI indica la R-5556A para el 5083 y el 7020. Con 5356 en el 5083 cuesta llegar a los 40 ksi que piden muchas normas (The Fabricator); la 5183 se creó para dar la máxima resistencia en el 5083 (Airgas). Lincoln dice que la 5356 va bien cuando no se exigen esos 40 ksi. Si la pieza tiene que cumplir una resistencia concreta, confírmalo.');
+   if(fams.includes('7xxx')||fams.includes('6xxx'))t.push('No precalientes de más: en las aleaciones que se endurecen con tratamiento térmico (6082, 7020), llegar a la temperatura de envejecido (unos 163–204 °C) arruina sus propiedades. Lincoln acepta precalentar a unos 93 °C solo para quitar humedad.')}
   if(r.si)t.push('⚠️ Fundición aluminio-silicio: con mucho silicio el aporte habitual es el 4043 o el 4047, no el ER5356. Confírmalo con la ficha de la pieza.');
   return t}
 function recBox(k){k=normU(k);const r=recFor(k,esp);const V=vals[k]||defV(k);const f=x=>String(x).replace('.',',');
@@ -1309,11 +1314,14 @@ function recBox(k){k=normU(k);const r=recFor(k,esp);const V=vals[k]||defV(k);con
    ['Gas',tgas==='ar'?'Argón 7–9,5 l/min':'Ar + He ≈24 l/min','—',null,'gas']];
   const HH={ok:'<span class="ok">✓</span>',up:'<span class="ko">↑ súbelo</span>',dn:'<span class="ko">↓ bájalo</span>',cam:'<span class="ko">cámbialo</span>'};
   const tips=tipsOf(r);
-  return `<div class="rbox"><div class="rhead"><b>Recomendación</b><span>${r.both?'Fundición maciza':(r.anyCast?'Otra pieza · ':'Espesor · ')+espTxt(esp)}</span></div>
+  const ch=(g,v,l,cur)=>`<button class="espb${cur===v?' on':''}" data-${g}="${v}">${l}</button>`;
+  return `<div class="rsel"><span>Unión</span>${ch('junta','tope','A tope',junta)}${ch('junta','t','En T',junta)}${ch('junta','esq','Esquina exterior',junta)}</div>
+  <div class="rsel"><span>Pieza</span>${ch('estado','limpia','Limpia',estado)}${ch('estado','sucia','Sucia, vieja o fundición',estado)}</div>
+  <div class="rbox"><div class="rhead"><b>Recomendación</b><span>${r.both?'Fundición maciza':(r.anyCast?'Otra pieza · ':'Espesor · ')+espTxt(esp)}</span></div>
   <table class="rtab"><tr><th>Parámetro</th><th>Recomendado</th><th>Tuyo</th><th></th></tr>${rows.map(([n,a,b,c,w])=>`<tr><td>${n}<button class="whyb" data-why="${w}">¿Por qué? ▾</button></td><td><b>${a}</b></td><td>${b}</td><td>${c?HH[c]:''}</td></tr><tr class="whyr" data-whyr="${w}" hidden><td colspan="4">${whyOf(r,w)}</td></tr>`).join('')}</table>
   ${tips.length?`<div class="tips">${tips.map(t=>`<p>${t}</p>`).join('')}</div>`:''}
   <button class="btn y" style="width:100%;margin-top:10px" data-loadrec="${k}">Cargar recomendación en el panel</button>
-  <p class="src" style="margin:8px 0 0">Ajuste fino de Claude, orientativo: compruébalo con una probeta. Fuentes: <a href="https://www.millerwelds.com/resources/article-library/tig-frequency">Miller</a> · <a href="https://www.thefabricator.com/article/arcwelding/how-to-tig-weld-aluminum">The Fabricator</a> · <a href="https://welders-supply.com/welding-processes/tig-welding/tig-welding-aluminum-settings/">Welders Supply</a> · <a href="https://www.twi-global.com/technical-knowledge/faqs/faq-i-keep-getting-porosity-when-welding-aluminium-any-advice">TWI</a> · <a href="https://hobartbrothers.com/resources/technical-guides/aluminum-welding-guide/weld-preparation-treatments-preheating-and-interpass-temperatures">Hobart</a> · <a href="https://www.weldingtipsandtricks.com/tig-welding-cast-aluminum-cleaning-action.html">Welding Tips and Tricks</a> · manual ESAB TA24</p></div>`}
+  <p class="src" style="margin:8px 0 0">Sacado de estas fuentes. Son puntos de partida: compruébalo con una probeta. <a href="https://www.millerwelds.com/resources/article-library/tig-frequency">Miller (frecuencia)</a> · <a href="https://www.millerwelds.com/resources/article-library/how-to-implement-ac-balance-control-for-aluminum-welding">Miller (balance)</a> · <a href="https://www.thefabricator.com/article/arcwelding/how-to-tig-weld-aluminum">The Fabricator</a> · <a href="https://www.twi-global.com/technical-knowledge/job-knowledge/weldability-of-materials-aluminium-alloys-021">TWI</a> · <a href="https://www.thefabricator.com/thewelder/article/aluminumwelding/aluminum-workshop-meet-tensile-strength-requirements-with-the-right-filler-metal">The Fabricator (5083)</a> · <a href="https://www.lincolnelectric.com/da-DK/Products/superglaze5356_gtaw">Lincoln (5356)</a> · <a href="https://www.bester.rapidwelding.com/files/0479100214.pdf">ESAB Tig 4300iw (ficha)</a> · <a href="https://welders-supply.com/welding-processes/tig-welding/tig-welding-aluminum-settings/">Welders Supply</a></p></div>`}
 function loadRec(k){k=normU(k);const r=recFor(k,esp);pushHist();const mid=([a,b])=>Math.round((a+b)/2);
   mat=k;vals[k]={bal:mid(r.bal),hz:mid(r.hz)};
   if(pv.up<r.up[0]||pv.up>r.up[1])pv.up=0;if(pv.dn<r.dn[0]||pv.dn>r.dn[1])pv.dn=0;
@@ -1325,6 +1333,8 @@ function loadRec(k){k=normU(k);const r=recFor(k,esp);pushHist();const mid=([a,b]
 function openRec(){const k=normU(mat);$('expBody').innerHTML=`<h2>${esc(unionName(k))}</h2>`+recBox(k);$('expDlg').dataset.k='rec';if(!$('expDlg').open)$('expDlg').showModal()}
 document.addEventListener('click',e=>{
   const wb=e.target.closest('[data-why]');if(wb){const tr=wb.closest('table').querySelector(`[data-whyr="${wb.dataset.why}"]`);if(tr){tr.hidden=!tr.hidden;wb.textContent=tr.hidden?'¿Por qué? ▾':'¿Por qué? ▴'}return}
+  const jb=e.target.closest('[data-junta]');if(jb){junta=jb.dataset.junta;try{localStorage.setItem('wbJunta',junta)}catch(x){}renderAll();openRec();return}
+  const eb2=e.target.closest('[data-estado]');if(eb2){estado=eb2.dataset.estado;try{localStorage.setItem('wbEstado',estado)}catch(x){}renderAll();openRec();return}
   const l=e.target.closest('[data-loadrec]');if(l)loadRec(l.dataset.loadrec)});
 const FAMX={
  '5xxx':{s:[['Qué es','Aluminio con magnesio, sin tratamiento térmico. Es el típico de chapa: depósitos, carenados, piezas de chapa.'],['¿Se suelda bien?','Muy bien: la serie 5000 tiene una soldabilidad excelente (TWI).'],['Con ER5356','Va perfecto: es de la misma familia aluminio-magnesio.'],['Qué vigilar','En chapa fina, que no deforme ni se agujeree: punteado, cordones cortos y respaldo.']]},
@@ -1518,7 +1528,7 @@ function goView(v){for(const x of document.querySelectorAll('nav button'))x.setA
   for(const x of document.querySelectorAll('.view'))x.classList.toggle('on',x.id==='v-'+v);window.scrollTo(0,0);if(v==='pla')renderPlanos()}
 
 /* Auto-actualizar */
-const APPV='20261127154225';
+const APPV='20261127160726';
 (function(){
   if(!GHMODE||location.protocol!=='https:')return;
   try{if(sessionStorage.getItem('wbUpdDone')===APPV){sessionStorage.removeItem('wbUpdDone');toast('✓ App actualizada')}}catch(x){}
