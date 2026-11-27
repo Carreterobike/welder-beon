@@ -6,8 +6,8 @@
 <title>Welder BeOn</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Welder BeOn">
-<meta name="theme-color" content="#ffd100">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#0c0d0f">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="apple-touch-icon" href="icono.png">
 <link rel="icon" href="icono.png">
 <link rel="manifest" href="manifest.json">
@@ -155,23 +155,91 @@ main{padding:10px max(3vw,10px)}
 .rtab{width:100%;border-collapse:collapse;font-size:14px}.rtab th{font-size:12px;color:var(--mut);font-weight:500;text-align:left;padding:3px}.rtab td{padding:5px 3px;border-top:1px solid var(--line);vertical-align:top}.twd{display:inline-block;width:10px;height:10px;border-radius:50%;border:1.5px solid #111;margin-right:4px;vertical-align:-1px}
 .rtab .ok{color:#1a7f37;font-weight:700}.rtab .ko{color:#b45309;font-weight:700;white-space:nowrap}
 .whyb{display:block;margin-top:2px;padding:0;border:0;background:none;color:#2b6cb0;font:500 12px Barlow,sans-serif;cursor:pointer}.whyr td{background:var(--card);border-radius:8px;font-size:13.5px;line-height:1.45;padding:8px!important;color:var(--ink)}
+.ucard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;margin:0 0 10px}
+.urow{display:flex;align-items:center;gap:8px}.urow select{flex:1;min-height:46px;font:600 17px Barlow,sans-serif;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:6px 10px}.uplus{font:700 22px Barlow,sans-serif;color:var(--y)}
+.ulab{font-size:12px;color:var(--mut);margin:10px 2px 4px;text-transform:uppercase;letter-spacing:.06em}
+.espsel{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.espsel button{min-width:44px;min-height:38px;border-radius:19px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:600 15px Barlow,sans-serif;cursor:pointer;padding:2px 12px}.espsel button[aria-pressed=true]{background:var(--y);color:#111;border-color:var(--y)}
+.uact{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.uinfo{display:contents}
+.chipi{min-height:34px;border-radius:17px;border:1px solid var(--line);background:transparent;color:var(--ink);font:600 14px Barlow,sans-serif;padding:2px 12px;cursor:pointer}
+.recbtn{width:100%;margin-top:10px;min-height:46px}
+.rhead{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:baseline;margin-bottom:6px}.rhead span{font-size:13px;color:var(--mut)}
+.tips{margin-top:10px;padding:10px;border-radius:10px;background:var(--card);border:1px solid var(--line)}.tips p{margin:4px 0;font-size:14px}
+.wn{background:#3a2c0b;color:#ffd98a;border-radius:8px;padding:8px 10px;margin-top:10px}
+.mlist{display:flex;flex-direction:column;gap:6px;margin:8px 0 12px}.mrow{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px}.mrow small{display:block;color:var(--mut)}
+#expDlg select,#expDlg input{width:100%;min-height:42px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:6px 10px;font:500 16px Barlow,sans-serif}
+
+/* ===== Tema v3: moderno oscuro ===== */
+:root,:root[data-theme=light]{color-scheme:dark;--bg:#0c0d0f;--card:#16181c;--card2:#1d2025;--ink:#f3f3f1;--mut:#9ea1a8;--line:#2a2d34;--bad:#ff8a7a;--ok:#4ade80;--warn:#fbbf24}
+html{background:#0c0d0f}
+body{background:radial-gradient(1200px 500px at 50% -200px,#2a2410 0%,transparent 60%),#0c0d0f;color:var(--ink);font-feature-settings:"tnum" 1}
+header{background:rgba(12,13,15,.82);backdrop-filter:saturate(1.4) blur(14px);-webkit-backdrop-filter:saturate(1.4) blur(14px);color:var(--ink);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:6;padding-top:max(10px,env(safe-area-inset-top));padding-bottom:10px}
+.wm img{filter:invert(1);height:clamp(22px,4.6vw,30px)!important}.wm span{color:var(--y);letter-spacing:4px}
+#logo{box-shadow:none;border-radius:12px;width:40px;height:40px}
+header p{color:var(--mut);font-size:12px;letter-spacing:.04em}
+main{padding-top:14px}
+h2{letter-spacing:.01em}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px}
+.btn{border-radius:12px;background:var(--card2);color:var(--ink);border:1px solid var(--line)}
+.btn.y{background:var(--y);color:#111;border:0;box-shadow:0 8px 24px -10px rgba(255,209,0,.55)}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+.btn:active{transform:scale(.98)}
+.acch{position:relative;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;text-align:left;min-height:76px;padding:14px 16px;border-radius:18px;border:1px solid var(--line);background:linear-gradient(180deg,#1b1e23,#15171b);color:var(--ink);font:inherit;box-shadow:0 10px 30px -18px #000;transition:border-color .2s,transform .1s}
+.acch:active{transform:scale(.99)}
+.acch[aria-expanded=true]{background:linear-gradient(180deg,#1f1c10,#15171b);border-color:rgba(255,209,0,.55);color:var(--ink)}
+.acci{display:flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:14px;background:var(--y);color:#111;font:800 15px "Barlow Condensed",sans-serif;letter-spacing:.04em}
+.acct{display:flex;flex-direction:column;line-height:1.15}.acct b{font:700 22px "Barlow Condensed",sans-serif;letter-spacing:.01em}.acct small{color:var(--mut);font-size:13px;margin-top:2px}
+.acch .chev{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--card2);border:1px solid var(--line);font-size:14px}
+.acch[aria-expanded=true] .chev{background:var(--y);color:#111;border-color:var(--y)}
+.ucard{background:var(--card);border:1px solid var(--line);border-radius:18px}
+.urow select,.espsel button,.chipi{background:var(--card2);border-color:var(--line);color:var(--ink)}
+.machine{border:1px solid #2a2c30;border-radius:20px;box-shadow:0 20px 50px -24px #000}
+nav{background:rgba(16,17,20,.9);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--line)}
+nav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#8b8e95;font:600 12px Barlow,sans-serif;letter-spacing:.02em;border-top:0!important;position:relative}
+nav button svg{width:24px;height:24px}
+nav button[aria-current=true]{color:var(--y)}
+nav button[aria-current=true]::before{content:"";position:absolute;top:6px;width:44px;height:32px;border-radius:16px;background:rgba(255,209,0,.12)}
+@media(min-width:900px){header{position:relative}nav{position:sticky;top:0;z-index:5;border:1px solid var(--line);border-top:0;border-radius:0 0 16px 16px}nav button{flex-direction:row;gap:8px;font-size:15px;border-bottom:3px solid transparent!important}nav button[aria-current=true]{border-bottom-color:var(--y)!important}nav button[aria-current=true]::before{display:none}#panelBox{top:66px}}
+#expDlg,#mkDlg{background:#15171b;color:var(--ink);border:1px solid var(--line);border-radius:20px;box-shadow:0 30px 80px -20px #000}
+#expDlg::backdrop,#mkDlg::backdrop{background:rgba(0,0,0,.6);backdrop-filter:blur(4px)}
+.xclose{background:var(--card2);border-color:var(--line);color:var(--ink)}
+.rbox,.exr{background:var(--card2)}
+.rtab .ok,.exr .ok{color:var(--ok)}.rtab .ko,.exr .ko{color:var(--warn)}
+.whyb{color:#7cb3ff}
+.whyr td{background:#0f1114}
+.twc button{border-color:var(--line);color:var(--ink);background:var(--card2)}.twc button[aria-pressed=true]{background:var(--y);color:#111;border-color:var(--y)}
+.saved{border:1px solid rgba(74,222,128,.45);background:rgba(74,222,128,.07);border-radius:16px}
+.seg button{border:1px solid var(--line);background:var(--card2);color:var(--ink);border-radius:12px}.seg button[aria-pressed=true]{background:var(--y);color:#111;border-color:var(--y)}
+.chips button{background:var(--card2);border-color:var(--line);color:var(--ink)}.chips button[aria-pressed=true]{background:var(--y);color:#111;border-color:var(--y)}
+input,textarea,select{background:var(--card2);color:var(--ink);border-color:var(--line)}
+.mnav a{background:var(--card2);border-color:var(--line);color:var(--ink)}
+.plc{background:var(--card);border-color:var(--line)}
+.mut{color:var(--mut)}
+.view.on{animation:fadeup .25s ease}
+@keyframes fadeup{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.view.on{animation:none}}
+#outMig .ic{height:22px;overflow:hidden;margin-bottom:4px}#outMig .ic svg{height:22px!important;width:auto!important}#outMig .cell small{display:block;margin-top:0}
 </style>
 </head>
 <body>
 <header id="top"><div class="hd"><div class="brand"><img id="logo" alt="" width="56" height="56"><div><h1 class="wm"><img src="data:image/png;base64,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" alt="Welder" height="40"><span>BeOn</span></h1><p>Aluminio · ER5356 · motos de carreras</p></div></div><button class="btn" id="inst" hidden>Instalar en el Mac</button></div></header>
 <nav>
-  <button data-v="maq" aria-current="true">Máquina</button>
-  <button data-v="pla">Planos</button>
-  <button data-v="man">Manual</button>
-  <button data-v="aju">⚙️ Ajustes</button>
+  <button data-v="maq" aria-current="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l6-6M14 4l6 6-8 8-6-6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="17" cy="7" r="1.4" fill="currentColor"/></svg><span>Máquina</span></button>
+  <button data-v="pla"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z M9 4v14 M15 6v14" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>Planos</span></button>
+  <button data-v="man"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5a2 2 0 012-2h13v16H6a2 2 0 00-2 2z M4 19V5 M8 7h7 M8 11h7" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg><span>Manual</span></button>
+  <button data-v="aju"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Ajustes</span></button>
 </nav>
 
 <main>
 <!-- MÁQUINA -->
 <section class="view on" id="v-maq">
-<button class="acch" data-m="tig" aria-expanded="false"><span>TIG · 4300i</span><i class="chev">▾</i></button>
+<button class="acch" data-m="tig" aria-expanded="false"><span class="acci">TIG</span><span class="acct"><b>Tig 4300i</b><small>ESAB · panel Origo TA24 AC/DC</small></span><i class="chev">▾</i></button>
 <div id="tigMaq" hidden>
-  <div class="seg" id="mat"></div>
+  <div class="ucard">
+    <div class="urow"><select id="uA" aria-label="Material A"></select><b class="uplus">+</b><select id="uB" aria-label="Material B"></select></div>
+    <div id="espWrap"><div class="ulab" id="espLab">Espesor</div><div class="espsel" id="espSel"></div></div>
+    <div class="uact"><div id="uInfo" class="uinfo"></div><button class="chipi" id="matsBtn">+ Añadir material</button></div>
+    <button class="btn y recbtn" id="recBtn">Recomendación para esta unión ›</button>
+  </div>
   <div class="machine" aria-live="polite">
     <div class="mhead"><b>Origo TA24 AC/DC</b><i id="tag"></i></div>
     <div id="panelBox" class="pbox"><div id="panel"></div><p id="pinfo" class="pinfo"></p></div>
@@ -196,7 +264,7 @@ main{padding:10px max(3vw,10px)}
 <div id="savedBox" style="margin-top:10px"></div>
 </div>
 
-<button class="acch" data-m="mig" aria-expanded="false"><span>HILO · Aristo 500ix</span><i class="chev">▾</i></button>
+<button class="acch" data-m="mig" aria-expanded="false"><span class="acci">HILO</span><span class="acct"><b>Aristo 500ix</b><small>ESAB · panel Aristo U82</small></span><i class="chev">▾</i></button>
 <div id="migMaq" hidden>
   <div class="chips" id="mtSel"><span>Material</span><button data-v="fe">Hierro <i class="inf" data-mi="fe">ⓘ</i></button><button data-v="inox">Inox <i class="inf" data-mi="inox">ⓘ</i></button><button data-v="alu">Aluminio <i class="inf" data-mi="alu">ⓘ</i></button></div>
   <div class="chips" id="wireSel"></div>
@@ -342,12 +410,15 @@ main{padding:10px max(3vw,10px)}
 
 <script>
 {
-const DEF={'7020':{bal:80,hz:119},'6082':{bal:68,hz:100},fund:{bal:68,hz:109}};
-const NAME={"7020":'7020','6082':'6082',fund:'Fundición'};
-const MREC={'7020':{bal:'75–80',hz:'110–130'},'6082':{bal:'68–72',hz:'100–120'},fund:{bal:'62–68',hz:'90–110'}};
+const DEF={'7020+7020':{bal:80,hz:119},'6082+6082':{bal:68,hz:100},'6082+fund':{bal:68,hz:109}};
+const LEGU={fund:'6082+fund','7020':'7020+7020','6082':'6082+6082'};
+function normU(k){k=String(k||'');if(LEGU[k])return LEGU[k];const p=k.split('+');if(p.length!==2)return '6082+fund';return p.slice().sort().join('+')}
+function defV(k){if(DEF[k])return {...DEF[k]};try{const r=recFor(k,esp);return{bal:Math.round((r.bal[0]+r.bal[1])/2),hz:Math.round((r.hz[0]+r.hz[1])/2)}}catch(x){return{bal:70,hz:110}}}
+function ensureV(){mat=normU(mat);if(!vals[mat])vals[mat]=defV(mat)}
+const NAME=new Proxy({},{get:(t,k)=>typeof k==='string'?unionName(k):undefined});
 const NOTE={fund:'Más limpieza: la fundición trae más óxido y suciedad.',"7020":'Más penetración y arco concentrado para meter poco calor.'};
 let maq='tig',mt='fe',wire='1.0',gas='M21';try{const m=JSON.parse(localStorage.getItem('wbMaq')||'null');if(m){if(m.maq==='mig'||m.maq==='tig')maq=m.maq;if(['fe','inox','alu'].includes(m.mt))mt=m.mt;if(typeof m.wire==='string')wire=m.wire;if(typeof m.gas==='string')gas=m.gas}}catch(x){}
-let vals=JSON.parse(JSON.stringify(DEF)),mat='fund',db=null,assets=null,sample=null,entries=[],sel=-1,files=[];
+let vals=JSON.parse(JSON.stringify(DEF)),mat='6082+fund',db=null,assets=null,sample=null,entries=[],sel=-1,files=[];
 const GHMODE=typeof claude==='undefined';
 const H={past:[],fut:[],t:0};
 const TG={ar:{n:'Argón puro',v:'7–9,5',c:'#2b7bd6'},arhe:{n:'Argón + helio',v:'≈24 (50/50)',c:'#9b59b6'}};
@@ -460,9 +531,7 @@ let fixOn={tig:true,ac:true,loc:true};try{const f=JSON.parse(localStorage.getIte
 const FIXK=['tig','ac','loc'];const isFix=k=>FIXK.includes(k)&&fixOn[k];
 const cell=(ic,l,v,u,e,k,pi)=>`<div class="cell${k?' key':''}${pi&&isFix(ic)?' fix':''}" data-ic="${ic}" data-l="${esc(l)}" data-e="${esc(String(e||'').replace(/<[^>]*>/g,''))}"><div class="ic">${pi&&IB[ic]?pico(ic):ico(ic)}</div><small>${l}</small><div class="v">${esc(v)}${u?`<u>${u}</u>`:''}</div>${e?`<em>${e}</em>`:''}${pi&&typeof EDIT!=='undefined'&&EDIT.has(ic)?'<div class="pm"><button data-d="-1" aria-label="Bajar">−</button><button data-d="1" aria-label="Subir">+</button></div>':''}</div>`;
 
-function segs(){
-  for(const id of ['mat','mat2'])$(id).innerHTML=Object.keys(NAME).map(k=>`<button data-v="${k}" aria-pressed="${k===mat}">${NAME[k]}<i class="inf" data-mi="${k}">ⓘ</i></button>`).join('');
-}
+function segs(){ensureV();if($('mat2'))$('mat2').innerHTML='';if($('uA'))renderUnion()}
 const TW={az:{n:'Azul 3,2',c:'#1e5fd6',t:'lantanado 2 % (WL20)',r:'60–70',m:0},ve:{n:'Verde 3,2',c:'#1f9d3a',t:'puro (WP)',r:'55–65',m:1},do:{n:'Dorado 2,4',c:'#d9a400',t:'lantanado 1,5 % (WL15)',r:'40–50',m:0}};
 let tw='ve';try{const t=localStorage.getItem('wbTw');if(TW[t])tw=t}catch(x){}
 function renderTw(){const e=document.getElementById('twSel');if(e)e.innerHTML=Object.entries(TW).map(([k,o])=>`<button data-tw="${k}" aria-pressed="${k===tw}"><i style="background:${o.c}"></i>${o.n}</button>`).join('')}
@@ -534,9 +603,9 @@ const PN={tig:'Proceso TIG',mma:'Electrodo (MMA)',ac:'Corriente AC',dc:'Corrient
 const UNIT={up:'uS',dn:'uS',post:'uS',pre:'uS',bal:'uP',hz:'uH',cur:'uA'};
 const WANT={tig:'tig',mma:'tig',ac:'ac',dc:'ac',pul:'ac',hf:'hf',lift:'hf',t2:'t2',t4:'t2',rem:'loc',mem:'loc',loc:'loc'};
 let pSel=null,pv={up:0,dn:0,post:10,pre:1,ex:40};try{const q=JSON.parse(localStorage.getItem('wbPv')||'null');if(q)for(const kk in pv)if(typeof q[kk]==='number')pv[kk]=q[kk]}catch(x){}
-function pval(k){if(k==='bal')return vals[mat].bal;if(k==='hz')return vals[mat].hz;return pv[k]}
+function pval(k){ensureV();if(k==='bal')return vals[mat].bal;if(k==='hz')return vals[mat].hz;return pv[k]}
 function pfmt(k){const v=pval(k);if(k==='cur')return '';if(RNG[k]&&RNG[k][2]===1)return String(v);return v.toFixed(1)}
-function prec(k){return k==='bal'?(MREC[mat]||MREC.fund).bal:k==='hz'?(MREC[mat]||MREC.fund).hz:k==='post'?(typeof esp==='number'?Math.max(5,Math.round(4*esp))+'–25':'1 s por cada 10 A'):k==='pre'?'1–1,5':k==='ex'?TW[tw].r:'0'}
+function prec(k){const RR=recFor(mat,esp);return k==='bal'?RR.bal.join('–'):k==='hz'?RR.hz.join('–'):k==='post'?RR.post.join('–'):k==='pre'?'1–1,5':k==='ex'?TW[tw].r:'0'}
 function dirRec(k){const r=String(prec(k)).replace(/,/g,'.');const m=r.match(/^([\d.]+)(?:–([\d.]+))?$/);if(!m)return null;const v=pval(k),a=+m[1],b=m[2]?+m[2]:a;return v<a?'up':v>b?'dn':'ok'}
 const DIRH={ok:'<span class="ok">✓</span>',up:'<span class="ko">↑ súbelo</span>',dn:'<span class="ko">↓ bájalo</span>'};
 function inRec(k){const r=String(prec(k)).replace(/,/g,'.');const m=r.match(/^([\d.]+)(?:–([\d.]+))?$/);if(!m)return null;const v=pval(k),a=+m[1],b=m[2]?+m[2]:a;return v>=a&&v<=b}
@@ -918,7 +987,7 @@ document.addEventListener('click',e=>{
 });
 
 /* formulario */
-function fillForm(){if(maq==='mig'){$('fb').value='';$('fh').value='0';return}const p=vals[$('fu').value];$('fb').value=p.bal;$('fh').value=p.hz}
+function fillForm(){if(maq==='mig'){$('fb').value='';$('fh').value='0';return}const p=vals[normU($('fu').value)]||defV(normU($('fu').value));$('fb').value=p.bal;$('fh').value=p.hz}
 $('fu').addEventListener('change',fillForm);
 $('ff').addEventListener('change',()=>{
   files=[...$('ff').files];
@@ -1133,31 +1202,64 @@ const MATX={
   ['Cómo se suelda','Con pulso, empujando la antorcha 10–15°. Hot start para que el inicio funda y Crater filling al final.'],
   ['Qué vigilar','Rodillos en U con poca presión, sirga de teflón, tubo de contacto de aluminio y manguera recta. Hilo seco y limpio. El hollín negro a los lados es normal con 5356.']]}
 };
-let esp=3;try{const q=+localStorage.getItem('wbEsp');if(q>=2&&q<=6)esp=q}catch(x){}
-function recFor(k,e){const M=MREC[k];const rg=t=>t.split('–').map(Number);const tk=e<=4?'do':'az';
-  return{bal:rg(M.bal),hz:rg(M.hz),up:[0,0.5],dn:[0,1],post:[Math.max(5,Math.round(40*e/10)),25],pre:[1,1.5],tw:tk,ex:rg(TW[tk].r)}}
-
+let esp=3;try{const q=+localStorage.getItem('wbEsp');if([1,1.5,2,3,4,5,6].includes(q))esp=q}catch(x){}
+const ESPS=[1,1.5,2,3,4,5,6];
+const FAM={
+ '5xxx':{n:'Serie 5000 (aluminio-magnesio)',bal:[68,72],hz:[100,120],cast:0},
+ '6xxx':{n:'Serie 6000 (aluminio-silicio-magnesio)',bal:[68,72],hz:[100,120],cast:0},
+ '7xxx':{n:'Serie 7000 (aluminio-zinc-magnesio)',bal:[75,80],hz:[110,130],cast:0},
+ castMg:{n:'Fundición aluminio-magnesio',bal:[62,68],hz:[90,110],cast:1},
+ castSi:{n:'Fundición aluminio-silicio',bal:[62,68],hz:[90,110],cast:1,si:1}};
+const BASEM=[{id:'7020',n:'7020',fam:'7xxx'},{id:'6082',n:'6082',fam:'6xxx'},{id:'fund',n:'Fundición',fam:'castMg'}];
+let cmats=[];try{cmats=JSON.parse(localStorage.getItem('wbMats')||'[]')||[]}catch(x){}
+function allMats(){return BASEM.concat(cmats.filter(m=>m&&m.id&&FAM[m.fam]))}
+function matOf(id){return allMats().find(m=>m.id===id)}
+function matName(id){const m=matOf(id);return m?m.n:id}
+function famOf(id){const m=matOf(id);return m?m.fam:'6xxx'}
+function bothCast(k){const[a,b]=k.split('+');return FAM[famOf(a)].cast&&FAM[famOf(b)].cast}
+function unionName(k){k=normU(k);const[a,b]=k.split('+');return matName(a)+' + '+matName(b)}
+function espTxt(e){return String(e).replace('.',',')+' mm'}
+function recFor(k,e){k=normU(k);const[a,b]=k.split('+');const A=FAM[famOf(a)],B=FAM[famOf(b)];
+  const anyCast=A.cast||B.cast,both=A.cast&&B.cast,ef=both?null:e;
+  const fb=anyCast?(A.cast?famOf(a):famOf(b)):(A.bal[0]<=B.bal[0]?famOf(a):famOf(b));
+  const fh=anyCast?fb:(A.hz[1]>=B.hz[1]?famOf(a):famOf(b));
+  const thin=!anyCast&&ef!=null&&ef<=1.5;
+  const hz=anyCast?FAM[fb].hz:thin?[120,150]:FAM[fh].hz;
+  const tk=both||(ef!=null&&ef>=5)?'az':'do';
+  const post=anyCast?[15,25]:[Math.max(5,Math.round(4*ef)),25];
+  return{bal:FAM[fb].bal,hz,up:[0,0.5],dn:[0,1],post,pre:[1,1.5],tw:tk,ex:TW[tk].r.split('–').map(Number),fb,fh,thin,anyCast,both,si:A.si||B.si}}
+function famKey(f){return f==='7xxx'?'7020':f==='6xxx'||f==='5xxx'?'6082':'fund'}
 const WHYC={
- cur:'El calor lo controlas tú con el pie según cómo va el baño. En la máquina deja el máximo con margen (tú, 260 A) y pisa solo lo que pida la pieza.',
- af:'En punta da un arco estrecho y dirigido. Con la punta un poco truncada (plana en la puntita) aguanta mejor en alterna y no se funde como una aguja.',
+ cur:'El calor lo controlas tú con el pie según cómo va el baño. En la máquina deja el máximo con margen y pisa solo lo que pida la pieza.',
+ tw:'Tu máquina es inversora. Con estas máquinas se recomienda tungsteno de tierras raras (lantanado) en vez de puro: mantiene la punta y no hace bola. El puro en alterna hace bola, eso da un arco más ancho y puede hacer que el arco se mueva (Miller). El diámetro va según el amperaje: 2,4 mm hasta piezas de unos 4 mm; 3,2 mm para 5–6 mm y fundición maciza.',
+ af:'Se prefiere la punta truncada: una punta afilada con la puntita plana. Concentra el arco y aguanta mejor en alterna que una aguja (The Fabricator).',
  up:'Con pedal la subida la haces tú. Si la pones larga, la máquina mete calor aunque tú no quieras.',
  dn:'Con pedal la bajada la haces tú, levantando el pie despacio mientras llenas el cráter. Una rampa larga mete calor de más al final.',
- post:'1 s por cada 10 A que uses (unos 40 A por mm de espesor), con un mínimo de 5 s. Protege el tungsteno y el final del cordón mientras se enfrían. Si te quedas corto, el tungsteno sale de color.',
+ post:'1 s por cada 10 A que uses, mínimo 5 s (Welders Supply). Protege el tungsteno y el final del cordón mientras se enfrían. En TIG, los poros vienen casi siempre de contaminación o de perder la protección de gas (TWI).',
  pre:'Echa el aire de la manguera y de la zona antes de cebar, para que el arranque no salga con poro.',
  ex:'Es lo que pide el tungsteno recomendado según la tabla de ESAB, para que el arco cebe bien en alterna. Si cambias de tungsteno, cambia este valor.',
- gas:'Con ese caudal el baño queda bien cubierto. Más gas no protege más: hace remolinos, mete aire y salen poros.'};
-const WHYM={
- '7020':{bal:'El 7020 es chapa o perfil limpio, con poco óxido: no necesita tanta limpieza. Así va más calor a la pieza y menos al tungsteno, se penetra antes y estás menos tiempo calentando. Eso es lo que conviene, porque el calor ablanda el 7020 alrededor del cordón.',
-   hz:'Más frecuencia da un arco más estrecho: el calor va solo a la junta y la zona ablandada alrededor queda más pequeña.',
-   tw:'Tu máquina es inversora: con ellas se recomienda lantanado afilado en lugar de puro, porque mantiene la punta y el arco va más concentrado. El diámetro va según el amperaje que pide el espesor. Tú usas el verde 3,2 solo en dos cordones concretos de 7020: el puro hace bola en la punta y da un arco más ancho y blando. Si en esos cordones te funciona, mantenlo; para el resto, lantanado.'},
- '6082':{bal:'El 6082 suele venir limpio, en perfil o mecanizado. Va con un reparto equilibrado: limpia el óxido de la superficie sin quitar demasiado calor a la pieza.',
-   hz:'Frecuencia media: arco algo concentrado para controlar el calor (el 6082-T6 pierde mucha resistencia con el calor), sin un baño tan estrecho que cueste mojar los bordes.',
-   tw:'Tu máquina es inversora: con ellas se recomienda lantanado afilado en lugar de puro, porque mantiene la punta y el arco va más concentrado. El diámetro va según el amperaje que pide el espesor.'},
- fund:{bal:'La fundición trae más óxido y suciedad por dentro y por fuera. Con el balance más bajo se limpia más: el baño sale más limpio y salen menos puntitos negros.',
-   hz:'Frecuencia más baja: baño algo más ancho, que ayuda a mojar bien la fundición y a soltar la suciedad hacia fuera.',
-   tw:'Tu máquina es inversora: con ellas se recomienda lantanado afilado en lugar de puro, porque mantiene la punta y el arco va más concentrado. El diámetro va según el amperaje que pide el espesor.'}};
-function whyOf(k,key){return (WHYM[k]&&WHYM[k][key])||WHYC[key]||''}
-function recBox(k){const r=recFor(k,esp);const V=vals[k]||DEF[k];const f=x=>String(x).replace('.',',');
+ gas:'Miller da 15–20 CFH (unos 7–9,5 l/min) para la mayoría de trabajos; con tobera grande o lente de gas, algo más. Más gas no protege más: hace remolinos, mete aire y salen poros.'};
+const WHYF={
+ '7xxx':{bal:'Más tiempo en negativo da un cordón más profundo y estrecho y más penetración (Miller). El 7020 viene limpio y no necesita tanta limpieza. Así se penetra antes y estás menos tiempo calentando, y eso importa porque cuanto más calor total metes, más baja la resistencia alrededor del cordón (ESAB).',
+   hz:'Subir la frecuencia da un cono de arco estrecho: el calor va a una zona más pequeña, con mejor penetración y cordón más estrecho (Miller). En el 7020, eso deja más pequeña la zona ablandada.'},
+ '6xxx':{bal:'Material limpio: reparto equilibrado entre limpiar el óxido y meter calor (Welders Supply: 65–70 % en material limpio).',
+   hz:'Entre 80 y 120 Hz el arco es cómodo, se controla mejor y se avanza más rápido (The Fabricator). El 6082-T6 pierde mucha resistencia con el calor, así que conviene un arco algo concentrado.'},
+ '5xxx':{bal:'Chapa limpia: reparto equilibrado entre limpiar el óxido y meter calor (Welders Supply: 65–70 % en material limpio).',
+   hz:'Arco algo concentrado para controlar el calor sin hacer un baño tan estrecho que cueste mojar los bordes.'},
+ castMg:{bal:'Más tiempo en positivo quita más óxido (Miller). Con fundición o aluminio sucio, deja que la limpieza del arco trabaje antes de hacer baño (Welding Tips and Tricks). Si ves escamas como pimienta negra en el baño, baja el balance (Miller).',
+   hz:'Bajar la frecuencia da un cono de arco más ancho: ensancha el cordón y quita mejor las impurezas de la superficie (Miller).'},
+ castSi:{bal:'Más tiempo en positivo quita más óxido (Miller). Con fundición o aluminio sucio, deja que la limpieza del arco trabaje antes de hacer baño (Welding Tips and Tricks).',
+   hz:'Bajar la frecuencia da un cono de arco más ancho: ensancha el cordón y quita mejor las impurezas de la superficie (Miller).'}};
+function whyOf(r,key){if(key==='bal')return WHYF[r.fb].bal;if(key==='hz'){if(r.thin)return 'Chapa fina: una frecuencia más alta da un arco más concentrado, con el calor en una zona más pequeña (Miller). Así se deforma y se agujerea menos. Miller da 120–200 Hz como ideal para la mayoría del aluminio.';return WHYF[r.fh].hz}
+  if(key==='post'&&r.anyCast)return 'Con fundición maciza se pisa bastante más, porque se lleva mucho el calor. Con 1 s por cada 10 A (Welders Supply), salen 15 s o más. Protege el tungsteno y el final del cordón.';return WHYC[key]||''}
+function tipsOf(r){const t=[];
+  if(r.anyCast&&!r.both)t.push('La fundición maciza se lleva mucho calor: dirige el arco más hacia la fundición y deja que la otra pieza se funda con el baño. Según Hobart, el precalentamiento se puede usar para compensar piezas de espesores muy distintos; valóralo si la fundición no moja.');
+  if(r.both)t.push('Fundición con fundición: limpieza mecánica a fondo antes de soldar, porque el disolvente solo no quita los óxidos incrustados ni los restos de la fundición, que dan poros.');
+  else if(r.anyCast)t.push('Limpia la fundición mecánicamente: el disolvente solo no quita los óxidos incrustados ni los restos de la fundición, que dan poros y falta de fusión.');
+  if(r.thin)t.push('Chapa fina: puntea mucho, haz cordones cortos alternando zonas y, si puedes, pon un respaldo de cobre o aluminio detrás de la junta para que se lleve el calor.');
+  if(r.si)t.push('⚠️ Fundición aluminio-silicio: con mucho silicio el aporte habitual es el 4043 o el 4047, no el ER5356. Confírmalo con la ficha de la pieza.');
+  return t}
+function recBox(k){k=normU(k);const r=recFor(k,esp);const V=vals[k]||defV(k);const f=x=>String(x).replace('.',',');
   const d=(v,[a,b])=>v<a?'up':v>b?'dn':'ok';const rng=([a,b],u)=>a===b?f(a)+u:f(a)+'–'+f(b)+u;
   const dot=t=>`<i class="twd" style="background:${TW[t].c}"></i>`;
   const rows=[['Corriente','Pedal',fixOn.loc?'Pedal':'Panel',fixOn.loc?'ok':null,'cur'],
@@ -1171,27 +1273,62 @@ function recBox(k){const r=recFor(k,esp);const V=vals[k]||DEF[k];const f=x=>Stri
    ['Frecuencia',rng(r.hz,' Hz'),V.hz+' Hz',d(V.hz,r.hz),'hz'],
    ['Precalent.',rng(r.ex,''),String(pv.ex),d(pv.ex,r.ex),'ex'],
    ['Gas',tgas==='ar'?'Argón 7–9,5 l/min':'Ar + He ≈24 l/min','—',null,'gas']];
-  const H={ok:'<span class="ok">✓</span>',up:'<span class="ko">↑ súbelo</span>',dn:'<span class="ko">↓ bájalo</span>',cam:'<span class="ko">cámbialo</span>'};
-  return `<div class="rbox"><b>Recomendación para ${esc(NAME[k])}</b><div class="lbx">Espesor de la pieza</div><div class="twc esp">${[2,3,4,5,6].map(e=>`<button data-esp="${e}" data-mk="${k}" aria-pressed="${e===esp}">${e} mm</button>`).join('')}</div>
-  <table class="rtab"><tr><th>Parámetro</th><th>Recomendado</th><th>Tuyo</th><th></th></tr>${rows.map(([n,a,b,c,w])=>`<tr><td>${n}<button class="whyb" data-why="${w}">¿Por qué? ▾</button></td><td><b>${a}</b></td><td>${b}</td><td>${c?H[c]:''}</td></tr><tr class="whyr" data-whyr="${w}" hidden><td colspan="4">${whyOf(k,w)}</td></tr>`).join('')}</table>
-  <button class="btn y" style="width:100%;margin-top:8px" data-loadrec="${k}">Cargar recomendación en el panel</button>
-  <p class="mut" style="margin:6px 0 0">Tu máquina es inversora: con ella se recomienda tungsteno lantanado afilado, no puro (verde). ${esp<=4?'2,4 mm vale para unos 110–200 A en aluminio':'3,2 mm para piezas de 5–6 mm y más amperaje'}. Postgás: 1 s por cada 10 A que uses (unos 40 A por mm de espesor), mínimo 5 s. Ajuste fino de Claude, orientativo: compruébalo con una probeta.</p></div>`}
-function loadRec(k){const r=recFor(k,esp);pushHist();const mid=([a,b])=>Math.round((a+b)/2);
-  mat=k;vals[k]={bal:mid(r.bal),hz:Math.round(mid(r.hz)/1)};
+  const HH={ok:'<span class="ok">✓</span>',up:'<span class="ko">↑ súbelo</span>',dn:'<span class="ko">↓ bájalo</span>',cam:'<span class="ko">cámbialo</span>'};
+  const tips=tipsOf(r);
+  return `<div class="rbox"><div class="rhead"><b>Recomendación</b><span>${r.both?'Fundición maciza':(r.anyCast?'Otra pieza · ':'Espesor · ')+espTxt(esp)}</span></div>
+  <table class="rtab"><tr><th>Parámetro</th><th>Recomendado</th><th>Tuyo</th><th></th></tr>${rows.map(([n,a,b,c,w])=>`<tr><td>${n}<button class="whyb" data-why="${w}">¿Por qué? ▾</button></td><td><b>${a}</b></td><td>${b}</td><td>${c?HH[c]:''}</td></tr><tr class="whyr" data-whyr="${w}" hidden><td colspan="4">${whyOf(r,w)}</td></tr>`).join('')}</table>
+  ${tips.length?`<div class="tips">${tips.map(t=>`<p>${t}</p>`).join('')}</div>`:''}
+  <button class="btn y" style="width:100%;margin-top:10px" data-loadrec="${k}">Cargar recomendación en el panel</button>
+  <p class="src" style="margin:8px 0 0">Ajuste fino de Claude, orientativo: compruébalo con una probeta. Fuentes: <a href="https://www.millerwelds.com/resources/article-library/tig-frequency">Miller</a> · <a href="https://www.thefabricator.com/article/arcwelding/how-to-tig-weld-aluminum">The Fabricator</a> · <a href="https://welders-supply.com/welding-processes/tig-welding/tig-welding-aluminum-settings/">Welders Supply</a> · <a href="https://www.twi-global.com/technical-knowledge/faqs/faq-i-keep-getting-porosity-when-welding-aluminium-any-advice">TWI</a> · <a href="https://hobartbrothers.com/resources/technical-guides/aluminum-welding-guide/weld-preparation-treatments-preheating-and-interpass-temperatures">Hobart</a> · <a href="https://www.weldingtipsandtricks.com/tig-welding-cast-aluminum-cleaning-action.html">Welding Tips and Tricks</a> · manual ESAB TA24</p></div>`}
+function loadRec(k){k=normU(k);const r=recFor(k,esp);pushHist();const mid=([a,b])=>Math.round((a+b)/2);
+  mat=k;vals[k]={bal:mid(r.bal),hz:mid(r.hz)};
   if(pv.up<r.up[0]||pv.up>r.up[1])pv.up=0;if(pv.dn<r.dn[0]||pv.dn>r.dn[1])pv.dn=0;
   if(pv.post<r.post[0])pv.post=r.post[0];if(pv.pre<r.pre[0]||pv.pre>r.pre[1])pv.pre=1;
   tw=r.tw;pv.ex=mid(r.ex);fixOn.loc=true;
   try{localStorage.setItem('wbPv',JSON.stringify(pv));localStorage.setItem('wbTw',tw);localStorage.setItem('wbFix',JSON.stringify(fixOn))}catch(x){}
   saveValsSoon();renderAll();$('expDlg').close();flash('Recomendación cargada');
   if(openM!=='tig'){openM='tig';maq='tig';renderMaqSel()}}
-document.addEventListener('click',e=>{const b=e.target.closest('[data-esp]');if(b){esp=+b.dataset.esp;try{localStorage.setItem('wbEsp',esp)}catch(x){}openMat(b.dataset.mk);return}
+function openRec(){const k=normU(mat);$('expBody').innerHTML=`<h2>${esc(unionName(k))}</h2>`+recBox(k);$('expDlg').dataset.k='rec';if(!$('expDlg').open)$('expDlg').showModal()}
+document.addEventListener('click',e=>{
   const wb=e.target.closest('[data-why]');if(wb){const tr=wb.closest('table').querySelector(`[data-whyr="${wb.dataset.why}"]`);if(tr){tr.hidden=!tr.hidden;wb.textContent=tr.hidden?'¿Por qué? ▾':'¿Por qué? ▴'}return}
   const l=e.target.closest('[data-loadrec]');if(l)loadRec(l.dataset.loadrec)});
-function openMat(k){const o=MATX[k];if(!o)return;
-  let rec='';if(MREC[k])rec=recBox(k);
-  $('expBody').innerHTML=`<h2>${esc(o.t)}</h2><p class="mut" style="margin-top:0">${esc(o.c)}</p>${rec}${o.s.map(([a,b])=>`<h3>${a}</h3><p>${b}</p>`).join('')}${o.w?`<p class="wn" style="background:#faeeda;color:#633806;border-radius:8px;padding:8px 10px;margin-top:10px">${o.w}</p>`:''}<p class="src">Fuentes: <a href="https://twi-global.com/technical-knowledge/job-knowledge/weldability-of-materials-aluminium-alloys-021">TWI</a> · <a href="https://welders-supply.com/welding-processes/tig-welding/tig-welding-aluminum-settings/">Welders Supply</a> · estudios técnicos sobre 6082-T6 y 7020 · fichas EN 1706</p>`;
-  $('expDlg').dataset.k='';if(!$('expDlg').open)$('expDlg').showModal();
+const FAMX={
+ '5xxx':{s:[['Qué es','Aluminio con magnesio, sin tratamiento térmico. Es el típico de chapa: depósitos, carenados, piezas de chapa.'],['¿Se suelda bien?','Muy bien: la serie 5000 tiene una soldabilidad excelente (TWI).'],['Con ER5356','Va perfecto: es de la misma familia aluminio-magnesio.'],['Qué vigilar','En chapa fina, que no deforme ni se agujeree: punteado, cordones cortos y respaldo.']]},
+ '6xxx':{s:[['Qué es','Aluminio con silicio y magnesio. Perfiles y piezas mecanizadas, casi siempre en T6.'],['Qué le pasa con el calor','La zona de alrededor del cordón pierde mucha resistencia.'],['Grietas','Tiende a agrietarse en caliente si se suelda sin aporte: con ER5356 se evita.']]},
+ '7xxx':{s:[['Qué es','Aluminio con zinc y magnesio. Los de resistencia media, como el 7020, se pueden soldar con TIG y MIG (TWI).'],['Qué le pasa con el calor','Alrededor del cordón queda una zona más blanda: poco calor.']]},
+ castMg:{s:[['Qué es','Aluminio fundido con magnesio como aleante principal.'],['¿Se suelda bien?','Regular: peor que una chapa o un perfil.'],['Con ER5356','Va bien: misma familia aluminio-magnesio.']]},
+ castSi:{s:[['Qué es','Aluminio fundido con silicio como aleante principal: la mayoría de piezas de fundición de motor.'],['Aporte','Con mucho silicio el aporte habitual es el 4043 o el 4047, no el ER5356. Confírmalo con la ficha de la pieza.']]}};
+function openMat(id){const o=MATX[id];const m=matOf(id)||(o?{n:o.t,fam:null}:null);if(!m)return;
+  const body=o?`<p class="mut" style="margin-top:0">${esc(o.c)}</p>${o.s.map(([a,b])=>`<h3>${a}</h3><p>${b}</p>`).join('')}${o.w?`<p class="wn">${o.w}</p>`:''}`
+   :`<p class="mut" style="margin-top:0">${esc(FAM[m.fam].n)}</p>${FAMX[m.fam].s.map(([a,b])=>`<h3>${a}</h3><p>${b}</p>`).join('')}`;
+  $('expBody').innerHTML=`<h2>${esc(o?o.t:m.n)}</h2>${body}<p class="src">Fuentes: <a href="https://twi-global.com/technical-knowledge/job-knowledge/weldability-of-materials-aluminium-alloys-021">TWI</a> · estudios técnicos · fichas EN 1706</p>`;
+  $('expDlg').dataset.k='';if(!$('expDlg').open)$('expDlg').showModal()}
+function saveMats(){try{localStorage.setItem('wbMats',JSON.stringify(cmats))}catch(x){}if(db)try{db.doc('ajustes/materiales').set({list:JSON.parse(JSON.stringify(cmats))})}catch(x){}}
+function openMats(){
+  const famOpts=Object.entries(FAM).map(([k,o])=>`<option value="${k}">${o.n}</option>`).join('');
+  $('expBody').innerHTML=`<h2>Materiales</h2><p class="mut">Los tuyos se sincronizan entre Mac y móvil.</p>
+  <div class="mlist">${allMats().map(m=>`<div class="mrow"><div><b>${esc(m.n)}</b><small>${esc(FAM[m.fam].n)}</small></div>${BASEM.some(x=>x.id===m.id)?'<span class="mut" style="font-size:12px">fijo</span>':`<button class="btn ghost" data-delmat="${m.id}">Borrar</button>`}</div>`).join('')}</div>
+  <h3>+ Añadir material</h3><label for="nmN">Nombre</label><input id="nmN" maxlength="40" placeholder="Chapa depósito 5754">
+  <label for="nmF">Familia</label><select id="nmF">${famOpts}</select>
+  <p class="err" id="nmE"></p><button class="btn y" id="nmOk" style="width:100%">Añadir</button>`;
+  $('expDlg').dataset.k='mats';if(!$('expDlg').open)$('expDlg').showModal()}
+document.addEventListener('click',e=>{
+  if(e.target.id==='nmOk'){const n=$('nmN').value.trim(),f=$('nmF').value;if(!n){$('nmE').textContent='Ponle un nombre.';return}
+    if(allMats().some(m=>m.n.toLowerCase()===n.toLowerCase())){$('nmE').textContent='Ya hay un material con ese nombre.';return}
+    cmats.push({id:'m'+Date.now().toString(36),n:n.slice(0,40),fam:f});saveMats();renderUnion();openMats();return}
+  const d=e.target.closest('[data-delmat]');if(d){if(d.dataset.s!=='1'){d.dataset.s='1';d.textContent='Pulsa otra vez';return}
+    const id=d.dataset.delmat;cmats=cmats.filter(m=>m.id!==id);saveMats();if(mat.split('+').includes(id))mat='6082+fund';renderAll();openMats()}});
+let uiAB=null;
+function renderUnion(){
+  const k=normU(mat);let[a,b]=k.split('+');if(uiAB&&normU(uiAB.join('+'))===k)[a,b]=uiAB;const ms=allMats();
+  const opt=s=>ms.map(m=>`<option value="${m.id}"${m.id===s?' selected':''}>${esc(m.n)}</option>`).join('');
+  $('uA').innerHTML=opt(a);$('uB').innerHTML=opt(b);
+  const both=bothCast(k),one=!both&&(FAM[famOf(a)].cast||FAM[famOf(b)].cast);
+  $('espWrap').hidden=both;$('espLab').textContent=one?'Espesor de la otra pieza':'Espesor';
+  $('espSel').innerHTML=ESPS.map(e=>`<button data-esp2="${e}" aria-pressed="${e===esp}">${String(e).replace('.',',')}</button>`).join('')+'<span class="mut">mm</span>';
+  $('uInfo').innerHTML=[a,b].filter((x,i,s)=>s.indexOf(x)===i).map(x=>`<button class="chipi" data-mi2="${x}">ⓘ ${esc(matName(x))}</button>`).join('');
 }
+
 function openGas(){
   const chips=`<div class="twc">${Object.entries(TG).map(([k,o])=>`<button data-tg="${k}" aria-pressed="${k===tgas}"><i style="background:${o.c}"></i>${o.n}</button>`).join('')}</div>`;
   const A={t:'Gas: '+TG[tgas].n,q:'Protege el tungsteno y el baño del aire. No está en el panel: se regula en el caudalímetro de la botella. Elige el que llevas:',
@@ -1211,7 +1348,7 @@ function openExpMig(l,e){
 /* Deshacer / rehacer */
 function snapState(){return JSON.stringify({vals,pv,fixOn,tw,mat,tgas})}
 function pushHist(){const now=Date.now();const s=snapState();if(now-H.t>700||!H.past.length){if(H.past[H.past.length-1]!==s){H.past.push(s);if(H.past.length>100)H.past.shift()}}H.t=now;H.fut=[]}
-function applyState(s){const o=JSON.parse(s);vals=o.vals;Object.assign(pv,o.pv);Object.assign(fixOn,o.fixOn);if(TW[o.tw])tw=o.tw;if(o.mat&&NAME[o.mat])mat=o.mat;if(TG[o.tgas]){tgas=o.tgas;try{localStorage.setItem('wbTgas',tgas)}catch(x){}}
+function applyState(s){const o=JSON.parse(s);vals=o.vals;Object.assign(pv,o.pv);Object.assign(fixOn,o.fixOn);if(TW[o.tw])tw=o.tw;if(o.mat)mat=normU(o.mat);if(TG[o.tgas]){tgas=o.tgas;try{localStorage.setItem('wbTgas',tgas)}catch(x){}}
   try{localStorage.setItem('wbPv',JSON.stringify(pv));localStorage.setItem('wbFix',JSON.stringify(fixOn));localStorage.setItem('wbTw',tw)}catch(x){}saveValsSoon();renderAll()}
 function undo(){if(!H.past.length)return;H.fut.push(snapState());applyState(H.past.pop());H.t=0;flash('Deshecho')}
 function redo(){if(!H.fut.length)return;H.past.push(snapState());applyState(H.fut.pop());H.t=0;flash('Rehecho')}
@@ -1232,7 +1369,7 @@ function paramRows(p){
 }
 function loadParams(p){
   pushHist();
-  if(p.maq==='tig'){maq='tig';if(NAME[p.union])mat=p.union;vals[mat]={bal:p.bal,hz:p.hz};for(const k of ['up','dn','post','pre','ex'])if(typeof p[k]==='number')pv[k]=p[k];if(p.fix)Object.assign(fixOn,p.fix);if(TW[p.tw])tw=p.tw;if(TG[p.tgas]){tgas=p.tgas;try{localStorage.setItem('wbTgas',tgas)}catch(x){}}
+  if(p.maq==='tig'){maq='tig';if(p.union)mat=normU(p.union);vals[mat]={bal:p.bal,hz:p.hz};for(const k of ['up','dn','post','pre','ex'])if(typeof p[k]==='number')pv[k]=p[k];if(p.fix)Object.assign(fixOn,p.fix);if(TW[p.tw])tw=p.tw;if(TG[p.tgas]){tgas=p.tgas;try{localStorage.setItem('wbTgas',tgas)}catch(x){}}
     try{localStorage.setItem('wbPv',JSON.stringify(pv));localStorage.setItem('wbFix',JSON.stringify(fixOn));localStorage.setItem('wbTw',tw)}catch(x){}saveValsSoon()}
   else{maq='mig';if(MT[p.mt])mt=p.mt;wire=p.wire;gas=p.gas;if(p.gas==='otro'){gasTxt=p.gasTxt||'';try{localStorage.setItem('wbGasTxt',gasTxt)}catch(x){}}}
   openM=maq;renderAll();renderMaqSel();goView('maq');
@@ -1324,7 +1461,7 @@ function goView(v){for(const x of document.querySelectorAll('nav button'))x.setA
   for(const x of document.querySelectorAll('.view'))x.classList.toggle('on',x.id==='v-'+v);window.scrollTo(0,0);if(v==='pla')renderPlanos()}
 
 /* Auto-actualizar */
-const APPV='20261126223215';
+const APPV='20261127064920';
 (function(){
   if(!GHMODE||location.protocol!=='https:')return;
   try{if(sessionStorage.getItem('wbUpdDone')===APPV){sessionStorage.removeItem('wbUpdDone');toast('✓ App actualizada')}}catch(x){}
@@ -1347,13 +1484,19 @@ const APPV='20261126223215';
 })();
 function toast(t){const d=document.createElement('div');d.textContent=t;d.style.cssText='position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top));transform:translateX(-50%);background:#1a7f37;color:#fff;padding:10px 16px;border-radius:12px;font:600 15px Barlow,sans-serif;z-index:99;box-shadow:0 8px 20px -6px #0008';document.body.appendChild(d);setTimeout(()=>d.remove(),3000)}
 $('expX').addEventListener('click',()=>$('expDlg').close());
+for(const id of ['uA','uB'])$(id).addEventListener('change',()=>{pushHist();uiAB=[$('uA').value,$('uB').value];mat=normU(uiAB.join('+'));sel=-1;renderAll()});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-esp2]');if(b){esp=+b.dataset.esp2;try{localStorage.setItem('wbEsp',esp)}catch(x){}renderAll();return}
+  const i=e.target.closest('[data-mi2]');if(i){openMat(i.dataset.mi2);return}
+  const eb=e.target.closest('[data-esp]');if(eb){esp=+eb.dataset.esp;try{localStorage.setItem('wbEsp',esp)}catch(x){}renderAll();openRec();return}});
+$('recBtn').addEventListener('click',openRec);$('matsBtn').addEventListener('click',openMats);
 $('manSel').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;manMaq=b.dataset.v;renderMan();window.scrollTo(0,0)});
 $('updBtn').addEventListener('click',()=>{try{sessionStorage.removeItem('wbUpdTry')}catch(x){}location.href=location.pathname+'?v='+Date.now()});
 $('expDlg').addEventListener('click',e=>{if(e.target===$('expDlg'))$('expDlg').close()});
 document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='z'&&!/input|textarea/i.test(document.activeElement.tagName)&&$('v-maq').classList.contains('on')){e.preventDefault();e.shiftKey?redo():undo()}});
 planosInit();
 /*save*/
-let saved={};try{saved=JSON.parse(localStorage.getItem('wbSaved')||'{}')||{}}catch(x){}
+function migSaved(o){const r={};for(const k of Object.keys(o||{})){const nk=normU(k);if(k===nk||!o[nk])r[nk]={...o[k],union:nk}}return r}
+let saved={};try{saved=migSaved(JSON.parse(localStorage.getItem('wbSaved')||'{}')||{})}catch(x){}
 function renderSaved(){
   const g=saved[mat];if(!g){$('savedBox').innerHTML='<p class="mut" style="margin:8px 0 0">Todavía no has guardado parámetros para '+NAME[mat]+'.</p>';return}
   const f=new Date(g.ts);const rows=[['Proceso',g.fix&&g.fix.tig===false?'—':'TIG'],['Corriente',g.fix&&g.fix.ac===false?'—':'AC'],['Mando',g.fix&&g.fix.loc===false?'—':'Pedal'],['Balance',g.bal+' %'],['Frecuencia',g.hz+' Hz'],['Rampa subida',String(g.up).replace('.',',')+' s'],['Rampa bajada',String(g.dn).replace('.',',')+' s'],['Postgás',String(g.post).replace('.',',')+' s'],['Pregás',String(g.pre).replace('.',',')+' s'],['Tungsteno',TW[g.tw]?TW[g.tw].n:'—'],['Precalentamiento',String(g.ex)],['Gas',TG[g.tgas]?TG[g.tgas].n:'Argón puro']];
@@ -1399,9 +1542,10 @@ function drawIconOld(){const c=document.createElement('canvas');c.width=c.height
   try{db=await claude.use('db')}catch(x){}
   if(!db&&GHMODE){$('syncCard').hidden=false;GH.ui();if(!GH.cfg){$('listMsg').textContent='Conecta la sincronización para guardar.';renderPlanos();return}db=GH.db;assets=GH.assets;GH.start()}
   if(!db){$('listMsg').textContent='El guardado no está disponible en esta vista.';renderPlanos();return}
-  db.doc('ajustes/guardado').onSnapshot(s=>{if(s.exists){const d=s.data();if(d&&typeof d==='object'){saved=JSON.parse(JSON.stringify(d));try{renderSaved()}catch(x){}}}},()=>{});
+  db.doc('ajustes/materiales').onSnapshot(s=>{if(s.exists){const d=s.data();if(d&&Array.isArray(d.list)){cmats=d.list;try{localStorage.setItem('wbMats',JSON.stringify(cmats))}catch(x){}renderAll()}}},()=>{});
+  db.doc('ajustes/guardado').onSnapshot(s=>{if(s.exists){const d=s.data();if(d&&typeof d==='object'){saved=migSaved(JSON.parse(JSON.stringify(d)));try{renderSaved()}catch(x){}}}},()=>{});
   db.doc('ajustes/valores').onSnapshot(s=>{
-    if(s.exists){const v=s.data();for(const k of Object.keys(DEF))if(v[k]&&+v[k].bal&&+v[k].hz)vals[k]={bal:+v[k].bal,hz:+v[k].hz};renderAll();fillForm()}
+    if(s.exists){const v=s.data();for(const k of Object.keys(v||{}))if(v[k]&&+v[k].bal&&+v[k].hz){const nk=normU(k);if(k===nk||!v[nk])vals[nk]={bal:+v[k].bal,hz:+v[k].hz}}renderAll();try{fillForm()}catch(x){}}
   },()=>{});
   const t=setTimeout(()=>{$('listMsg').textContent='No se pueden cargar las pruebas todavía.'},10000);
   db.collection('planos').orderBy('ts','desc').limit(200).onSnapshot(s=>{planos=s.docs.slice().sort((a,b)=>(b.data().ts||0)-(a.data().ts||0));renderPlanos()},()=>{});
