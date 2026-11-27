@@ -223,6 +223,12 @@ input,textarea,select{background:var(--card2);color:var(--ink);border-color:var(
 .rsel{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 8px}.rsel .espb{min-height:32px;padding:4px 12px;border-radius:16px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font:600 14px Barlow,sans-serif;cursor:pointer}.rsel .espb.on{background:var(--y);color:#111;border-color:var(--y)}.minfo{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}.rsel>span{font:600 12px Barlow,sans-serif;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;min-width:52px}
 .sline .srow{display:flex;flex-wrap:wrap;align-items:center;gap:6px}.sline .sbtns{display:inline-flex;flex-wrap:wrap;gap:6px;margin-left:auto}.sline table{margin-top:8px}
 .pen{margin-left:6px;border:1px solid var(--line);background:var(--card2);color:var(--ink);border-radius:8px;min-width:30px;min-height:28px;cursor:pointer;font-size:14px}.pen.ok2{background:var(--y);color:#111;border-color:var(--y)}.dstep{display:inline-flex;align-items:center;gap:6px}.dstep button{min-width:30px;min-height:30px;border-radius:8px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font:700 18px Barlow,sans-serif;cursor:pointer}.dtw{display:inline-flex;flex-direction:column;gap:4px}.dtwb{display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--card2);color:var(--ink);border-radius:8px;padding:4px 8px;cursor:pointer;font:600 13px Barlow,sans-serif}.dtwb.on{border-color:var(--y)}.rload{display:flex;gap:8px;margin-top:10px}.rload .btn{flex:1}.rsel .espb{display:inline-flex;align-items:center;gap:6px}
+.u82{background:#2a2a2a}.u8tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}.u8tabs button{flex:1;min-height:38px;border-radius:10px;border:1px solid #444;background:#1b1b1b;color:#ddd;font:600 14px Barlow,sans-serif;cursor:pointer}.u8tabs button[aria-pressed=true]{background:var(--y);color:#111;border-color:var(--y)}
+.u8body{background:#f2b705;border-radius:14px;padding:12px;box-shadow:inset 0 0 0 3px #222}.u8brand{text-align:right;font:italic 700 16px Barlow,sans-serif;color:#222;margin:0 4px 8px}.u8scr{background:#dfeef2;border:3px solid #222;border-radius:8px;padding:8px;color:#2b2f8f;font:600 15px ui-monospace,Menlo,monospace;min-height:220px;display:flex;flex-direction:column}
+.u8h{font-weight:800;letter-spacing:.04em;border-bottom:2px solid #2b2f8f;padding-bottom:4px;margin-bottom:6px}.u8l{display:flex;align-items:center;gap:6px;padding:5px 4px;border-radius:4px;cursor:pointer;flex-wrap:wrap}.u8l:hover{background:#c7dbe6}.u8k{flex:1;text-transform:uppercase;font-size:13px}.u8v{font-weight:800}
+.u8pen{border:1px solid #2b2f8f;background:#fff;color:#2b2f8f;border-radius:6px;min-width:28px;min-height:26px;cursor:pointer;margin-left:6px;font-size:13px}.u8pen.ok2{background:#2b2f8f;color:#fff}.u8ed{display:inline-flex;flex-wrap:wrap;gap:4px;align-items:center}.u8ed button{min-width:30px;min-height:30px;border-radius:6px;border:1px solid #2b2f8f;background:#fff;color:#2b2f8f;font:700 14px ui-monospace,Menlo,monospace;cursor:pointer;padding:0 6px}.u8o.on{background:#2b2f8f!important;color:#fff!important}
+.u8top{display:flex;justify-content:space-between;border-bottom:2px solid #2b2f8f;font-size:13px;padding-bottom:3px}.u8big{flex:1;display:flex;flex-direction:column;justify-content:center;gap:2px;padding:6px 0}.u8big>div{display:flex;align-items:baseline;justify-content:center;gap:6px;font:800 22px ui-monospace,Menlo,monospace}.u8big b{font-size:34px}.u8big i{font-style:normal;margin-right:auto;font-size:20px}.u8big small{font-size:13px;font-weight:600}
+.u8soft{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin-top:auto;padding-top:6px}.u8soft span{background:linear-gradient(#8c6f80,#6f7da0);color:#fff;font:700 10px ui-monospace,Menlo,monospace;text-align:center;padding:4px 2px;border-radius:2px;min-height:28px;display:flex;align-items:center;justify-content:center;line-height:1.1}
 </style>
 </head>
 <body>
@@ -271,14 +277,9 @@ input,textarea,select{background:var(--card2);color:var(--ink);border-color:var(
 
 <button class="acch" data-m="mig" aria-expanded="false"><span class="acci">HILO</span><span class="acct"><b>Aristo 500ix</b><small>ESAB · panel Aristo U82</small></span><i class="chev">▾</i></button>
 <div id="migMaq" hidden>
-  <div class="chips" id="mtSel"><span>Material</span><button data-v="fe">Hierro <i class="inf" data-mi="fe">ⓘ</i></button><button data-v="inox">Inox <i class="inf" data-mi="inox">ⓘ</i></button><button data-v="alu">Aluminio <i class="inf" data-mi="alu">ⓘ</i></button></div>
-  <div class="chips" id="wireSel"></div>
-  <div class="chips" id="gasSel"></div>
-  <div class="machine" aria-live="polite">
-    <div class="mhead"><b id="migTitle">Aristo U82</b><i id="tagMig"></i></div>
-    <div class="grid" id="outMig"></div>
-    <p class="note">El U82 es un panel de menús con texto: los nombres son los de su menú «Weld Data Setting» (en inglés si tu panel está en inglés). Los iconos son orientativos, no los del panel. Son valores de partida: la velocidad de hilo va según espesor y la ajustas tú.</p>
-  </div>
+  <div class="chips" id="mtSel"><span>Material</span><button data-v="fe">Hierro <i class="inf" data-mi="fe">ⓘ</i></button><button data-v="inox">Inox <i class="inf" data-mi="inox">ⓘ</i></button></div>
+  <div id="wireSel" hidden></div><div id="gasSel" hidden></div><div id="outMig" hidden></div><b id="migTitle" hidden></b><i id="tagMig" hidden></i>
+  <div class="machine u82" id="u82" aria-live="polite"></div>
   <div class="card" style="margin-top:14px">
     <h2 id="migPrepT">Antes de soldar con HILO</h2>
     <ul id="migPrep"></ul>
@@ -316,7 +317,7 @@ input,textarea,select{background:var(--card2);color:var(--ink);border-color:var(
       <li>Apunta cada prueba en el Registro, con foto.</li>
     </ol>
   </div>
-  <div class="chips" id="mtSel2"><span>Material</span><button data-v="fe">Hierro</button><button data-v="inox">Inox</button><button data-v="alu">Aluminio</button></div>
+  <div class="chips" id="mtSel2"><span>Material</span><button data-v="fe">Hierro</button><button data-v="inox">Inox</button></div>
   <p class="mut">¿Qué ves en el cordón?</p>
   <div id="ansMig"></div>
   <div class="sym" id="symMig"></div>
@@ -968,8 +969,97 @@ const MT={
 };
 const WN=w=>String(w).replace('.',',');
 function fixMt(){const M=MT[mt];if(!M.wires.includes(wire))wire=M.wires[1];if(!M.gases[gas]&&gas!=='otro')gas=Object.keys(M.gases)[0]}
+// ===== HILO: pantalla Aristo U82 con mis valores, guardado y recomendación =====
+const HDEF={fe:{prog:'JMR 37',arco:'Pulsado',hilo:'Fe ER70S',gas:'Ar + 8% CO₂',diam:1.0,volt:35.0,corr:4.0,vel:7.8,sin:'ON',gat:'4T',crater:null,hot:null,caudal:null,stick:null},
+ inox:{prog:'',arco:null,hilo:null,gas:null,diam:null,volt:null,corr:null,vel:null,sin:null,gat:null,crater:null,hot:null,caudal:null,stick:null}};
+let HV={};try{HV=JSON.parse(localStorage.getItem('wbHilo')||'{}')||{}}catch(x){}
+const hv=()=>{const m=mt==='inox'?'inox':'fe';if(!HV[m])HV[m]=JSON.parse(JSON.stringify(HDEF[m]));return HV[m]};
+let u82Tab='soldar',hEdit=null;
+const HOPT={arco:['Corto','Pulsado','Spray'],sin:['ON','OFF'],gat:['2T','4T'],crater:['ON','OFF'],hot:['ON','OFF'],diam:[0.8,1.0,1.2],
+ hilo:{fe:['Fe ER70S','G3Si1 (ER70S-6)'],inox:['308LSi','316LSi','309LSi']},
+ gas:{fe:['Ar + 8% CO₂','Ar + 10% CO₂','Ar + 18% CO₂','CO₂ 100%'],inox:['Ar + 2% CO₂','Ar + 2% O₂','Ar + 3% CO₂']}};
+const HNUM={volt:[5,60,0.25,'V'],corr:[-10,10,0.25,'V'],vel:[0.5,25,0.1,'m/min'],caudal:[4,30,1,'l/min'],stick:[5,30,1,'mm']};
+const hf=v=>v==null||v===''?'—':typeof v==='number'?(Number.isInteger(v*10)?v.toFixed(1):String(Math.round(v*100)/100)).replace('.',','):v;
+function hSave(){try{localStorage.setItem('wbHilo',JSON.stringify(HV))}catch(x){}if(db)try{db.doc('ajustes/hilo').set(JSON.parse(JSON.stringify(HV))).catch(()=>{})}catch(x){}}
+// Recomendación (lo que más se repite entre fuentes)
+function hRec(m){const d=hv().diam||1.0;const r=Math.round;
+ return m==='inox'?{
+  gas:{t:'Ar + 2% CO₂ (o Ar + 2% O₂)',ok:g=>/2%/.test(g||''),w:'Coinciden Miller, ESAB, Lincoln, Air Liquide, Linde y The Fabricator: argón con muy poco CO₂ (2 %, como mucho 5 %) para inox. ESAB avisa: no uses en inox la mezcla de hierro con 18 % de CO₂, porque estropea la resistencia a la corrosión. Para pulsado o spray también vale Ar + 2 % O₂ (Lincoln).'},
+  caudal:{t:'10–15 l/min',rng:[10,15],w:'ESAB: 10–12 l/min normal y como mucho 15, porque más gas hace remolinos y mete aire. Regla de EWM: de 10 a 12 veces el diámetro del hilo en l/min. Kemppi da 10–20 l/min según el trabajo y Lincoln, en su ficha de hilo 308LSi, 15–20 l/min. Donde más coinciden: 10–15 l/min.'},
+  hilo:{t:'308LSi en 304 · 316LSi en 316',ok:h=>/LSi/.test(h||''),w:'Lincoln: el hilo depende del inox que sueldes (308 para el 304, 316 para el 316); la «L» es bajo carbono y la «Si» da un baño más fluido que moja mejor los bordes.'},
+  arco:{t:'Pulsado',ok:a=>a==='Pulsado',w:'ESAB y Kemppi: el pulsado mete menos calor, salpica menos y deforma menos; por eso es lo preferido en chapa fina e inox. En inox, menos calor también cuida la resistencia a la corrosión (ESAB, estudio ISIJ).'},
+  stick:{t:'10–15 mm',rng:[10,15],w:'ESAB: con hilo macizo, de 10 a 15 mm entre tubo de contacto y pieza; Fronius: 15 mm normal. En inox importa más: Kemppi explica que el hilo de inox tiene mucha resistencia, y si alargas el stickout la corriente baja mucho.'},
+  crater:{t:'ON',ok:v=>v==='ON',w:'ESAB y Kemppi: el relleno de cráter evita poros y grietas al acabar el cordón. The Fabricator: el cráter sin rellenar es donde salen las grietas.'},
+  hot:{t:'OFF',ok:v=>v!=='ON',w:'Kemppi y ESAB: el arranque en caliente sirve sobre todo en aluminio, que se lleva el calor muy rápido. En inox no hace falta, salvo que el principio del cordón te quede frío.'}
+ }:{
+  gas:{t:'Ar + 8–18% CO₂',ok:g=>/8%|10%|18%/.test(g||''),w:'Para pulsado o spray hace falta mucho argón: The Fabricator dice que con más de un 18 % de CO₂ no hay spray. ESAB recomienda Ar + 10 % CO₂ para spray y pulsado en hierro; Bakers e Ilmo, Ar + 8 % CO₂ para chapa fina y spray. Tu Ar + 8 % CO₂ está dentro de lo que dicen.'},
+  caudal:{t:`${r(10*d)}–${r(12*d)} l/min`,rng:[r(10*d),Math.max(r(12*d),12)],w:'ESAB: 10–12 l/min en condiciones normales y como mucho 15. EWM: de 10 a 12 veces el diámetro del hilo en l/min. Metabo: 10 veces el diámetro. Con hilo de 1,0 mm salen 10–12 l/min.'},
+  hilo:{t:'ER70S-6 (G3Si1)',ok:h=>/ER70S|G3Si1/.test(h||''),w:'Hilo macizo de acero al carbono: ER70S-6 (G3Si1 en la norma europea). Es el que nombran Miller, Lincoln y HP Academy para acero normal.'},
+  arco:{t:'Corto en chapa fina · Pulsado o spray en más grueso',ok:()=>true,w:'TWI: con hilo de 1,0 mm, arco corto va de 70 a 180 A (17–22 V) y spray de 230 a 300 A (26–35 V). ESAB: el pulsado da el spray con menos calor, menos salpicadura y en todas las posiciones.'},
+  stick:{t:'10–15 mm',rng:[10,15],w:'ESAB: de 10 a 15 mm en hilo macizo de acero (10–12 mm con hilo de 0,8). Fronius: 15 mm normal. Bernard: en arco corto o pulsado de poca corriente, cuanto más corto mejor.'},
+  crater:{t:'ON en cordones largos',ok:()=>true,w:'ESAB y Kemppi: el relleno de cráter evita poros y grietas al acabar. En cordones cortos o puntos no hace falta.'},
+  hot:{t:'OFF',ok:v=>v!=='ON',w:'Kemppi y ESAB: el arranque en caliente es sobre todo para aluminio. En hierro no hace falta, salvo que el principio del cordón quede frío.'}
+ }}
+const HL={prog:'Programa',arco:'Tipo de arco',hilo:'Tipo de hilo',gas:'Gas de protección',diam:'Diámetro de hilo',volt:'Tensión',corr:'Corrección',vel:'Velocidad hilo',sin:'Modo sinérgico',gat:'Gatillo',crater:'Relleno de cráter',hot:'Arranque en caliente',caudal:'Caudal de gas',stick:'Stickout'};
+const HEXP={
+ volt:{q:'Con modo sinérgico en ON, la tensión la pone la máquina según la velocidad de hilo; el número entre paréntesis es la corrección que tú le sumas o restas.',s:[['Si la subes','Arco más largo, cordón más plano y ancho. Si te pasas: mordeduras y salpicadura fina.'],['Si la bajas','Arco más corto, cordón más alto y estrecho. Si te pasas: el hilo tropieza y salpica gordo.']]},
+ corr:{q:'Es lo que le has sumado o restado a la tensión de la sinergia. En tu foto: +4,0 V.',s:[['Cómo ajustarla','En pasos pequeños (el U82 va de 0,25 en 0,25 V) y haciendo una probeta.']]},
+ vel:{q:'Velocidad a la que sale el hilo. En sinergia es el mando principal: más velocidad = más corriente y más calor; la máquina ajusta la tensión sola.',s:[['Referencia','Wikipedia (GMAW): en soldadura manual va normalmente de 2 a 10 m/min.']]},
+ sin:{q:'Con sinergia en ON, tú eliges la velocidad de hilo y la máquina ajusta la tensión (y el pulso) según la línea de tu material, hilo y gas.',s:[['Importante','La línea elegida en el menú principal tiene que coincidir con el hilo, el diámetro y el gas que llevas puestos.']]},
+ arco:{q:'Cómo pasa el hilo al baño.',s:[['Corto','El hilo toca el baño muchas veces por segundo: poco calor, chapa fina y posiciones.'],['Spray','Gotas finas que vuelan sin tocar: mucha corriente, mucha penetración, posición plana.'],['Pulsado','La corriente sube y baja: una gota por pulso. Menos calor y salpicadura que el spray, y sirve en todas las posiciones (ESAB, Kemppi).']]},
+ hilo:{q:'El hilo que llevas puesto. Tiene que coincidir con la línea sinérgica del menú principal.',s:[]},
+ gas:{q:'El gas de la botella. Tiene que coincidir con la línea sinérgica del menú principal.',s:[]},
+ diam:{q:'Diámetro del hilo. Tiene que coincidir con la línea sinérgica, el tubo de contacto y los rodillos.',s:[]},
+ gat:{q:'2T: aprietas y suelda, sueltas y para. 4T: aprietas y sueltas para empezar, y otra vez para acabar.',s:[['Cuándo','2T para puntos y cordones cortos; 4T para cordones largos.']]},
+ crater:{q:'Al acabar, la corriente baja poco a poco para llenar el cráter final.',s:[['Para qué','Evita poros y grietas al final del cordón (ESAB, Kemppi).']]},
+ hot:{q:'Al empezar, la máquina da más potencia un momento para que el principio del cordón no quede frío.',s:[['Cuándo','Sobre todo en aluminio (Kemppi, ESAB). En hierro e inox, solo si el inicio te queda frío.']]},
+ caudal:{q:'Se regula en el caudalímetro de la botella, no en el panel.',s:[['Si te quedas corto','Poros.'],['Si te pasas','El chorro hace remolinos y mete aire: también poros (ESAB).']]},
+ stick:{q:'Distancia del tubo de contacto a la pieza. No está en el panel: depende de cómo sujetes la antorcha.',s:[['Si es larga','Baja la corriente y el arco se vuelve inestable; en inox mucho más (Kemppi).'],['Si es corta','Se calienta el tubo de contacto y se llena de proyecciones.']]},
+ prog:{q:'El nombre de la memoria de la máquina donde tienes guardado este ajuste. En tu foto: JMR 37.',s:[]}};
+function u82Line(k,label,val,arrow){const ed=k&&k!=='prog'&&(HOPT[k]||HNUM[k]);const v=hv();
+  let right=`<span class="u8v">${val}</span>`;
+  if(ed&&hEdit===k){if(HNUM[k])right=`<span class="u8ed"><button data-hstep="${k}" data-d="-1" aria-label="Bajar">−</button><b>${hf(v[k])} ${HNUM[k][3]}</b><button data-hstep="${k}" data-d="1" aria-label="Subir">+</button></span>`;
+   else{const o=Array.isArray(HOPT[k])?HOPT[k]:HOPT[k][mt==='inox'?'inox':'fe'];right=`<span class="u8ed">${o.map(x=>`<button class="u8o${String(v[k])===String(x)?' on':''}" data-hset="${k}" data-v="${x}">${hf(x)}</button>`).join('')}</span>`}
+   right+=`<button class="u8pen ok2" data-hedit="">✓</button>`}
+  else if(ed)right+=`<button class="u8pen" data-hedit="${k}" aria-label="Editar ${label}">✎</button>`;
+  return `<div class="u8l" ${k?`data-hexp="${k}"`:''}><span class="u8k">${label}${arrow?'▸':''}</span>${right}</div>`}
+function renderU82(){const v=hv(),M=mt==='inox'?'inox':'fe';
+  const sk=a=>`<div class="u8soft">${a.map(x=>`<span>${x}</span>`).join('')}</div>`;
+  let scr='';
+  if(u82Tab==='soldar')scr=`<div class="u8top"><span>${esc(v.prog||'—')}</span><span>1</span></div>
+   <div class="u8big"><div><i>#</i><b>${hf(v.volt)}</b> Volt${v.corr!=null?` <small>(${v.corr>0?'+':''}${hf(v.corr)})</small>`:''}<button class="u8pen" data-hedit="volt" aria-label="Editar tensión">✎</button></div><div><b>0</b> Amp <small>al soldar</small></div><div><i>✱</i><b>${hf(v.vel)}</b>m/min<button class="u8pen" data-hedit="vel" aria-label="Editar velocidad">✎</button></div></div>
+   ${hEdit==='volt'||hEdit==='vel'||hEdit==='corr'?u82Line(hEdit,HL[hEdit],''):''}${hEdit==='volt'?u82Line('corr',HL.corr,hf(v.corr)+' V'):''}
+   ${sk(['PURGA<br>GAS','ALIM.<br>HILO',(v.gat||'4T').replace('T','-<br>TIEMPO'),'REMOTO','1 2'])}`;
+  else if(u82Tab==='menu')scr=`<div class="u8h">MIG/MAG (HILO) ${String(v.arco||'').toUpperCase()}</div>
+   ${u82Line(null,'Procedimiento','MIG/MAG (HILO)')}${u82Line('arco','Tipo de arco',hf(v.arco))}${u82Line('hilo','Tipo de hilo',hf(v.hilo))}${u82Line('gas','Gas de protección',hf(v.gas))}${u82Line('diam','Diámetro de hilo',v.diam?hf(v.diam)+' mm':'—')}
+   ${sk(['AJUSTE','MEDIDA','MEMORIA','MODO<br>RÁPIDO',''])}`;
+  else scr=`<div class="u8h">AJUSTE DATOS SOLDADURA</div>
+   ${u82Line('volt','Tensión',v.volt!=null?`${hf(v.volt)}${v.corr!=null?` (${v.corr>0?'+':''}${hf(v.corr)})`:''} V`:'—')}${hEdit==='volt'?u82Line('corr',HL.corr,hf(v.corr)+' V'):''}${u82Line('vel','Velocidad hilo',v.vel!=null?hf(v.vel)+' m/min':'—')}${u82Line('sin','Modo sinérgico',hf(v.sin))}
+   ${u82Line('crater','Relleno de cráter',hf(v.crater))}${u82Line('hot','Arranque en caliente',hf(v.hot))}${u82Line('gat','Gatillo',hf(v.gat))}
+   ${sk(['RELLEN<br>CRÁTER','ARRAN<br>CALIEN',(v.gat||'4T').replace('T','-<br>TIEMPO'),'','SALIR'])}`;
+  const R=hRec(M);const rows=['gas','caudal','hilo','arco','stick','crater','hot'];
+  const st=k=>{const x=R[k],val=v[k];if(val==null||val==='')return '<span class="mut">sin dato</span>';if(x.rng){const n=+val;return n<x.rng[0]?'<span class="ko">↑ súbelo</span>':n>x.rng[1]?'<span class="ko">↓ bájalo</span>':'<span class="ok">✓</span>'}return x.ok(val)?'<span class="ok">✓</span>':'<span class="ko">revísalo</span>'};
+  $('u82').innerHTML=`<div class="u8tabs">${[['soldar','Pantalla'],['menu','Menú principal'],['ajuste','Ajuste datos']].map(([k,l])=>`<button data-u8tab="${k}" aria-pressed="${u82Tab===k}">${l}</button>`).join('')}</div>
+   <div class="u8body"><div class="u8brand">Aristo™ <b>U8<sub>2</sub></b></div><div class="u8scr">${scr}</div></div>
+   <p class="note">Toca una línea para ver qué es. Con el lápiz ✎ cambias tus valores: se guardan solos y se sincronizan entre Mac y móvil. Lo que pone «—» todavía no me lo has pasado.</p>
+   <div class="rbox"><div class="rhead"><b>Recomendación · ${M==='inox'?'Inox':'Hierro'}</b><span>Hilo ${v.diam?hf(v.diam):'1,0'} mm</span></div>
+   <table class="rtab"><tr><th>Parámetro</th><th>Recomendado</th><th>Mis valores</th><th></th></tr>${rows.map(k=>{const x=R[k];const val=k==='caudal'?(v.caudal!=null?hf(v.caudal)+' l/min':'—'):k==='stick'?(v.stick!=null?hf(v.stick)+' mm':'—'):hf(v[k]);
+    const ed=hEdit===k?`<span class="u8ed">${HNUM[k]?`<button data-hstep="${k}" data-d="-1">−</button><b>${hf(v[k])}</b><button data-hstep="${k}" data-d="1">+</button>`:(Array.isArray(HOPT[k])?HOPT[k]:HOPT[k][M]).map(o=>`<button class="u8o${String(v[k])===String(o)?' on':''}" data-hset="${k}" data-v="${o}">${hf(o)}</button>`).join('')}</span><button class="pen ok2" data-hedit="">✓</button>`:`${val}<button class="pen" data-hedit="${k}" aria-label="Editar">✎</button>`;
+    return `<tr><td>${HL[k]}<button class="whyb" data-hwhy="${k}">¿Por qué? ▾</button></td><td><b>${x.t}</b></td><td>${ed}</td><td>${st(k)}</td></tr><tr class="whyr" data-hwhyr="${k}" hidden><td colspan="4">${x.w}</td></tr>`}).join('')}</table>
+   <p class="mut" style="margin:8px 0 0">Tensión y velocidad de hilo: con sinergia las marca la máquina según el espesor; ajústalas con probetas.</p>
+   <p class="src" style="margin:8px 0 0">Fuentes: <a href="https://esab.com/al/eur_en/esab-university/blogs/fine-tuning-performance-mastering-mig-welding-machine-settings/">ESAB (ajustes MIG)</a> · <a href="https://esab.com/al/eur_en/esab-university/articles/mig-welding-guide-process-parameters-and-best-practices/">ESAB (guía MIG)</a> · <a href="https://esab.com/gb/eur_en/esab-university/blogs/what-is-pulsed-mig-welding/">ESAB (pulsado)</a> · <a href="https://millerwelds.com/resources/article-library/want-to-improve-results-when-mig-welding-stainless-steel">Miller (inox)</a> · <a href="https://www.lincolnelectric.com/en/Welding-and-Cutting-Resource-Center/Weld-Solutions/Stainless-Steel-MIG-Welding-with-Compact-Welders">Lincoln (inox)</a> · <a href="https://thefabricator.com/thewelder/blog/consumables/selecting-shielding-gas-for-gmaw-and-fcaw">The Fabricator (gas)</a> · <a href="https://www.thefabricator.com/thefabricator/article/consumables/selecting-a-shielding-gas-for-joining-stainless-steel">The Fabricator (gas inox)</a> · <a href="https://bakersgas.com/pages/guide-to-mig-shielding-gas">Bakers</a> · <a href="https://www.ewm-group.com/en/specialised-knowledge/shielding-gases.html">EWM</a> · <a href="https://kemppi.com/en-GB/blogs/choosing-the-right-gas-nozzle-length-for-mig-gmaw-welding">Kemppi (stickout)</a> · <a href="https://www.manualslib.com/manual/1500604/Kemppi-A3-Mig.html?page=14">Kemppi (arranque y cráter)</a> · <a href="https://www.fronius.com/en-us/usa/welding-technology/info-centre/news/personal-touch">Fronius</a> · <a href="https://www.twi-global.com/technical-knowledge/job-knowledge/equipment-for-mig-welding-015">TWI</a> · <a href="https://au.airliquide.com/arcaltm-welding-gas">Air Liquide</a></p></div>`;
+}
+$('u82').addEventListener('click',e=>{const v=hv();
+  const tb=e.target.closest('[data-u8tab]');if(tb){u82Tab=tb.dataset.u8tab;hEdit=null;renderU82();return}
+  const he=e.target.closest('[data-hedit]');if(he){e.stopPropagation();hEdit=he.dataset.hedit||null;renderU82();return}
+  const hs=e.target.closest('[data-hstep]');if(hs){e.stopPropagation();const k=hs.dataset.hstep,[mn,mx,st]=HNUM[k];const cur=v[k]!=null?v[k]:(k==='caudal'?11:k==='stick'?12:k==='corr'?0:mn);v[k]=Math.round(Math.min(mx,Math.max(mn,cur+(+hs.dataset.d)*st))*100)/100;hSave();renderU82();return}
+  const ho=e.target.closest('[data-hset]');if(ho){e.stopPropagation();const k=ho.dataset.hset;v[k]=k==='diam'?+ho.dataset.v:ho.dataset.v;hSave();renderU82();return}
+  const hw=e.target.closest('[data-hwhy]');if(hw){const tr=$('u82').querySelector(`[data-hwhyr="${hw.dataset.hwhy}"]`);if(tr){tr.hidden=!tr.hidden;hw.textContent=tr.hidden?'¿Por qué? ▾':'¿Por qué? ▴'}return}
+  const ln=e.target.closest('[data-hexp]');if(ln&&!e.target.closest('button')){const k=ln.dataset.hexp,o=HEXP[k];if(!o)return;
+    $('expBody').innerHTML=expHTML({t:HL[k],q:o.q,s:o.s,src:'<a href="https://ldgsesabwe.blob.core.windows.net/manuals/InstructionManuals/0460%20896%20287%20US.pdf">manual ESAB Aristo U82</a> y las fuentes de la recomendación'});$('expDlg').dataset.k='u82';if(!$('expDlg').open)$('expDlg').showModal()}});
+
 function renderMig(){
-  fixMt();const M=MT[mt];
+  if(mt==='alu')mt='fe';fixMt();const M=MT[mt];
   for(const id of ['mtSel','mtSel2'])for(const b of $(id).querySelectorAll('button'))b.setAttribute('aria-pressed',b.dataset.v===mt);
   $('wireSel').innerHTML='<span>Hilo '+M.wn+'</span>'+M.wires.map(w=>`<button data-v="${w}" aria-pressed="${w===wire}">${WN(w)} mm</button>`).join('');
   $('gasSel').innerHTML='<span>Gas</span>'+Object.entries(M.gases).map(([k,v])=>`<button data-v="${k}" aria-pressed="${k===gas}">${v}</button>`).join('')+`<button data-v="otro" aria-pressed="${gas==='otro'}">Otro…</button>`+(gas==='otro'?`<input id="gasTxt" placeholder="Escribe el gas de tu botella" value="${esc(gasTxt)}" maxlength="60" style="flex:1 1 220px;min-height:40px">`:'');
@@ -978,6 +1068,7 @@ function renderMig(){
   {const cs=M.cells(gasName(M,gas,gasTxt));if(gas==='otro')cs[cs.length-1]=cell('gas','Caudal de gas','—','l/min','Según el gas: mira la ficha de la botella');$('outMig').innerHTML=cs.join('')}
   $('migPrepT').textContent='Antes de soldar '+M.n.toLowerCase()+' con HILO';
   $('migPrep').innerHTML=M.prep.map(t=>`<li>${t}</li>`).join('');
+  try{renderU82()}catch(x){console.error(x)}
 }
 let selM=-1;
 function renderFinoMig(){
@@ -1551,7 +1642,7 @@ function goView(v){for(const x of document.querySelectorAll('nav button'))x.setA
   for(const x of document.querySelectorAll('.view'))x.classList.toggle('on',x.id==='v-'+v);window.scrollTo(0,0);if(v==='pla')renderPlanos()}
 
 /* Auto-actualizar */
-const APPV='20261127171204';
+const APPV='20261127185006';
 (function(){
   if(!GHMODE||location.protocol!=='https:')return;
   try{if(sessionStorage.getItem('wbUpdDone')===APPV){sessionStorage.removeItem('wbUpdDone');toast('✓ App actualizada')}}catch(x){}
@@ -1650,6 +1741,7 @@ function drawIconOld(){const c=document.createElement('canvas');c.width=c.height
   try{db=await claude.use('db')}catch(x){}
   if(!db&&GHMODE){$('syncCard').hidden=false;GH.ui();if(!GH.cfg){$('listMsg').textContent='Conecta la sincronización para guardar.';renderPlanos();return}db=GH.db;assets=GH.assets;GH.start()}
   if(!db){$('listMsg').textContent='El guardado no está disponible en esta vista.';renderPlanos();return}
+  db.doc('ajustes/hilo').onSnapshot(s=>{if(s.exists){const d=s.data();if(d&&typeof d==='object'&&JSON.stringify(d)!==JSON.stringify(HV)){HV=d;try{localStorage.setItem('wbHilo',JSON.stringify(HV))}catch(x){}if(!hEdit)try{renderU82()}catch(x){}}}else if(Object.keys(HV).length)hSave()},()=>{});
   db.doc('ajustes/materiales').onSnapshot(s=>{if(s.exists){const d=s.data();let nl;if(d&&Array.isArray(d.all)&&d.all.length){nl=d.all}else if(d&&Array.isArray(d.list)){nl=BASEM.map(m=>({...m})).concat(d.list)}else return;matsBase=JSON.parse(JSON.stringify(nl));if(JSON.stringify(nl)===JSON.stringify(mlist))return;mlist=nl;histSinMats();try{localStorage.setItem('wbMats2',JSON.stringify(mlist))}catch(x){}fixMat();renderAll()}},()=>{});
   // Material que David pidió añadir: se pone una vez en su cuenta (si luego lo borra, no vuelve).
   // Se mira en cada sincronización hasta que quede guardado de verdad en el servidor.
